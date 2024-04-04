@@ -12,9 +12,7 @@ const SignUpContainer = styled.div`
 width: 85%;
 max-width : 380px;
 max-height: 1036px;
-margin: auto;
-margin-top: 20px;
-margin-bottom: 50px;
+margin: 80px auto 50px; 
 `
 
 const SignupHeader = styled.div`
