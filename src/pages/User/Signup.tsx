@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
+import { IoIosArrowForward } from "react-icons/io";
 
-interface CheckboxProps {
+type CheckboxProps = {
   checked: boolean;
 }
 
-
 const SignUpContainer = styled.div`
-width: 80%;
+width: 85%;
 max-width : 380px;
 max-height: 1036px;
 margin: auto;
@@ -94,6 +94,10 @@ const SignupInput = styled.div`
     width: 20px;
     height: 20px;
   }
+
+  span{
+    
+  }
 `;
 
 const InvalidMsg = styled.p`
@@ -155,6 +159,7 @@ const HorizontalLineWithText = styled.div`
 
 
 const AgreeAllCheckbox = styled.div`
+  position: relative;
   font-family : Pretendard ExtraBold;
   height: 48px; 
   justify-content: center;
@@ -166,6 +171,18 @@ const AgreeAllCheckbox = styled.div`
     align-items: center;
   }
 
+  button{
+    position: absolute;
+    right: 5px;
+    width:12px;
+    height: 6px;
+    font-size: 20px;
+    border: none;
+    background: transparent;
+    color: var(--color-black);
+    cursor : pointer;
+   }
+
 `;
 
 const AgreeCheckbox = styled.div`
@@ -173,6 +190,7 @@ const AgreeCheckbox = styled.div`
   height: 48px;
   color: var(--color-black);
   justify-content: center;
+  position: relative;
 
   label {
     display: flex;
@@ -181,8 +199,20 @@ const AgreeCheckbox = styled.div`
 
   span{
     color: var(--color-brand-main);
-    margin-left: 4px;
+    margin-left: 2px;
   }
+
+  button{
+    position: absolute;
+    right: 5px;
+    width:12px;
+    height: 6px;
+    font-size: 20px;
+    border: none;
+    background: transparent;
+    color: var(--color-black);
+    cursor : pointer;
+   }
 `;
 
 const CustomCheckbox = styled.input.attrs({ type: 'checkbox' })<CheckboxProps>`
@@ -193,7 +223,7 @@ border: 1px solid var(--color-black);
 appearance: none;
 cursor: pointer;
 transition: background 0.2s;
-margin: 0px 14px;
+margin: 0px 5px 0px 0px;
 
 &:checked {
   border-color: transparent;
@@ -229,7 +259,7 @@ const SignUpQuestion = styled.div`
 `
 
 const handleValidateId = (input: string): boolean => {
-  const regex = /^[a-z0-9]{6,}$/;
+  const regex = /^(?=.*[a-z])(?=.*\d)[a-z\d]{6,}$/;
   return regex.test(input);
 };
 
@@ -239,11 +269,13 @@ const handleValidatePassword = (input: string): boolean => {
 };
 
 
+
 const SignUp: React.FC = () => {
 
   const [id, setId] = useState<string>('');
   const [isValidId, setIsValidId] = useState<boolean>(false);
   const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
+  const [duplicateMessage, setDuplicateMessage] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isValidPassword, setIsValidPassword] = useState<boolean>(false);
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -267,24 +299,54 @@ const SignUp: React.FC = () => {
     setId(e.target.value);
   };
 
-  // const handleCheckDuplicateId = async () => {
-  //   setIsCheckingDuplicate(true);
-  //   try {
-  //     const response = await fetch(`/checkDuplicateId?id=${id}`);
-  //     const data = await response.json();
-  //     if (data.isDuplicate) {
-  //       // 중복된 아이디 처리
-  //     } else {
-  //       // 중복되지 않은 아이디 처리
-  //     }
-  //   } catch (error) {
-  //     console.error('Error checking duplicate id:', error);
-  //   }
-  //   setIsCheckingDuplicate(false);
-  // };
-
   const handleIdBlur = () => {
     setIsValidId(handleValidateId(id));
+  
+    // 포커스가 아이디 입력란에서 떠났을 때 유효성 검사 결과에 따라 메시지를 표시합니다.
+    if (!isValidId && id) {
+      // 사용이 불가능한 아이디일 경우
+      // 유효성 검사 실패 메시지와 느낌표 아이콘을 표시합니다.
+      return (
+        <>
+          <InvalidMsg>사용이 불가능한 아이디입니다</InvalidMsg>
+          <span className="icon invalid"><FaCircleExclamation /></span>
+        </>
+      );
+    } else if (isValidId && id && isCheckingDuplicate) {
+      // 사용 가능한 아이디이고 중복 확인 중인 경우
+      // 사용 가능한 메시지와 체크마크 아이콘을 표시합니다.
+      return (
+        <>
+          <ValidMsg>사용 가능한 아이디입니다</ValidMsg>
+          <span className="icon valid"><FaCheckCircle /></span>
+        </>
+      );
+    }
+  };
+
+  const handleCheckDuplicateId = async () => {
+    setIsCheckingDuplicate(true); 
+    try {
+      const response = await fetch('/api/checkDuplicateId', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id }) 
+      });
+      const data = await response.json();
+      if (data.isDuplicate) {
+        setIsValidId(false); 
+        setDuplicateMessage('이미 사용 중인 아이디입니다');
+      } 
+      // else {
+      //   setIsValidId(true)
+      //   setDuplicateMessage('사용할 수 있는 아이디입니다'); 
+      // }
+    } catch (error) {
+      console.error('Error checking duplicate id:', error);
+    }
+    setIsCheckingDuplicate(false); 
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -298,7 +360,7 @@ const SignUp: React.FC = () => {
   };
 
   const handleConfirmPasswordBlur = () => {
-    setIsValidConfirmPassword(confirmPassword === password);
+    setIsValidConfirmPassword(confirmPassword === password && isValidPassword);
   };
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -344,15 +406,33 @@ const SignUp: React.FC = () => {
     }
   };
 
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   try{
-  //     await fetch('',{
-  //       method : 'POST',
-
-  //     })
-  //   }
-  // }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          password,
+          name,
+          phoneNumber,
+        }),
+      });
+  
+      if (response.ok) {
+        console.log('successful')
+      } else {
+        console.error("Failed to sign up:", response.statusText);
+      }
+    } catch (error : any) {
+      console.error("Failed to sign up:", error.message);
+    }
+  };
+  
 
   return (
     <SignUpContainer>
@@ -361,44 +441,52 @@ const SignUp: React.FC = () => {
         <p>Riset로 통합 인력관리, 지금 시작해보세요</p>
     </SignupHeader>
     <SignUpForm>
-      <form>
+      <form onSubmit={handleSubmit}>
         <SignupInput>
           <label>아이디</label>
           <div>
             <input type="text" value={id} onChange={handleIdChange} onBlur={handleIdBlur} placeholder="아이디를 입력하세요" />
-            {!isValidId && id && <InvalidMsg>사용이 불가능한 아이디입니다</InvalidMsg>} 
-            {isValidId && id && <ValidMsg>사용 가능한 아이디입니다</ValidMsg>}
-        {isValidId ? (
-        <span className="icon valid"><FaCheckCircle /></span>
-         ) : (
-           id && <span className="icon invalid"><FaCircleExclamation /></span> 
-      )}
+            
           </div>
           </SignupInput>
-          <IdChcekBtn disabled={!isValidId || isCheckingDuplicate}>아이디 중복 확인</IdChcekBtn>   
+
+          <IdChcekBtn disabled={!isValidId || isCheckingDuplicate} onClick={handleCheckDuplicateId}>아이디 중복 확인</IdChcekBtn>   
+          {duplicateMessage && <InvalidMsg>{duplicateMessage}</InvalidMsg>}
+
           <SignupInput>
           <label>비밀번호</label>
           <div>
             <input type="password" value={password} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="비밀번호를 입력하세요"/>
-            {!isValidPassword && password && <InvalidMsg>올바른 비밀번호를 입력하세요</InvalidMsg>}
-            {isValidPassword ? (
-        <span className="icon valid"><FaCheckCircle /></span>
-         ) : (
-           password && <span className="icon invalid"><FaCircleExclamation /></span> 
-      )}
+            {!isValidPassword && password && 
+            <>
+               <InvalidMsg>올바른 비밀번호를 입력하세요</InvalidMsg>
+            <span className="icon invalid"><FaCircleExclamation /></span>
+            </>
+           }
+            {isValidPassword &&
+            <>
+              <ValidMsg>비밀번호가 확인되었습니다</ValidMsg>
+              <span className="icon valid"><FaCheckCircle /></span>
+            </>
+            }
           </div>
           </SignupInput>
           <SignupInput>
           <label>비밀번호 재확인</label>
           <div>
             <input type="password" value={confirmPassword} onChange={handleConfirmPasswordChange} onBlur={handleConfirmPasswordBlur} placeholder="비밀번호를 입력하세요"/>
-            {password !== confirmPassword && confirmPassword && <InvalidMsg>비밀번호가 일치하지 않습니다</InvalidMsg>}
-            {password === confirmPassword && confirmPassword && <ValidMsg>비밀번호가 확인되었습니다</ValidMsg>}
-            {isValidConfirmPassword ? (
-              <span className="icon valid"><FaCheckCircle /></span>
-            ) : (
-              confirmPassword && <span className="icon invalid"><FaCircleExclamation /></span>
-            )}
+            {password !== confirmPassword && confirmPassword && 
+            <>
+            <InvalidMsg>비밀번호가 일치하지 않습니다</InvalidMsg>
+            <span className="icon invalid"><FaCircleExclamation /></span>
+            </>
+            }
+                       
+            {password === confirmPassword && confirmPassword && isValidPassword && <>
+            <ValidMsg>비밀번호가 확인되었습니다</ValidMsg>
+            <span className="icon valid"><FaCheckCircle /></span>
+            </>
+            }
           </div> 
           </SignupInput>        
 
@@ -423,28 +511,28 @@ const SignUp: React.FC = () => {
 
         <AgreeAllCheckbox>
           <label>
-            <CustomCheckbox checked={agreeAll} onChange={handleAgreeAllChange} />
-            전체 동의하기
+            <CustomCheckbox checked={agreeAll} onChange={handleAgreeAllChange} /><p>
+            전체 동의하기<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeAllCheckbox>
 
         <AgreeCheckbox>
           <label>
-            <CustomCheckbox checked={agreeAge} onChange={handleAgreeAgeChange}  />
-            [필수] 만 14세 이상입니다.
+            <CustomCheckbox checked={agreeAge} onChange={handleAgreeAgeChange}  /><p>
+            [필수] 만 14세 이상입니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
 
         <AgreeCheckbox>
           <label>
             <CustomCheckbox checked={agreeFinal} onChange={handleAgreeFinalChange} />
-            <p>[필수] <span>최종이용자 이용약관</span>에 동의합니다.</p>
+            <p>[필수] <span>최종이용자 이용약관</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
         <AgreeCheckbox>
           <label>
             <CustomCheckbox checked={agreePrivacy} onChange={handleAgreePrivacyChange} />
-            <p>[필수] <span>개인정보 수집 및 이용</span>에 동의합니다.</p>
+            <p>[필수] <span>개인정보 수집 및 이용</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
         <SignUpBtn type="submit" disabled={isDisabled}>가입하기</SignUpBtn>
