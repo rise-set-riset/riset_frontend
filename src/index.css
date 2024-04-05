@@ -11,6 +11,18 @@
   --color-pass: #03ca5f;
   --color-black: #353535;
   --color-white: #ffffff;
+  --color-svg-fill: #ffffff;
+  --color-svg-stroke: #353535;
+}
+
+html.darkmode {
+  --color-black: #ffffff;
+  --color-white: #353535;
+  --color-svg-fill: #ffdb7a;
+  --color-svg-stroke: #ffdb7a;
+  /*
+    추후에 스타일링 필요 (미완)
+  */
 }
 
 html {
@@ -56,4 +68,5 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: var(--color-white);
 }
