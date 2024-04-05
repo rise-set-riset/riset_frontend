@@ -7,6 +7,7 @@ import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { useContext } from "react";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { DarkModeContext } from "../../contexts/DarkmodeContext";
+import { Link } from "react-router-dom";
 
 const Layout = styled.header`
   position: fixed;
@@ -15,6 +16,7 @@ const Layout = styled.header`
   background-color: var(--color-white);
   z-index: 100;
   border-bottom: 1px solid var(--color-brand-lightgray);
+  transition: all 0.7s;
   box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
@@ -33,6 +35,7 @@ const Nav = styled.div`
 `;
 
 const HamburgerMenu = styled(Hamburger)`
+  transition: all 0.5s;
   cursor: pointer;
   path {
     stroke: var(--color-svg-stroke);
@@ -70,7 +73,7 @@ const Utils = styled.div`
     cursor: pointer;
   }
 
-  path {
+  svg:not(:last-child) > path {
     stroke: var(--color-svg-stroke);
   }
 
@@ -90,19 +93,27 @@ const Utils = styled.div`
   }
 `;
 
-export default function Header() {
+interface IsMenuOpen {
+  handleSideMenuOpen: () => void;
+}
+
+export default function Header({ handleSideMenuOpen }: IsMenuOpen) {
   const isMobile = useContext(ResponsiveContext);
   const { handleDarkmode } = useContext(DarkModeContext);
 
   return (
     <Layout>
       <Nav>
-        {!isMobile && <HamburgerMenu />}
-        <LogoImg src={logoUrl} alt="riset" />
+        {!isMobile && <HamburgerMenu onClick={handleSideMenuOpen} />}
+        <Link to="/home">
+          <LogoImg src={logoUrl} alt="riset" />
+        </Link>
         <Utils>
           <Moon onClick={handleDarkmode} />
           <Alert />
-          <Profile />
+          <Link to="/mypage">
+            <Profile />
+          </Link>
         </Utils>
       </Nav>
     </Layout>

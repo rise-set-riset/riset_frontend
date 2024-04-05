@@ -5,7 +5,7 @@ import { ReactComponent as Home } from "../../assets/bottomNav/bottom-home.svg";
 import { ReactComponent as Commute } from "../../assets/bottomNav/bottom-commute.svg";
 import { ReactComponent as Chat } from "../../assets/bottomNav/bottom-chat.svg";
 
-const Layout = styled.ul`
+const List = styled.ul`
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -49,11 +49,15 @@ const ChatMenu = styled(Chat)`
   ${CommonMenu}
 `;
 
-export default function BottomMenu() {
+interface SideMenuOpen {
+  handleSideMenuOpen: () => void;
+}
+
+export default function BottomMenu({ handleSideMenuOpen }: SideMenuOpen) {
   return (
-    <Layout>
+    <List>
       <Item>
-        <HamburgerMenu />
+        <HamburgerMenu onClick={handleSideMenuOpen} />
       </Item>
       <Item>
         <BoardMenu />
@@ -67,6 +71,6 @@ export default function BottomMenu() {
       <Item>
         <ChatMenu />
       </Item>
-    </Layout>
+    </List>
   );
 }
