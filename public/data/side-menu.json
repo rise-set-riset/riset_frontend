@@ -1,0 +1,106 @@
+{
+  "user": {
+    "imgUrl": "유저 이미지 url",
+    "name": "홍길동",
+    "rank": "사원"
+  },
+  "menus": [
+    {
+      "title": "홈",
+      "imgUrl": "이미지 경로",
+      "link": "/home",
+      "subMenus": []
+    },
+    {
+      "title": "출퇴근",
+      "imgUrl": "이미지 경로",
+      "link": "/commute",
+      "subMenus": []
+    },
+    {
+      "title": "게시판",
+      "imgUrl": "이미지 경로",
+      "link": "/postlist",
+      "subMenus": [
+        {
+          "title": "게시글 목록",
+          "imgUrl": "이미지 경로",
+          "link": "/postlist"
+        },
+        {
+          "title": "내 게시글",
+          "imgUrl": "이미지 경로",
+          "link": "/mypost"
+        }
+      ]
+    },
+    {
+      "title": "일정",
+      "imgUrl": "이미지 경로",
+      "link": "/official-plan",
+      "subMenus": [
+        {
+          "title": "회사 일정",
+          "imgUrl": "이미지 경로",
+          "link": "/official-plan"
+        },
+        {
+          "title": "근무 일정",
+          "imgUrl": "이미지 경로",
+          "link": "/personal-plan"
+        }
+      ]
+    },
+    {
+      "title": "휴가",
+      "imgUrl": "이미지 경로",
+      "link": "/apply-dayoff",
+      "subMenus": [
+        {
+          "title": "휴가 신청",
+          "imgUrl": "이미지 경로",
+          "link": "/apply-dayoff"
+        },
+        {
+          "title": "휴가 현황",
+          "imgUrl": "이미지 경로",
+          "link": "/accept-dayoff"
+        },
+        {
+          "title": "휴가 승인",
+          "imgUrl": "이미지 경로",
+          "link": "/current-dayoff"
+        }
+      ]
+    },
+    {
+      "title": "정산",
+      "imgUrl": "이미지 경로",
+      "link": "/salary",
+      "subMenus": []
+    },
+    {
+      "title": "조직",
+      "imgUrl": "이미지 경로",
+      "link": "/group-chart",
+      "subMenus": [
+        {
+          "title": "조직도",
+          "imgUrl": "이미지 경로",
+          "link": "/group-chart"
+        },
+        {
+          "title": "조직원 프로필",
+          "imgUrl": "이미지 경로",
+          "link": "/group-member"
+        }
+      ]
+    },
+    {
+      "title": "관리",
+      "imgUrl": "이미지 경로",
+      "link": "/setting",
+      "subMenus": []
+    }
+  ]
+}
