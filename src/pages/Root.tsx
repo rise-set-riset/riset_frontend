@@ -2,7 +2,7 @@ import { useContext } from "react";
 import Header from "../components/Header/Header";
 import { Outlet } from "react-router-dom";
 import { ResponsiveContext } from "../contexts/ResponsiveContext";
-import BottomNav from "../components/Header/BottomNav";
+import BottomMenu from "../components/Header/BottomMenu";
 
 export default function Root() {
   const isMobile = useContext(ResponsiveContext);
@@ -11,7 +11,7 @@ export default function Root() {
     <>
       <Header />
       <Outlet />
-      {isMobile && <BottomNav />}
+      {isMobile && <BottomMenu />}
     </>
   );
 }

@@ -18,6 +18,10 @@ const Layout = styled.ul`
   z-index: 100;
 `;
 
+const Item = styled.li`
+  padding: 10px;
+`;
+
 const CommonMenu = css`
   cursor: pointer;
   path {
@@ -45,24 +49,24 @@ const ChatMenu = styled(Chat)`
   ${CommonMenu}
 `;
 
-export default function BottomNav() {
+export default function BottomMenu() {
   return (
     <Layout>
-      <li>
+      <Item>
         <HamburgerMenu />
-      </li>
-      <li>
+      </Item>
+      <Item>
         <BoardMenu />
-      </li>
-      <li>
+      </Item>
+      <Item>
         <HomeMenu />
-      </li>
-      <li>
+      </Item>
+      <Item>
         <CommuteMenu />
-      </li>
-      <li>
+      </Item>
+      <Item>
         <ChatMenu />
-      </li>
+      </Item>
     </Layout>
   );
 }
