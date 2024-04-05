@@ -18,6 +18,7 @@ import Salary from "./pages/Salary/Salary";
 import GroupChart from "./pages/Group/GroupChart";
 import GroupMember from "./pages/Group/GroupMember";
 import Setting from "./pages/Setting/Setting";
+import { ResponsiveProvider } from "./contexts/ResponsiveContext";
 
 const router = createBrowserRouter([
   {
@@ -66,7 +67,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ResponsiveProvider>
+      <RouterProvider router={router} />
+    </ResponsiveProvider>
+  );
 }
 
 export default App;

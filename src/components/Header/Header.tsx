@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import logoUrl from "../../assets/logo.png";
-import { ReactComponent as Hamburger } from "../../assets/hamburger.svg";
-import { ReactComponent as Darkmode } from "../../assets/darkmode.svg";
-import { ReactComponent as Alert } from "../../assets/alert.svg";
-import { ReactComponent as Profile } from "../../assets/profile.svg";
+import { ReactComponent as Hamburger } from "../../assets/header/hamburger.svg";
+import { ReactComponent as Darkmode } from "../../assets/header/darkmode.svg";
+import { ReactComponent as Alert } from "../../assets/header/alert.svg";
+import { ReactComponent as Profile } from "../../assets/header/profile.svg";
+import { useContext } from "react";
+import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 
 const Layout = styled.header`
   position: fixed;
@@ -42,6 +44,10 @@ const LogoImg = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
   cursor: pointer;
+  @media screen and (max-width: 600px) {
+    position: static;
+    transform: translate(0, 0);
+  }
 `;
 
 const Utils = styled.div`
@@ -50,6 +56,12 @@ const Utils = styled.div`
   svg {
     cursor: pointer;
   }
+  @media screen and (max-width: 600px) {
+    svg {
+      width: 40px;
+      height: 40px;
+    }
+  }
 `;
 
 const ProfileImg = styled(Profile)`
@@ -57,10 +69,12 @@ const ProfileImg = styled(Profile)`
 `;
 
 export default function Header() {
+  const isMobile = useContext(ResponsiveContext);
+
   return (
     <Layout>
       <Nav>
-        <HamburgerMenu />
+        {!isMobile && <HamburgerMenu />}
         <LogoImg src={logoUrl} alt="riset" />
         <Utils>
           <Darkmode />
