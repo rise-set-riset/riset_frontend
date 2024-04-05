@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import logoUrl from "../../assets/logo.png";
 import { ReactComponent as Hamburger } from "../../assets/header/hamburger.svg";
-import { ReactComponent as Darkmode } from "../../assets/header/darkmode.svg";
+import { ReactComponent as Moon } from "../../assets/header/moon.svg";
 import { ReactComponent as Alert } from "../../assets/header/alert.svg";
 import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { useContext } from "react";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.header`
   position: fixed;
@@ -34,7 +35,7 @@ const Nav = styled.div`
 const HamburgerMenu = styled(Hamburger)`
   cursor: pointer;
   path {
-    stroke: var(--color-black);
+    stroke: var(--color-svg-stroke);
   }
 `;
 
@@ -53,23 +54,45 @@ const LogoImg = styled.img`
 const Utils = styled.div`
   display: flex;
   align-items: center;
-  svg {
+  gap: 1.5rem;
+
+  svg:last-child {
+    width: 35px;
+    height: 35px;
     cursor: pointer;
   }
+
+  svg:not(:last-child) {
+    width: 25px;
+    height: 25px;
+    transition: all 0.5s;
+    fill: var(--color-svg-fill);
+    cursor: pointer;
+  }
+
+  path {
+    stroke: var(--color-svg-stroke);
+  }
+
   @media screen and (max-width: 600px) {
-    svg {
-      width: 40px;
-      height: 40px;
+    gap: 1rem;
+    svg:last-child {
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+    }
+
+    svg:not(:last-child) {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
     }
   }
 `;
 
-const ProfileImg = styled(Profile)`
-  margin-left: 0.4rem;
-`;
-
 export default function Header() {
   const isMobile = useContext(ResponsiveContext);
+  const { handleDarkmode } = useContext(DarkModeContext);
 
   return (
     <Layout>
@@ -77,9 +100,9 @@ export default function Header() {
         {!isMobile && <HamburgerMenu />}
         <LogoImg src={logoUrl} alt="riset" />
         <Utils>
-          <Darkmode />
+          <Moon onClick={handleDarkmode} />
           <Alert />
-          <ProfileImg />
+          <Profile />
         </Utils>
       </Nav>
     </Layout>
