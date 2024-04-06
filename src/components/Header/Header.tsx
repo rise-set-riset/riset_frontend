@@ -1,22 +1,22 @@
+import React, { useContext } from "react";
 import styled from "styled-components";
 import logoUrl from "../../assets/logo.png";
 import { ReactComponent as Hamburger } from "../../assets/header/hamburger.svg";
 import { ReactComponent as Moon } from "../../assets/header/moon.svg";
 import { ReactComponent as Alert } from "../../assets/header/alert.svg";
 import { ReactComponent as Profile } from "../../assets/header/profile.svg";
-import { useContext } from "react";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { DarkModeContext } from "../../contexts/DarkmodeContext";
 import { Link } from "react-router-dom";
 
 const Layout = styled.header`
   position: fixed;
-  width: 100%;
+  width: 100vw;
   height: 60px;
   background-color: var(--color-white);
   z-index: 100;
   border-bottom: 1px solid var(--color-brand-lightgray);
-  transition: all 0.7s;
+  transition: all 0.5s;
   box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
@@ -37,8 +37,13 @@ const Nav = styled.div`
 const HamburgerMenu = styled(Hamburger)`
   transition: all 0.5s;
   cursor: pointer;
+
   path {
     stroke: var(--color-svg-stroke);
+  }
+
+  &:hover {
+    transform: scale(1.2);
   }
 `;
 
@@ -59,18 +64,24 @@ const Utils = styled.div`
   align-items: center;
   gap: 1.5rem;
 
+  svg {
+    transition: all 0.5s;
+    cursor: pointer;
+  }
+
+  svg:hover {
+    transform: scale(1.2);
+  }
+
   svg:last-child {
     width: 35px;
     height: 35px;
-    cursor: pointer;
   }
 
   svg:not(:last-child) {
     width: 25px;
     height: 25px;
-    transition: all 0.5s;
     fill: var(--color-svg-fill);
-    cursor: pointer;
   }
 
   svg:not(:last-child) > path {
@@ -82,29 +93,27 @@ const Utils = styled.div`
     svg:last-child {
       width: 25px;
       height: 25px;
-      cursor: pointer;
     }
 
     svg:not(:last-child) {
       width: 20px;
       height: 20px;
-      cursor: pointer;
     }
   }
 `;
 
 interface IsMenuOpen {
-  handleSideMenuOpen: () => void;
+  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Header({ handleSideMenuOpen }: IsMenuOpen) {
+export default function Header({ setIsSideMenuOpen }: IsMenuOpen) {
   const isMobile = useContext(ResponsiveContext);
   const { handleDarkmode } = useContext(DarkModeContext);
 
   return (
     <Layout>
       <Nav>
-        {!isMobile && <HamburgerMenu onClick={handleSideMenuOpen} />}
+        {!isMobile && <HamburgerMenu onClick={() => setIsSideMenuOpen((prev) => !prev)} />}
         <Link to="/home">
           <LogoImg src={logoUrl} alt="riset" />
         </Link>
