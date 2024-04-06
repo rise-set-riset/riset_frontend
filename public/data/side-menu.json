@@ -1,106 +1,110 @@
 {
   "user": {
-    "imgUrl": "유저 이미지 url",
+    "icon": "/data/cat.jpg",
     "name": "홍길동",
     "rank": "사원"
   },
   "menus": [
     {
+      "id": 1,
       "title": "홈",
-      "imgUrl": "이미지 경로",
-      "link": "/home",
-      "subMenus": []
+      "icon": "home",
+      "link": "/home"
     },
     {
+      "id": 2,
       "title": "출퇴근",
-      "imgUrl": "이미지 경로",
-      "link": "/commute",
-      "subMenus": []
+      "icon": "commute",
+      "link": "/commute"
     },
     {
+      "id": 3,
       "title": "게시판",
-      "imgUrl": "이미지 경로",
+      "icon": "board",
       "link": "/postlist",
       "subMenus": [
         {
+          "id": 4,
           "title": "게시글 목록",
-          "imgUrl": "이미지 경로",
           "link": "/postlist"
         },
         {
+          "id": 5,
           "title": "내 게시글",
-          "imgUrl": "이미지 경로",
           "link": "/mypost"
         }
       ]
     },
     {
+      "id": 6,
       "title": "일정",
-      "imgUrl": "이미지 경로",
+      "icon": "officialPlan",
       "link": "/official-plan",
       "subMenus": [
         {
+          "id": 7,
           "title": "회사 일정",
-          "imgUrl": "이미지 경로",
           "link": "/official-plan"
         },
         {
+          "id": 8,
           "title": "근무 일정",
-          "imgUrl": "이미지 경로",
           "link": "/personal-plan"
         }
       ]
     },
     {
+      "id": 9,
       "title": "휴가",
-      "imgUrl": "이미지 경로",
+      "icon": "applyDayoff",
       "link": "/apply-dayoff",
       "subMenus": [
         {
+          "id": 10,
           "title": "휴가 신청",
-          "imgUrl": "이미지 경로",
           "link": "/apply-dayoff"
         },
         {
+          "id": 11,
           "title": "휴가 현황",
-          "imgUrl": "이미지 경로",
           "link": "/accept-dayoff"
         },
         {
+          "id": 12,
           "title": "휴가 승인",
-          "imgUrl": "이미지 경로",
           "link": "/current-dayoff"
         }
       ]
     },
     {
+      "id": 13,
       "title": "정산",
-      "imgUrl": "이미지 경로",
-      "link": "/salary",
-      "subMenus": []
+      "icon": "salary",
+      "link": "/salary"
     },
     {
+      "id": 14,
       "title": "조직",
-      "imgUrl": "이미지 경로",
+      "icon": "groupChart",
       "link": "/group-chart",
       "subMenus": [
         {
+          "id": 15,
           "title": "조직도",
-          "imgUrl": "이미지 경로",
           "link": "/group-chart"
         },
         {
+          "id": 16,
           "title": "조직원 프로필",
-          "imgUrl": "이미지 경로",
           "link": "/group-member"
         }
       ]
     },
     {
+      "id": 17,
       "title": "관리",
-      "imgUrl": "이미지 경로",
-      "link": "/setting",
-      "subMenus": []
+      "icon": "setting",
+      "link": "/setting"
     }
   ]
 }

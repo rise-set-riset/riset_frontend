@@ -1,9 +1,10 @@
-import styled, { css } from "styled-components";
-import { ReactComponent as Hamburger } from "../../assets/bottomNav/bottom-hamburger.svg";
-import { ReactComponent as Board } from "../../assets/bottomNav/bottom-board.svg";
-import { ReactComponent as Home } from "../../assets/bottomNav/bottom-home.svg";
-import { ReactComponent as Commute } from "../../assets/bottomNav/bottom-commute.svg";
-import { ReactComponent as Chat } from "../../assets/bottomNav/bottom-chat.svg";
+import styled from "styled-components";
+import { ReactComponent as Hamburger } from "../../assets/bottomMenu/bottom-hamburger.svg";
+import { ReactComponent as Board } from "../../assets/bottomMenu/bottom-board.svg";
+import { ReactComponent as Home } from "../../assets/bottomMenu/bottom-home.svg";
+import { ReactComponent as Commute } from "../../assets/bottomMenu/bottom-commute.svg";
+import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg";
+import React from "react";
 
 const List = styled.ul`
   position: fixed;
@@ -20,56 +21,42 @@ const List = styled.ul`
 
 const Item = styled.li`
   padding: 10px;
-`;
-
-const CommonMenu = css`
   cursor: pointer;
+
+  svg {
+    transition: all 0.5s;
+  }
+
+  &:hover > svg {
+    transform: scale(1.2);
+  }
+
   path {
     stroke: var(--color-white);
   }
 `;
 
-const HamburgerMenu = styled(Hamburger)`
-  ${CommonMenu}
-`;
-
-const BoardMenu = styled(Board)`
-  ${CommonMenu}
-`;
-
-const HomeMenu = styled(Home)`
-  ${CommonMenu}
-`;
-
-const CommuteMenu = styled(Commute)`
-  ${CommonMenu}
-`;
-
-const ChatMenu = styled(Chat)`
-  ${CommonMenu}
-`;
-
 interface SideMenuOpen {
-  handleSideMenuOpen: () => void;
+  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function BottomMenu({ handleSideMenuOpen }: SideMenuOpen) {
+export default function BottomMenu({ setIsSideMenuOpen }: SideMenuOpen) {
   return (
     <List>
       <Item>
-        <HamburgerMenu onClick={handleSideMenuOpen} />
+        <Hamburger onClick={() => setIsSideMenuOpen((prev) => !prev)} />
       </Item>
       <Item>
-        <BoardMenu />
+        <Board />
       </Item>
       <Item>
-        <HomeMenu />
+        <Home />
       </Item>
       <Item>
-        <CommuteMenu />
+        <Commute />
       </Item>
       <Item>
-        <ChatMenu />
+        <Chat />
       </Item>
     </List>
   );
