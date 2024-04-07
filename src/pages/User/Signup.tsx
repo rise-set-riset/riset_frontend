@@ -259,7 +259,7 @@ export default function SignUp (){
     handleCheckDuplicateId
   } = useFormValidate(form);
 
-  const [agreeAll, agreeAge, agreeFinal, agreePrivacy, setAgree] = useAgree();
+  const [agreeAll, agreeAge, agreeFinal, agreePrivacy, setAgree, setAgreeAll, setAgreeAge, setAgreeFinal, setAgreePrivacy] = useAgree();
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   useEffect(() => {
@@ -301,35 +301,39 @@ export default function SignUp (){
   // 전체 동의하기 체크박스의 상태 변화를 처리. 체크박스가 선택되거나 해제될 때 호출되며, 해당 상태를 상태 변수에 반영
   const handleAgreeAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
-    setAgree(isChecked);
+    setAgreeAll(isChecked);
+    setAgreeAge(isChecked);
+    setAgreeFinal(isChecked);
+    setAgreePrivacy(isChecked);
   };
+
 
 //만 14세 이상 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
   const handleAgreeAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = e.target.checked;
-    setAgree(isChecked);
+     const isChecked = e.target.checked;
+    setAgreeAge(isChecked);
     if (!isChecked) {
-      setAgree(false);
+      setAgreeAll(false);
     }
   };
 
 //만 최종이용자 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
   const handleAgreeFinalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
-    setAgree(isChecked);
+    setAgreeFinal(isChecked);
     if (!isChecked) {
-      setAgree(false);
+      setAgreeAll(false);
     }
   };
 
 //만 개인정보수집 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
   const handleAgreePrivacyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
-    setAgree(isChecked);
+     setAgreePrivacy(isChecked);
     if (!isChecked) {
-      setAgree(false);
-    }
-  };
+    setAgreeAll(false);
+  }
+};
 
 // 폼의 기본 동작을 막고, 사용자가 입력한 데이터를 서버에 전송하여 회원가입을 시도
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
