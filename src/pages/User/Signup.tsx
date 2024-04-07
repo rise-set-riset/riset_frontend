@@ -10,7 +10,7 @@ import TextInput from "../../common/TextInput";
 
 interface CheckboxProps {
   checked: boolean;
-}
+};
 
 const backgroundImageUrl = 'url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)';
 
@@ -41,6 +41,13 @@ const SignUpContainer = styled.div`
 `;
 
 const SignupHeader = styled.div`
+  h2 {
+    text-align: center;
+    font-size: 32px;
+    font-family: Pretendard Medium;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
 
 p:first-child{  
   text-align: center;
@@ -60,10 +67,9 @@ p:last-child{
 `
 const SignUpForm = styled.div`
   width: 100%;
-  max-width : 381px;
+  max-width: 381px;
   max-height: 908px;
   font-color: #353535;
-  
 
   div {
     display: flex;
@@ -86,7 +92,7 @@ const InvalidMsg = styled.p`
   margin-top: 4px;
   color: #ff6228;
   font-size: 12px;
-`
+`;
 
 const ValidMsg = styled.p`
   margin-top: 4px;
@@ -113,20 +119,19 @@ const HorizontalLineWithText = styled.div`
   }
 
   &:before {
-    left: 0; 
-    width: 40%; 
+    left: 0;
+    width: 40%;
     top: 50%;
-    margin-right: 10px; 
+    margin-right: 10px;
   }
 
   &:after {
     right: 0;
     width: 40%;
-    top:50%;
-    margin-left: 10px; 
+    top: 50%;
+    margin-left: 10px;
   }
 `;
-
 
 const AgreeAllCheckbox = styled.div`
   position: relative;
@@ -142,10 +147,10 @@ const AgreeAllCheckbox = styled.div`
     align-items: center;
   }
 
-  button{
+  button {
     position: absolute;
     right: 5px;
-    width:12px;
+    width: 12px;
     height: 6px;
     font-size: 20px;
     border: none;
@@ -173,10 +178,10 @@ const AgreeCheckbox = styled.div`
     margin-left: 2px;
   }
 
-  button{
+  button {
     position: absolute;
     right: 5px;
-    width:12px;
+    width: 12px;
     height: 6px;
     font-size: 20px;
     border: none;
@@ -329,7 +334,7 @@ export default function SignUp (){
 // 폼의 기본 동작을 막고, 사용자가 입력한 데이터를 서버에 전송하여 회원가입을 시도
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch("/api/signup", {
         method: "POST",
@@ -338,17 +343,16 @@ export default function SignUp (){
         },
         body: JSON.stringify(form),
       });
-  
+
       if (response.ok) {
-        console.log('successful')
+        console.log("successful");
       } else {
         console.error("Failed to sign up:", response.statusText);
       }
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Failed to sign up:", error.message);
     }
   };
-  
 
   return (
     <Background>

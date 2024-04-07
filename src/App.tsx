@@ -18,6 +18,8 @@ import Salary from "./pages/Salary/Salary";
 import GroupChart from "./pages/Group/GroupChart";
 import GroupMember from "./pages/Group/GroupMember";
 import Setting from "./pages/Setting/Setting";
+import { ResponsiveProvider } from "./contexts/ResponsiveContext";
+import DarkmodeProvider from "./contexts/DarkmodeContext";
 
 const router = createBrowserRouter([
   {
@@ -66,7 +68,13 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <DarkmodeProvider>
+      <ResponsiveProvider>
+        <RouterProvider router={router} />
+      </ResponsiveProvider>
+    </DarkmodeProvider>
+  );
 }
 
 export default App;
