@@ -22,15 +22,6 @@ const List = styled.ul`
 const Item = styled.li`
   padding: 10px;
   cursor: pointer;
-
-  svg {
-    transition: all 0.5s;
-  }
-
-  &:hover > svg {
-    transform: scale(1.2);
-  }
-
   path {
     stroke: var(--color-white);
   }

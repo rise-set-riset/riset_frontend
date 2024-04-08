@@ -8,6 +8,7 @@ import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { DarkModeContext } from "../../contexts/DarkmodeContext";
 import { Link } from "react-router-dom";
+import { GlobalStyle } from "../../pages/Root";
 
 const Layout = styled.header`
   position: fixed;
@@ -16,7 +17,7 @@ const Layout = styled.header`
   background-color: var(--color-white);
   z-index: 100;
   border-bottom: 1px solid var(--color-brand-lightgray);
-  transition: all 0.5s;
+  transition: all 0.3s;
   box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
@@ -35,15 +36,9 @@ const Nav = styled.div`
 `;
 
 const HamburgerMenu = styled(Hamburger)`
-  transition: all 0.5s;
   cursor: pointer;
-
   path {
     stroke: var(--color-svg-stroke);
-  }
-
-  &:hover {
-    transform: scale(1.2);
   }
 `;
 
@@ -63,27 +58,15 @@ const Utils = styled.div`
   display: flex;
   align-items: center;
   gap: 1.5rem;
-
-  svg {
-    transition: all 0.5s;
-    cursor: pointer;
-  }
-
-  svg:hover {
-    transform: scale(1.2);
-  }
-
   svg:last-child {
     width: 35px;
     height: 35px;
   }
-
   svg:not(:last-child) {
     width: 25px;
     height: 25px;
     fill: var(--color-svg-fill);
   }
-
   svg:not(:last-child) > path {
     stroke: var(--color-svg-stroke);
   }
@@ -94,7 +77,6 @@ const Utils = styled.div`
       width: 25px;
       height: 25px;
     }
-
     svg:not(:last-child) {
       width: 20px;
       height: 20px;
@@ -111,20 +93,23 @@ export default function Header({ setIsSideMenuOpen }: IsMenuOpen) {
   const { handleDarkmode } = useContext(DarkModeContext);
 
   return (
-    <Layout>
-      <Nav>
-        {!isMobile && <HamburgerMenu onClick={() => setIsSideMenuOpen((prev) => !prev)} />}
-        <Link to="/home">
-          <LogoImg src={logoUrl} alt="riset" />
-        </Link>
-        <Utils>
-          <Moon onClick={handleDarkmode} />
-          <Alert />
-          <Link to="/mypage">
-            <Profile />
+    <>
+      <GlobalStyle />
+      <Layout>
+        <Nav>
+          {!isMobile && <HamburgerMenu onClick={() => setIsSideMenuOpen((prev) => !prev)} />}
+          <Link to="/home">
+            <LogoImg src={logoUrl} alt="riset" />
           </Link>
-        </Utils>
-      </Nav>
-    </Layout>
+          <Utils>
+            <Moon onClick={handleDarkmode} />
+            <Alert />
+            <Link to="/mypage">
+              <Profile />
+            </Link>
+          </Utils>
+        </Nav>
+      </Layout>
+    </>
   );
 }
