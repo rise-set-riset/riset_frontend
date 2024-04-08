@@ -14,7 +14,7 @@ const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number 
   top: 60px;
   z-index: 50;
   width: ${(props) => (props.$isSideMenuOpen ? "200px" : "60px")};
-  height: calc(100vh - 120px);
+  height: calc(100vh - 60px);
   background-color: var(--color-white);
   border-right: 1px solid var(--color-brand-lightgray);
   transition: all 0.3s;
@@ -22,6 +22,7 @@ const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number 
   overflow-x: hidden;
   @media screen and (max-width: 600px) {
     width: ${(props) => (props.$isSideMenuOpen ? "200px" : "0")};
+    height: calc(100vh - 120px);
   }
 `;
 
@@ -135,20 +136,23 @@ export default function SideMenu() {
 
   // 사이드 메뉴 받아오기
   useEffect(() => {
-    const fetchMenus = async () => {
-      try {
-        fetch("https://dev.risetconstruction.net/api/menus")
-          .then((res) => res.json())
-          .then((data) => setSideMenus(data));
-      } catch (err: any) {
-        console.log(err);
-        fetch("/data/side-menu.json")
-          .then((res) => res.json())
-          .then((data) => setSideMenus(data));
-      }
-    };
+    fetch("/data/side-menu.json")
+      .then((res) => res.json())
+      .then((data) => setSideMenus(data));
+    // const fetchMenus = async () => {
+    //   try {
+    //     fetch("https://dev.risetconstruction.net/api/menus")
+    //       .then((res) => res.json())
+    //       .then((data) => setSideMenus(data));
+    //   } catch (err: any) {
+    //     console.log(err);
+    //     fetch("/data/side-menu.json")
+    //       .then((res) => res.json())
+    //       .then((data) => setSideMenus(data));
+    //   }
+    // };
 
-    fetchMenus();
+    // fetchMenus();
   }, []);
 
   return (
