@@ -8,7 +8,6 @@ import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { DarkModeContext } from "../../contexts/DarkmodeContext";
 import { Link } from "react-router-dom";
-import { GlobalStyle } from "../../pages/Root";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
@@ -94,7 +93,6 @@ export default function Header() {
 
   return (
     <>
-      <GlobalStyle />
       <Layout>
         <Nav>
           {!isMobile && <HamburgerMenu onClick={() => dispatch(sideMenuAction.toggleSideMenu())} />}
