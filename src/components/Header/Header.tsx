@@ -9,6 +9,9 @@ import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { DarkModeContext } from "../../contexts/DarkmodeContext";
 import { Link } from "react-router-dom";
 import { GlobalStyle } from "../../pages/Root";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store/store";
+import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
 
 const Layout = styled.header`
   position: fixed;
@@ -84,20 +87,17 @@ const Utils = styled.div`
   }
 `;
 
-interface IsMenuOpen {
-  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function Header({ setIsSideMenuOpen }: IsMenuOpen) {
+export default function Header() {
   const isMobile = useContext(ResponsiveContext);
   const { handleDarkmode } = useContext(DarkModeContext);
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <>
       <GlobalStyle />
       <Layout>
         <Nav>
-          {!isMobile && <HamburgerMenu onClick={() => setIsSideMenuOpen((prev) => !prev)} />}
+          {!isMobile && <HamburgerMenu onClick={() => dispatch(sideMenuAction.toggleSideMenu())} />}
           <Link to="/home">
             <LogoImg src={logoUrl} alt="riset" />
           </Link>
