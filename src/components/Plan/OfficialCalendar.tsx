@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import interactionPlugin from "@fullcalendar/interaction";
+import EventModal from "./EventModal";
 
 const Layout = styled.div`
     width: 100%;
@@ -191,6 +192,8 @@ export default function OfficialCalendar() {
                     // expandRows={true}
                 />
             </CalendarCustomStyle>
+
+            <EventModal />
         </Layout>
     );
 }

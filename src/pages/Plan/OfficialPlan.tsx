@@ -1,8 +1,7 @@
-import React from "react";
 import styled from "styled-components";
 import OfficialCalendar from "../../components/Plan/OfficialCalendar";
 
-const Layout = styled.div`
+const Layout = styled.main`
     max-width: 1200px;
     width: 100%;
     margin-top: 60px;
@@ -11,6 +10,7 @@ const Layout = styled.div`
     flex-direction: column;
     justify-content: center;
     background-color: var(--color-gray-1);
+    transition: all 0.3s;
 `;
 
 const PlanTitle = styled.h1`
