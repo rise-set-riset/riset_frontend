@@ -41,7 +41,6 @@ const MenuWrapper = styled.div`
 `;
 
 const MenuTitle = styled.p<{ $isSideMenuOpen: boolean }>`
-  transition: all 0.3s;
   opacity: ${(props) => (props.$isSideMenuOpen ? "1" : "0")};
 `;
 

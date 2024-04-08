@@ -20,7 +20,7 @@ const Layout = styled.header`
   background-color: var(--color-white);
   z-index: 100;
   border-bottom: 1px solid var(--color-brand-lightgray);
-  transition: all 0.3s;
+  transition: background-color 0.3s;
   box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
