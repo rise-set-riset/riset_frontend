@@ -9,6 +9,9 @@ import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { DarkModeContext } from "../../contexts/DarkmodeContext";
 import { Link } from "react-router-dom";
 import { GlobalStyle } from "../../pages/Root";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store/store";
+import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
 
 const Layout = styled.header`
     position: fixed;
@@ -17,7 +20,7 @@ const Layout = styled.header`
     background-color: var(--color-white);
     z-index: 100;
     border-bottom: 1px solid var(--color-brand-lightgray);
-    transition: all 0.3s;
+    transition: background-color 0.3s;
     box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
     -webkit-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
@@ -84,13 +87,10 @@ const Utils = styled.div`
     }
 `;
 
-interface IsMenuOpen {
-    setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function Header({ setIsSideMenuOpen }: IsMenuOpen) {
+export default function Header() {
     const isMobile = useContext(ResponsiveContext);
     const { handleDarkmode } = useContext(DarkModeContext);
+    const dispatch = useDispatch<AppDispatch>();
 
     return (
         <>
@@ -99,7 +99,9 @@ export default function Header({ setIsSideMenuOpen }: IsMenuOpen) {
                 <Nav>
                     {!isMobile && (
                         <HamburgerMenu
-                            onClick={() => setIsSideMenuOpen((prev) => !prev)}
+                            onClick={() =>
+                                dispatch(sideMenuAction.toggleSideMenu())
+                            }
                         />
                     )}
                     <Link to="/home">

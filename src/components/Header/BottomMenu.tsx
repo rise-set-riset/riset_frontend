@@ -5,6 +5,9 @@ import { ReactComponent as Home } from "../../assets/bottomMenu/bottom-home.svg"
 import { ReactComponent as Commute } from "../../assets/bottomMenu/bottom-commute.svg";
 import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store/store";
+import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
 
 const List = styled.ul`
   position: fixed;
@@ -27,15 +30,13 @@ const Item = styled.li`
   }
 `;
 
-interface SideMenuOpen {
-  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+export default function BottomMenu() {
+  const dispatch = useDispatch<AppDispatch>();
 
-export default function BottomMenu({ setIsSideMenuOpen }: SideMenuOpen) {
   return (
     <List>
       <Item>
-        <Hamburger onClick={() => setIsSideMenuOpen((prev) => !prev)} />
+        <Hamburger onClick={() => dispatch(sideMenuAction.toggleSideMenu())} />
       </Item>
       <Item>
         <Board />
