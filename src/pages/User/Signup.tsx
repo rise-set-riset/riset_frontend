@@ -7,6 +7,9 @@ import { useAgree } from "../../hooks/useAgree";
 import { useForm } from "../../hooks/useForm";
 import { useFormValidate } from "../../hooks/useFormValidate";
 import TextInput from "../../common/TextInput";
+import CustomCheckbox from "../../common/CustomCheckbox";
+import HorizontalLineWithText from "../../common/HorizontalLineWithText";
+
 
 interface CheckboxProps {
   checked: boolean;
@@ -18,19 +21,18 @@ const Background = styled.div`
   min-width: 100vw;
   width: 100%;
   background-image: ${backgroundImageUrl};
-  background-size: cover; /* 화면에 꽉 차도록 배경 이미지 크기 조정 */
+  background-size: cover; 
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const SignUpContainer = styled.div`
-  width: 85%;
+  width: 90%;
   max-width: 519px;
   max-height: 1036px;
   margin: 70px auto; 
-  padding-top : 40px;
-  padding-bottom : 40px;
+  padding: 40px 20px;
   background-color: #FFFFFF;
   opacity: 0.8;
   border-radius: 10px;
@@ -81,7 +83,7 @@ const IdChcekBtn = styled.button<{ disabled: boolean }>`
   width: 100%;
   padding : 13px 20px;
   margin-bottom : 16px;
-  border-radius: 10px;
+  border-radius: 8px;
   color: white;
   border: none;
   background-color: ${({ disabled }) => (disabled ? ' #c4c4c4' : '#ff7f50')};
@@ -99,39 +101,6 @@ const ValidMsg = styled.p`
   color: #03ca5f; 
   font-size : 12px;
 `
-
-const HorizontalLineWithText = styled.div`
-  display: flex;
-  align-items: center;
-  color: #c4c4c4;
-  font-size: 14px;
-  height: 20px;
-
-  position: relative;
-
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    width: calc(50% - 20px);
-    height: 1px;
-    background-color: #c4c4c4;
-  }
-
-  &:before {
-    left: 0;
-    width: 40%;
-    top: 50%;
-    margin-right: 10px;
-  }
-
-  &:after {
-    right: 0;
-    width: 40%;
-    top: 50%;
-    margin-left: 10px;
-  }
-`;
 
 const AgreeAllCheckbox = styled.div`
   position: relative;
@@ -189,26 +158,6 @@ const AgreeCheckbox = styled.div`
     color: #353535;
     cursor : pointer;
    }
-`;
-
-const CustomCheckbox = styled.input.attrs({ type: 'checkbox' })<CheckboxProps>`
-width: 20px;
-height: 20px;
-border-radius: 50%;
-border: 1px solid #353535;
-appearance: none;
-cursor: pointer;
-transition: background 0.2s;
-margin: 0px 5px 0px 0px;
-
-&:checked {
-  border-color: transparent;
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
-  background-size: 100% 100%;
-  background-position: 50%;
-  background-repeat: no-repeat;
-  background-color: #ff7f50;
-}
 `;
 
 const SignUpBtn = styled.button<{ disabled: boolean }>`
@@ -478,7 +427,7 @@ export default function SignUp (){
         <SignUpBtn type="submit" disabled={isDisabled}>가입하기</SignUpBtn>
       </form>
       <SignUpQuestion>
-      <p>이미 계정이 있으신가요?<a href="/login">로그인</a></p>
+      <p>이미 계정이 있으신가요?<a href="/">로그인</a></p>
       </SignUpQuestion>
       </SignUpForm>
        </SignUpContainer>
