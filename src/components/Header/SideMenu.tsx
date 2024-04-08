@@ -17,7 +17,7 @@ const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number 
   height: calc(100vh - 60px);
   background-color: var(--color-white);
   border-right: 1px solid var(--color-brand-lightgray);
-  transition: all 0.3s;
+  transition: background-color 0.3s, width 0.3s;
   overflow: auto;
   overflow-x: hidden;
   @media screen and (max-width: 600px) {
@@ -32,7 +32,7 @@ const UserProfile = styled.div`
   height: 65px;
   padding: 0 1rem 0 0.7rem;
   background-color: var(--color-gray-1);
-  transition: all 0.3s;
+  transition: background-color 0.3s;
   cursor: pointer;
 `;
 
