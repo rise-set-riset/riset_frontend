@@ -43,9 +43,10 @@ const CalendarCustomStyle = styled.div`
             border-radius: 50%;
             font-weight: bold;
             color: var(--color-black);
-
             background-color: var(--color-white);
             cursor: pointer;
+            box-shadow: none !important;
+
             span {
                 display: flex;
                 justify-content: center;
@@ -116,9 +117,17 @@ const CalendarCustomStyle = styled.div`
 
 export default function OfficialCalendar() {
     const calendarRef = useRef<any>(null);
+    const testRef = useRef<any>(null);
     const [renderedYear, setRenderedYear] = useState<number>(
         new Date().getFullYear()
     );
+    useEffect(() => {
+        if (testRef.current) {
+            testRef.current.querySelector(
+                "button.fc-today-button.fc-button"
+            ).disabled = false;
+        }
+    }, []);
 
     useEffect(() => {
         setRenderedYear(
@@ -130,7 +139,7 @@ export default function OfficialCalendar() {
 
     return (
         <Layout>
-            <CalendarCustomStyle>
+            <CalendarCustomStyle ref={testRef}>
                 <YearTitle>{renderedYear}</YearTitle>
                 <FullCalendar
                     /* 
