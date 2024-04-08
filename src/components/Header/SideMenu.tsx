@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { sideMenuIcon } from "./SideMenuIcons";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import SideMenuCard from "./SideMenuCard";
 
 const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number }>`
   position: fixed;
@@ -12,37 +13,28 @@ const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number 
   height: calc(100vh - 60px);
   background-color: var(--color-white);
   border-right: 1px solid var(--color-brand-lightgray);
-  transition: all 0.5s;
+  transition: all 0.3s;
   overflow: hidden;
-
   @media screen and (max-width: 600px) {
     width: ${(props) => (props.$isSideMenuOpen ? "200px" : "0")};
   }
 `;
 
-const CommonSvgStyle = css`
-  cursor: pointer;
-
-  svg {
-    transition: all 0.5s;
-    margin-left: 3px;
-  }
-
-  &:hover > svg {
-    transform: scale(1.2);
-  }
-
-  path {
-    stroke: var(--color-svg-stroke);
-  }
-`;
-
-const User = styled.div`
+const UserProfile = styled.div`
   display: flex;
   align-items: center;
-  padding: 1rem 1rem 1rem 0.7rem;
-  background-color: var(--color-white);
+  height: 65px;
+  padding: 0 1rem 0 0.7rem;
+  background-color: var(--color-gray-1);
+  transition: all 0.3s;
   cursor: pointer;
+`;
+
+const CustomLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 `;
 
 const Profile = styled.div`
@@ -50,11 +42,9 @@ const Profile = styled.div`
   flex: 1;
   align-items: center;
   white-space: nowrap;
-
   > img {
     margin-right: 1rem;
   }
-
   > svg {
     margin-right: 1rem;
   }
@@ -70,19 +60,9 @@ const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
   > p:first-child {
     font-weight: bold;
   }
-`;
-
-const List = styled.ul``;
-
-const Item = styled.li<{ $isCurrentPage: boolean }>`
-  ${CommonSvgStyle}
-  background-color: ${(props) =>
-    props.$isCurrentPage ? "var(--color-brand-main)" : "var(--color-white)"};
-  padding: 1rem;
 `;
 
 interface IsMenuOpen {
@@ -97,7 +77,7 @@ interface SubMenus {
   [key: string]: string;
 }
 
-interface Menus {
+export interface Menus {
   id: number;
   title: string;
   icon: string;
@@ -113,8 +93,23 @@ interface SlideMenus {
 export default function SideMenu({ isSideMenuOpen }: IsMenuOpen) {
   const [sideMenus, setSideMenus] = useState<SlideMenus | null>(null);
   const [sideMenuPosition, setSideMenuPosition] = useState<number>(0);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean[]>([]);
   const location = useLocation();
   const pathname = location.pathname;
+
+  // 현재 보고있는 메뉴만 열리게하기
+  const handleIsMenuOpen = (idx: number) => {
+    setIsMenuOpen((prev) => prev.map((_, i) => (i === idx ? true : false)));
+  };
+
+  // 현재 보고 있는 메뉴 확인용
+  useEffect(() => {
+    setIsMenuOpen(
+      Array.from({ length: sideMenus?.menus.length! }, (_, idx) => {
+        return sideMenus?.menus[idx].link.split("/")[1] === pathname.split("/")[1];
+      })
+    );
+  }, [sideMenus, pathname]);
 
   // 사이드 메뉴 위치 조정
   useEffect(() => {
@@ -133,7 +128,7 @@ export default function SideMenu({ isSideMenuOpen }: IsMenuOpen) {
     return () => window.removeEventListener("resize", handleSideMenuPosition);
   }, []);
 
-  // 사이드 메뉴들 받아오기
+  // 사이드 메뉴 받아오기
   useEffect(() => {
     fetch("/data/side-menu.json")
       .then((res) => res.json())
@@ -142,28 +137,36 @@ export default function SideMenu({ isSideMenuOpen }: IsMenuOpen) {
 
   return (
     <Layout $isSideMenuOpen={isSideMenuOpen} $sideMenuPosition={sideMenuPosition}>
-      <User>
-        {sideMenus && (
-          <>
-            <Profile>
-              {<UserImg src={sideMenus.user.icon} alt="profile" /> || sideMenuIcon["profile"]()}
-              <UserInfo>
-                <p>{sideMenus.user.name}</p>
-                <p>{sideMenus.user.rank}</p>
-              </UserInfo>
-            </Profile>
-            {sideMenuIcon["arrow"]()}
-          </>
-        )}
-      </User>
-      <List>
+      <UserProfile>
+        <CustomLink to="/mypage">
+          {sideMenus && (
+            <>
+              <Profile>
+                {<UserImg src={sideMenus.user.icon} alt="profile" /> || sideMenuIcon["profile"]()}
+                <UserInfo>
+                  <p>{sideMenus.user.name}</p>
+                  <p>{sideMenus.user.rank}</p>
+                </UserInfo>
+              </Profile>
+              {sideMenuIcon["arrow"]()}
+            </>
+          )}
+        </CustomLink>
+      </UserProfile>
+      <ul>
         {sideMenus &&
-          sideMenus.menus.map((menu) => (
-            <Item key={menu.id} $isCurrentPage={pathname === menu.link}>
-              {sideMenuIcon[menu.icon]()}
-            </Item>
+          sideMenus.menus.map((menu, idx) => (
+            <SideMenuCard
+              key={menu.id}
+              menu={menu}
+              isSideMenuOpen={isSideMenuOpen}
+              sideMenuIcon={sideMenuIcon}
+              isMenuOpen={isMenuOpen[idx]}
+              idx={idx}
+              handleIsMenuOpen={handleIsMenuOpen}
+            />
           ))}
-      </List>
+      </ul>
     </Layout>
   );
 }
