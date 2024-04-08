@@ -4,6 +4,8 @@ import { Menus } from "./SideMenu";
 import { useContext, useState } from "react";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { Transition } from "react-transition-group";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/store";
 
 const Item = styled.li`
   width: 200px;
@@ -45,7 +47,7 @@ const MenuTitle = styled.p<{ $isSideMenuOpen: boolean }>`
 
 const SubList = styled.ul<{ $isMenuOpen: boolean; $state: string }>`
   position: relative;
-  transition: all 0.5s;
+  transition: all 0.3s;
   background-color: ${(props) =>
     props.$isMenuOpen ? "var(--color-brand-orange)" : "var(--color-white)"};
   color: ${(props) => (props.$isMenuOpen ? "var(--color-white)" : "var(--color-black)")};
@@ -92,7 +94,6 @@ const SelectedDot = styled.div<{ $isSelected: boolean }>`
 
 interface Card {
   menu: Menus;
-  isSideMenuOpen: boolean;
   sideMenuIcon: any;
   isMenuOpen: boolean;
   idx: number;
@@ -101,7 +102,6 @@ interface Card {
 
 export default function SideMenuCard({
   menu,
-  isSideMenuOpen,
   sideMenuIcon,
   isMenuOpen,
   idx,
@@ -112,6 +112,7 @@ export default function SideMenuCard({
   const pathname = location.pathname;
   const isMobile = useContext(ResponsiveContext);
   const [isMenuEnter, setIsMenuEnter] = useState<boolean>(false);
+  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 
   // 서브 메뉴가 열리는 조건
   const isSubOpen = isMobile
@@ -132,7 +133,7 @@ export default function SideMenuCard({
         <MenuWrapper>{sideMenuIcon[menu.icon]()}</MenuWrapper>
         <MenuTitle $isSideMenuOpen={isSideMenuOpen}>{menu.title}</MenuTitle>
       </CustomLink>
-      <Transition in={Boolean(isSubOpen)} timeout={500} unmountOnExit mountOnEnter>
+      <Transition in={Boolean(isSubOpen)} timeout={300} unmountOnExit mountOnEnter>
         {(state) => (
           <SubList $isMenuOpen={isMenuOpen} $state={state}>
             {menu.subMenus?.map((sub) => (

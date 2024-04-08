@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { sideMenuIcon } from "./SideMenuIcons";
 import { Link, useLocation } from "react-router-dom";
 import SideMenuCard from "./SideMenuCard";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store/store";
+import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
 
 const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number }>`
   position: fixed;
@@ -67,11 +70,6 @@ const UserInfo = styled.div`
   }
 `;
 
-interface IsMenuOpen {
-  isSideMenuOpen: boolean;
-  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 interface User {
   [key: string]: string;
 }
@@ -93,18 +91,20 @@ interface SlideMenus {
   menus: Menus[];
 }
 
-export default function SideMenu({ isSideMenuOpen, setIsSideMenuOpen }: IsMenuOpen) {
+export default function SideMenu() {
   const [sideMenus, setSideMenus] = useState<SlideMenus | null>(null);
   const [sideMenuPosition, setSideMenuPosition] = useState<number>(0);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean[]>([]);
   const location = useLocation();
   const pathname = location.pathname;
   const isMobile = useContext(ResponsiveContext);
+  const dispatch = useDispatch<AppDispatch>();
+  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 
   // 현재 보고있는 메뉴만 열리게하기
   const handleIsMenuOpen = (idx: number) => {
     setIsMenuOpen((prev) => prev.map((_, i) => (i === idx ? true : false)));
-    if (isMobile) setIsSideMenuOpen(false);
+    if (isMobile) dispatch(sideMenuAction.toggleSideMenu());
   };
 
   // 현재 보고 있는 메뉴 확인용
@@ -135,9 +135,20 @@ export default function SideMenu({ isSideMenuOpen, setIsSideMenuOpen }: IsMenuOp
 
   // 사이드 메뉴 받아오기
   useEffect(() => {
-    fetch("/data/side-menu.json")
-      .then((res) => res.json())
-      .then((data) => setSideMenus(data));
+    const fetchMenus = async () => {
+      try {
+        fetch("https://dev.risetconstruction.net/api/menus")
+          .then((res) => res.json())
+          .then((data) => setSideMenus(data));
+      } catch (err: any) {
+        console.log(err);
+        fetch("/data/side-menu.json")
+          .then((res) => res.json())
+          .then((data) => setSideMenus(data));
+      }
+    };
+
+    fetchMenus();
   }, []);
 
   return (
@@ -164,7 +175,6 @@ export default function SideMenu({ isSideMenuOpen, setIsSideMenuOpen }: IsMenuOp
             <SideMenuCard
               key={menu.id}
               menu={menu}
-              isSideMenuOpen={isSideMenuOpen}
               sideMenuIcon={sideMenuIcon}
               isMenuOpen={isMenuOpen[idx]}
               idx={idx}

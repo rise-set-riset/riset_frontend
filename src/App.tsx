@@ -20,6 +20,8 @@ import GroupMember from "./pages/Group/GroupMember";
 import Setting from "./pages/Setting/Setting";
 import { ResponsiveProvider } from "./contexts/ResponsiveContext";
 import DarkmodeProvider from "./contexts/DarkmodeContext";
+import { Provider } from "react-redux";
+import { store } from "./redux/store/store";
 
 const router = createBrowserRouter([
   {
@@ -71,7 +73,9 @@ function App() {
   return (
     <DarkmodeProvider>
       <ResponsiveProvider>
-        <RouterProvider router={router} />
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
       </ResponsiveProvider>
     </DarkmodeProvider>
   );
