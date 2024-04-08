@@ -11,11 +11,12 @@ const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number 
   top: 60px;
   z-index: 50;
   width: ${(props) => (props.$isSideMenuOpen ? "200px" : "60px")};
-  height: calc(100vh - 60px);
+  height: calc(100vh - 120px);
   background-color: var(--color-white);
   border-right: 1px solid var(--color-brand-lightgray);
   transition: all 0.3s;
-  overflow: hidden;
+  overflow: auto;
+  overflow-x: hidden;
   @media screen and (max-width: 600px) {
     width: ${(props) => (props.$isSideMenuOpen ? "200px" : "0")};
   }
