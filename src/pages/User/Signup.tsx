@@ -234,13 +234,7 @@ const SignUpQuestion = styled.div`
  }
 `
 export default function SignUp (){
-  const [form, setForm] = useState({
-    id: '',
-    password: '',
-    confirmPassword: '',
-    name: '',
-    phoneNumber: '',
-  });
+const [form, setForm] = useForm();
 
   const {
     isValidId,

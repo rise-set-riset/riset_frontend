@@ -123,12 +123,12 @@ export default function TextInput({ label, type, value, onChange, onBlur, placeh
         
         {isHelperTextVisible && helperText && <HelperText>{helperText}</HelperText>}
 
-        {isValid && value && label == '아이디' && !isHelperTextVisible&&
+        {isValid && value && label === '아이디' && !isHelperTextVisible&&
           <>
           <ValidMsg style={{ color: '#ff6228' }}>{validMessage}</ValidMsg>
           </>}
 
-        {isValid && value && label == '비밀번호 확인' && 
+        {isValid && value && label === '비밀번호 확인' && 
         <>
         <span className="icon valid"><FaCheckCircle /></span>
         <ValidMsg>{validMessage}</ValidMsg>
