@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { sideMenuIcon } from "./SideMenuIcons";
 import { Link, useLocation } from "react-router-dom";
 import SideMenuCard from "./SideMenuCard";
+import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 
 const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number }>`
   position: fixed;
@@ -67,6 +68,7 @@ const UserInfo = styled.div`
 
 interface IsMenuOpen {
   isSideMenuOpen: boolean;
+  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface User {
@@ -90,16 +92,18 @@ interface SlideMenus {
   menus: Menus[];
 }
 
-export default function SideMenu({ isSideMenuOpen }: IsMenuOpen) {
+export default function SideMenu({ isSideMenuOpen, setIsSideMenuOpen }: IsMenuOpen) {
   const [sideMenus, setSideMenus] = useState<SlideMenus | null>(null);
   const [sideMenuPosition, setSideMenuPosition] = useState<number>(0);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean[]>([]);
   const location = useLocation();
   const pathname = location.pathname;
+  const isMobile = useContext(ResponsiveContext);
 
   // 현재 보고있는 메뉴만 열리게하기
   const handleIsMenuOpen = (idx: number) => {
     setIsMenuOpen((prev) => prev.map((_, i) => (i === idx ? true : false)));
+    if (isMobile) setIsSideMenuOpen(false);
   };
 
   // 현재 보고 있는 메뉴 확인용

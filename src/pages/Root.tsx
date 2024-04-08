@@ -34,7 +34,7 @@ export default function Root() {
     <>
       {isAuth && <Header setIsSideMenuOpen={setIsSideMenuOpen} />}
       <Outlet />
-      {isAuth && <SideMenu isSideMenuOpen={isSideMenuOpen} />}
+      {isAuth && <SideMenu isSideMenuOpen={isSideMenuOpen} setIsSideMenuOpen={setIsSideMenuOpen} />}
       {isMobile && isAuth && <BottomMenu setIsSideMenuOpen={setIsSideMenuOpen} />}
     </>
   );
