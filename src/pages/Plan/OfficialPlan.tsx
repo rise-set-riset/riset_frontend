@@ -1,30 +1,19 @@
-import styled from "styled-components";
 import OfficialCalendar from "../../components/Plan/OfficialCalendar";
+import styled from "styled-components";
 
-const Layout = styled.main`
-    max-width: 1200px;
+const Layout = styled.div`
     width: 100%;
-    margin-top: 60px;
-    padding-left: 200px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background-color: var(--color-gray-1);
-    transition: all 0.3s;
-`;
-
-const PlanTitle = styled.h1`
-    background-color: var(--color-white);
-    height: 4rem;
-    padding: 18px 24px;
-    font-size: 1.5rem;
+    justify-content: flex-end;
 `;
 
 export default function OfficialPlan() {
     return (
         <Layout>
-            <PlanTitle>회사일정</PlanTitle>
-            <OfficialCalendar />
+            <main>
+                <h1>회사일정</h1>
+                <OfficialCalendar />
+            </main>
         </Layout>
     );
 }

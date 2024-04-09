@@ -3,15 +3,47 @@ import { IoClose } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
 import { IoArrowForward } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa6";
+import { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 
-const EventFormContainer = styled.form`
-    padding: 24px;
+/* 전체 틀 */
+const Layout = styled.form`
+    padding: 16px 24px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
 `;
 
-const SelectDateLayout = styled.div`
+/* 닫기 버튼 */
+const CloseIconBox = styled.div`
+    align-self: flex-end;
+`;
+const CloseIcon = styled(IoClose)`
+    font-size: 1.5rem;
+    color: var(--color-black);
+`;
+
+/* 제목 입력란 */
+const TitleInputBox = styled.div`
+    width: 100%;
+    input {
+        width: 100%;
+        padding: 10px 8px 16px;
+        color: var(--color-brand-lightgray);
+        font-size: 1rem;
+        border: none;
+        border-bottom: 1px solid var(--color-brand-lightgray);
+        &:focus {
+            outline: none;
+            border-color: var(--color-brand-main);
+        }
+    }
+`;
+
+const DateInputBox = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,69 +52,84 @@ const SelectDateLayout = styled.div`
 const SelectDateInput = styled.div`
     display: flex;
     flex-direction: column;
-    input[type="date"]::before {
-        content: attr(data-placeholder);
-        width: 100%;
-    }
-    input[type="date"]::-webkit-datetime-edit-text {
-        -webkit-appearance: none;
-        display: none;
-    }
-
-    input[type="date"]::-webkit-datetime-edit-month-field {
-        -webkit-appearance: none;
-        display: none;
-    }
-
-    input[type="date"]::-webkit-datetime-edit-day-field {
-        -webkit-appearance: none;
-        display: none;
-    }
-
-    input[type="date"]::-webkit-datetime-edit-year-field {
-        -webkit-appearance: none;
-        display: none;
-    }
 `;
 
-const CloseIconBox = styled.div`
-    align-self: flex-end;
-`;
-const CloseIcon = styled(IoClose)``;
 const CalendarIcon = styled(LuCalendarDays)``;
 const ArrowIcon = styled(IoArrowForward)``;
 const ClockIcon = styled(FaRegClock)``;
 
 export default function EventForm() {
+    const [startDate, setStartDate] = useState(new Date());
+    const [isOpen, setIsOpen] = useState(false);
+    const handleChange = (date: Date) => {
+        setIsOpen(!isOpen);
+        setStartDate(date);
+    };
+    const handleClick = (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
+        e.preventDefault();
+        setIsOpen(!isOpen);
+    };
     return (
-        <EventFormContainer>
+        <Layout>
             <CloseIconBox>
                 <CloseIcon />
             </CloseIconBox>
-            <div>
+            <TitleInputBox>
                 <input type="text" placeholder="제목을 입력해주세요" />
-            </div>
-            <SelectDateLayout>
+            </TitleInputBox>
+            <DateInputBox>
                 <SelectDateInput>
-                    <CalendarIcon />
+                    <label htmlFor="event-end-date">
+                        <CalendarIcon />
+                    </label>
                     <ClockIcon />
                 </SelectDateInput>
                 <SelectDateInput>
-                    <input type="date" data-placeholder="4/12(월)" />
+                    <button
+                        className="example-custom-input"
+                        onClick={handleClick}
+                    >
+                        {format(startDate, "MM. dd")}
+                    </button>
+                    {isOpen && (
+                        <DatePicker
+                            dateFormat="MM.dd"
+                            selected={startDate}
+                            onChange={handleChange}
+                            inline
+                            shouldCloseOnSelect
+                        />
+                    )}
                     <button type="button">추가</button>
                 </SelectDateInput>
                 <SelectDateInput>
                     <ArrowIcon />
                 </SelectDateInput>
                 <SelectDateInput>
-                    <input type="date" />
+                    <button
+                        className="example-custom-input"
+                        onClick={handleClick}
+                    >
+                        {format(startDate, "MM. dd")}
+                    </button>
+                    {isOpen && (
+                        <DatePicker
+                            dateFormat="MM.dd"
+                            selected={startDate}
+                            onChange={handleChange}
+                            inline
+                            shouldCloseOnSelect
+                        />
+                    )}
                     <button type="button">추가</button>
                 </SelectDateInput>
-            </SelectDateLayout>
+            </DateInputBox>
             <div>
-                <label htmlFor="writer">
+                <label htmlFor="event-writer">
                     작성자 :
-                    <input type="text" id="writer" name="writer" />
+                    <input type="text" id="event-writer" name="event-writer" />
                 </label>
             </div>
             <div>
@@ -98,6 +145,6 @@ export default function EventForm() {
                 <button type="button">취소</button>
                 <button>저장</button>
             </div>
-        </EventFormContainer>
+        </Layout>
     );
 }

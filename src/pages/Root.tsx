@@ -43,17 +43,17 @@ h1 {
 `;
 
 export default function Root() {
-  const isMobile = useContext(ResponsiveContext);
-  const location = useLocation();
-  const isAuth = !["/", "/signup", "/authority"].includes(location.pathname);
+    const isMobile = useContext(ResponsiveContext);
+    const location = useLocation();
+    const isAuth = !["/", "/signup", "/authority"].includes(location.pathname);
 
-  return (
-    <>
-      <GlobalOutletStyle />
-      {isAuth && <Header />}
-      <Outlet />
-      {isAuth && <SideMenu />}
-      {isMobile && isAuth && <BottomMenu />}
-    </>
-  );
+    return (
+        <>
+            <GlobalOutletStyle />
+            {isAuth && <Header />}
+            <Outlet />
+            {isAuth && <SideMenu />}
+            {isMobile && isAuth && <BottomMenu />}
+        </>
+    );
 }

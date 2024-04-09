@@ -8,10 +8,15 @@ const Layout = styled.div`
     background-color: var(--color-white);
     border-radius: 16px;
 `;
+
+const Test = styled.div`
+    height: 500px;
+`;
 export default function EventModal() {
     return (
         <Layout>
             <EventForm />
+            <Test />
         </Layout>
     );
 }
