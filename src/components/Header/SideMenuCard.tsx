@@ -45,6 +45,7 @@ const MenuTitle = styled.p<{ $isSideMenuOpen: boolean }>`
 
 const SubList = styled.ul<{ $isMenuOpen: boolean; $state: string }>`
   position: relative;
+  transition: all 0.5s;
   background-color: ${(props) =>
     props.$isMenuOpen ? "var(--color-brand-orange)" : "var(--color-white)"};
   color: ${(props) => (props.$isMenuOpen ? "var(--color-white)" : "var(--color-black)")};
