@@ -10,7 +10,6 @@ import { RootState } from "../redux/store/store";
 
 export const GlobalSvgStyle = createGlobalStyle`
   svg {
-    transition: all 0.3s;
     cursor: pointer;
   }
   li:hover svg,
@@ -19,12 +18,14 @@ export const GlobalSvgStyle = createGlobalStyle`
     transform: scale(1.2);
   }
   path {
-    transition: all 0.3s;
     stroke: var(--color-svg-stroke);
   }
 `;
 
 export const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
+  * {
+    transition: background-color 0.3s;
+  }
   .main {
     margin-top: 60px;
     display: flex;
@@ -49,6 +50,7 @@ export const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
     padding: 18px 24px;
     font-size: 1.5rem;
     background-color: var(--color-white);
+    color: var(--color-black);
   }
 `;
 
