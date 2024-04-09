@@ -3,19 +3,29 @@ import styled from "styled-components";
 import TextInput from "../../common/TextInput";
 import CustomCheckbox from "../../common/CustomCheckbox";
 import HorizontalLineWithText from "../../common/HorizontalLineWithText";
-import loginLogo from "../../assets/loginLogo.png"
-import naverLogo from "../../assets/naverLogo.png"
-import kakaoLogo from "../../assets/kakaoLogo.png"
-import googleLogo from "../../assets/googleLogo.png"
+import loginLogo from "../../assets/login-logo.png"
+import naverLogo from "../../assets/naver-logo.png"
+import kakaoLogo from "../../assets/kakao-logo.png"
+import googleLogo from "../../assets/google-logo.png"
+
+const backgroundImageUrl = 'url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)';
 
 const Background = styled.div`
   min-width: 100vw;
   width: 100%;
+  background-image: ${backgroundImageUrl};
+  background-size: cover; 
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #c4c4c4;
 `;
+
+const SocialLogo= styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 20px;
+`
 
 const LoginContainer = styled.div`
   width: 90%;
@@ -32,7 +42,7 @@ const LoginContainer = styled.div`
   align-items: center;
 `;
 
-const LogoContainer = styled.div`
+const LogoWrapper = styled.div`
     width: 200.22px;
     height: 66px;
     margin-bottom : 50px;
@@ -55,15 +65,44 @@ const LoginForm = styled.div`
   }
 `;
 
-const RememberIdContainer = styled.div`
+const TextInputWrapper = styled.div`
+  position: relative;
+`;
 
+const FindIdButton = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: transparent;
+  border: none;
+  font-family: pretendard;
+  cursor: pointer;
+  font-size: 14px;
+  color: #ff7f50;
+  letter-spacing: 0.1px;
+  margin-bottom: 4px;
+`;
+
+const RememberIdWrapper = styled.p`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 3px;
+  margin-bottom: 19px;
+  width: 137px;
+  height: 24px;
+
+  span{
+    margin-left: 5px;
+    letter-spacing: 0.5px;
+  }
 `;
 
 const LoginBtn = styled.div`
   width: 100%;
   height: 50px;
   padding : 13px 20px;  
-  margin-bottom : 16px;
+  margin-bottom : 24px;
   border-radius: 8px;
   color: white;
   border: none;
@@ -72,7 +111,13 @@ const LoginBtn = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-`
+`;
+
+const SocialLoginWrapper = styled.div`
+  width: 100%;
+  margin-top: 24px;
+  margin-bottom: 32px;
+`;
 
 const SocialLoginBtn = styled.button`
   width: 100%;
@@ -88,12 +133,6 @@ const SocialLoginBtn = styled.button`
   align-items: center;
   cursor: pointer;
 `;
-
-const SocialLogo= styled.img`
-  width: 20px;
-  height: 20px;
-  margin-right: 20px;
-`
 
 const LoginQuestion = styled.div`
  color: #545454;
@@ -112,30 +151,39 @@ export default function Login() {
   const [isValidId, setIsValidId] = useState<boolean>(false);
   const [isValidPassword, setIsValidPassword] = useState<boolean>(false);
 
-  const handleIdChange = () =>{
-    console.log('hi')
+  const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setId(e.target.value);
   }
 
   const handleIdBlur = () => {
     console.log('hi')
   }
 
-  const handlePasswordChange = () =>{
-    console.log('hi')
+  const handleFindId = () => {
+    console.log("아이디 찾기 버튼 클릭");
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswrd(e.target.value);
   }
 
   const handlePasswordBlur = () => {
     console.log('hi')
   }
 
+  const handleFindPassword = () => {
+    console.log('hi')
+  }
+
   return (
     <Background>
        <LoginContainer>
-   <LogoContainer>
+   <LogoWrapper>
     <img src={loginLogo} alt="logo"/>
-   </LogoContainer> 
+   </LogoWrapper> 
     <LoginForm>
       <form>
+      <TextInputWrapper>
       <TextInput
             label="아이디"
             type="text"
@@ -148,6 +196,10 @@ export default function Login() {
             inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
             helperText=""
           />
+           <FindIdButton onClick={handleFindId}>아이디 찾기</FindIdButton>
+      </TextInputWrapper>
+
+      <TextInputWrapper>
          <TextInput
             label="비밀번호"
             type="password"
@@ -160,15 +212,17 @@ export default function Login() {
             inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
             helperText=""
           />
+          <FindIdButton onClick={handleFindPassword}>비밀번호 찾기</FindIdButton>
+      </TextInputWrapper>
 
-          <RememberIdContainer>
+          <RememberIdWrapper>
           <CustomCheckbox/><span>아이디 기억하기</span>
-          </RememberIdContainer>
+          </RememberIdWrapper>
 
           <LoginBtn>로그인</LoginBtn>
           <HorizontalLineWithText>OR</HorizontalLineWithText>
 
-
+        <SocialLoginWrapper>
           <SocialLoginBtn>
             <SocialLogo src={naverLogo}/>
               <span>네이버 아이디로 로그인</span>
@@ -183,6 +237,7 @@ export default function Login() {
             <SocialLogo src={googleLogo}/>
             <span>구글 아이디로 로그인</span>
           </SocialLoginBtn>
+          </SocialLoginWrapper>
 
           <LoginQuestion><p>아직 Riset의 계정이 없으신가요?<a href="/signup">회원가입</a></p></LoginQuestion>
       </form>

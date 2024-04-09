@@ -10,11 +10,6 @@ import TextInput from "../../common/TextInput";
 import CustomCheckbox from "../../common/CustomCheckbox";
 import HorizontalLineWithText from "../../common/HorizontalLineWithText";
 
-
-interface CheckboxProps {
-  checked: boolean;
-};
-
 const backgroundImageUrl = 'url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)';
 
 const Background = styled.div`
@@ -183,13 +178,7 @@ const SignUpQuestion = styled.div`
  }
 `
 export default function SignUp (){
-  const [form, setForm] = useState({
-    id: '',
-    password: '',
-    confirmPassword: '',
-    name: '',
-    phoneNumber: '',
-  });
+  const [form, setForm] = useForm()
 
   const {
     isValidId,
@@ -215,7 +204,7 @@ export default function SignUp (){
     const isAllAgreed = agreeAge && agreeFinal && agreePrivacy;
     setAgree(isAllAgreed);
     setIsDisabled(!isAllAgreed || !isValidId || !isNotDuplicate || !isValidPassword || form.password !== form.confirmPassword || !isValidName );
-  }, [agreeAge, agreeFinal, agreePrivacy, isValidId, isNotDuplicate, isValidPassword, form.password, form.confirmPassword, isValidName]);
+  }, [agreeAge, agreeFinal, agreePrivacy, setAgree, isValidId, isNotDuplicate, isValidPassword, form.password, form.confirmPassword, isValidName]);
 
   // 아이디 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
    const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {

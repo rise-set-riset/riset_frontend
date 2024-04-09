@@ -86,8 +86,6 @@ export default function TextInput({ label, type, value, onChange, onBlur, placeh
   const [isFirstBlur, setIsFirstBlur] = useState<boolean>(true);
   const [isHelperTextVisible, setIsHelperTextVisible] = useState<boolean>(true);
   const [isDuplicateChecking, setIsDuplicateChecking] = useState<boolean>(false);
-  const [isIdDuplicateCheckRequired, setIsIdDuplicateCheckRequired] = useState<boolean>(false);
-
 
 // 부모 컴포넌트에서 전달된 onBlur 이벤트 핸들러를 호출하고, 입력 필드가 포커스를 잃었음을 나타내는 상태를 업데이트하여 helperText를 숨기는 역할
   const handleBlur = () => {
@@ -123,12 +121,12 @@ export default function TextInput({ label, type, value, onChange, onBlur, placeh
         
         {isHelperTextVisible && helperText && <HelperText>{helperText}</HelperText>}
 
-        {isValid && value && label == '아이디' && !isHelperTextVisible&&
+        {isValid && value && label === '아이디' && !isHelperTextVisible&&
           <>
           <ValidMsg style={{ color: '#ff6228' }}>{validMessage}</ValidMsg>
           </>}
 
-        {isValid && value && label == '비밀번호 확인' && 
+        {isValid && value && label === '비밀번호 확인' && 
         <>
         <span className="icon valid"><FaCheckCircle /></span>
         <ValidMsg>{validMessage}</ValidMsg>
