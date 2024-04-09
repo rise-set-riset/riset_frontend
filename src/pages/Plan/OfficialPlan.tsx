@@ -11,7 +11,7 @@ export default function OfficialPlan() {
     return (
         <Layout>
             <main className="main">
-                <h2 className="title">회사일정</h2>
+                <h1 className="title">회사일정</h1>
                 <OfficialCalendar />
             </main>
         </Layout>

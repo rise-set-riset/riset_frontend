@@ -1,5 +1,6 @@
 import { useState } from "react";
-import styled from "styled-components";
+import type { ClickPositionType, EventFormType } from "./OfficialCalendar";
+import styled, { keyframes } from "styled-components";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
@@ -10,17 +11,47 @@ import { FiArrowRight } from "react-icons/fi";
 import { FiClock } from "react-icons/fi";
 import { FiPlusCircle } from "react-icons/fi";
 
+const slideInAnimation = keyframes`
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
+const slideOutAnimation = keyframes`
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+`;
+
 /* 전체 틀 */
-const FormLayout = styled.form`
+const FormLayout = styled.form<{
+    $dateClickPosition: ClickPositionType;
+    $isFormOpen: boolean;
+}>`
     width: 375px;
     padding: 16px 24px 24px;
+    position: fixed;
+    left: ${(props) => `${props.$dateClickPosition.x}px`};
+    top: ${(props) => `${props.$dateClickPosition.y}px`};
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
     border-radius: 16px;
     background-color: var(--color-white);
-
+    z-index: 10;
+    box-shadow: 0px 0px 10px 0px var(--color-brand-lightgray);
+    animation: ${slideInAnimation} 0.5s ease;
     input,
     label {
         font-size: 1rem;
@@ -88,11 +119,11 @@ const SelectColorBox = styled.ul`
     position: absolute;
     top: 0;
     right: 0;
-    border: 1px solid var(--color-brand-lightgray);
     border-radius: 16px;
     padding: 24px 20px;
     background-color: var(--color-white);
     z-index: 10;
+    box-shadow: 0px 0px 10px 0px var(--color-brand-lightgray);
 `;
 
 const SelectColorOption = styled.li<{ $colorcode: string }>`
@@ -269,7 +300,21 @@ const EndButtonBox = styled.div`
     }
 `;
 
-export default function EventForm() {
+interface EventFormProps {
+    isFormOpen: boolean;
+    setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    eventForm: EventFormType;
+    setEventForm: React.Dispatch<React.SetStateAction<EventFormType>>;
+    dateClickPosition: ClickPositionType;
+}
+
+export default function EventForm({
+    isFormOpen,
+    setIsFormOpen,
+    eventForm,
+    setEventForm,
+    dateClickPosition,
+}: EventFormProps) {
     /* 색상 선택 */
     const eventColorList = [
         "#FFBFA7",
@@ -311,8 +356,11 @@ export default function EventForm() {
         setIsOpen(!isOpen);
     };
     return (
-        <FormLayout>
-            <CloseIconBox>
+        <FormLayout
+            $dateClickPosition={dateClickPosition}
+            $isFormOpen={isFormOpen}
+        >
+            <CloseIconBox onClick={() => setIsFormOpen(false)}>
                 <CloseIcon />
             </CloseIconBox>
 
@@ -481,7 +529,11 @@ export default function EventForm() {
                 ></textarea>
             </ContentInputBox>
             <EndButtonBox>
-                <button type="button" className="event-cancel-btn">
+                <button
+                    type="button"
+                    className="event-cancel-btn"
+                    onClick={() => setIsFormOpen(false)}
+                >
                     취소
                 </button>
                 <button className="event-save-btn">저장</button>

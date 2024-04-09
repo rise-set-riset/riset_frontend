@@ -117,19 +117,51 @@ const CalendarCustomStyle = styled.div`
     }
 `;
 
+export interface EventFormType {
+    [key: string]: string;
+}
+
+export interface ClickPositionType {
+    [key: string]: number;
+}
+
 export default function OfficialCalendar() {
     const calendarRef = useRef<any>(null);
-    const testRef = useRef<any>(null);
     const [renderedYear, setRenderedYear] = useState<number>(
         new Date().getFullYear()
     );
+
+    /* Today 버튼 제어 */
+    const todayRef = useRef<any>(null);
     useEffect(() => {
-        if (testRef.current) {
-            testRef.current.querySelector(
+        if (todayRef.current) {
+            todayRef.current.querySelector(
                 "button.fc-today-button.fc-button"
             ).disabled = false;
         }
     }, []);
+
+    /* 
+    eventForm: 추가하거나 수정할 이벤트 Form
+    isFormOpen: Form 팝업 표시 여부
+
+    */
+    /* 날짜 클릭시 */
+    const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+    const [eventForm, setEventForm] = useState<EventFormType>({});
+    const [dateClickPosition, setDateClickPosition] =
+        useState<ClickPositionType>({
+            x: 0,
+            y: 0,
+        });
+
+    const handleDateClick = (info: any) => {
+        setIsFormOpen(true);
+        setDateClickPosition({
+            x: info.jsEvent.x,
+            y: info.jsEvent.y,
+        });
+    };
 
     useEffect(() => {
         setRenderedYear(
@@ -141,10 +173,10 @@ export default function OfficialCalendar() {
 
     return (
         <Layout>
-            <CalendarCustomStyle ref={testRef}>
+            <CalendarCustomStyle ref={todayRef}>
                 <YearTitle>{renderedYear}</YearTitle>
                 <FullCalendar
-                    /* 
+                    /*
                     ref: useRef
                     plugins: 당월, 한해, 이벤트 view
                     initialView: 처음 보여주는 view
@@ -157,6 +189,7 @@ export default function OfficialCalendar() {
                     eventTimeFormat: 시간 표시 방식
                     editable: 수정 가능 여부
                     dayMaxEvents: 팝업으로 펼쳐보기
+                    dateClick: 날짜 클릭 이벤트
                     */
                     ref={calendarRef}
                     plugins={[
@@ -189,12 +222,19 @@ export default function OfficialCalendar() {
                     }}
                     editable={true}
                     dayMaxEvents={true}
-                    // handleWindowResize={true}
-                    // expandRows={true}
+                    dateClick={(info) => handleDateClick(info)}
                 />
             </CalendarCustomStyle>
 
-            <EventForm />
+            {isFormOpen && (
+                <EventForm
+                    isFormOpen={isFormOpen}
+                    setIsFormOpen={setIsFormOpen}
+                    eventForm={eventForm}
+                    setEventForm={setEventForm}
+                    dateClickPosition={dateClickPosition}
+                />
+            )}
         </Layout>
     );
 }
