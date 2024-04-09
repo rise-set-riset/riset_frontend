@@ -25,7 +25,7 @@ export const GlobalSvgStyle = createGlobalStyle`
 `;
 
 export const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
-  main {
+  .main {
     margin-top: 60px;
     display: flex;
     flex-direction: column;
@@ -39,16 +39,17 @@ export const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
           return "calc(100% - 200px)";
         case "pcClose":
           return "calc(100% - 60px)";
+        default:
+          return null;
       }
     }}
   }
-
-h1 {
-  height: 4rem;
-  padding: 18px 24px;
-  font-size: 1.5rem;
-  background-color: var(--color-white);
-}
+  .title {
+    height: 4rem;
+    padding: 18px 24px;
+    font-size: 1.5rem;
+    background-color: var(--color-white);
+  }
 `;
 
 type SideOpenState = "mobile" | "pcOpen" | "pcClose";

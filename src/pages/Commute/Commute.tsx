@@ -6,10 +6,11 @@ export default function Commute() {
     display: flex;
     justify-content: flex-end;
   `;
+
   return (
     <Layout>
-      <main>
-        <h1>출퇴근</h1>
+      <main className="main">
+        <h1 className="title">출퇴근</h1>
       </main>
     </Layout>
   );
