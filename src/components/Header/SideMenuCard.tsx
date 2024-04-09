@@ -72,6 +72,8 @@ const SubList = styled.ul<{ $isMenuOpen: boolean; $state: string }>`
           z-index: -1;
           opacity: 0;
         `;
+      default:
+        return null;
     }
   }};
 `;
