@@ -8,8 +8,9 @@ import { createGlobalStyle } from "styled-components";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/store";
 
-export const GlobalSvgStyle = createGlobalStyle`
+const GlobalSvgStyle = createGlobalStyle`
   svg {
+    transition: all 0.3s;
     cursor: pointer;
   }
   li:hover svg,
@@ -18,11 +19,12 @@ export const GlobalSvgStyle = createGlobalStyle`
     transform: scale(1.2);
   }
   path {
+    transition: all 0.3s;
     stroke: var(--color-svg-stroke);
   }
 `;
 
-export const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
+const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
   * {
     transition: background-color 0.3s;
   }
