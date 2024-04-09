@@ -9,10 +9,6 @@ const Layout = styled.div`
 `;
 
 const Test = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 50vw;
   height: 50vh;
   border-radius: 1rem;
