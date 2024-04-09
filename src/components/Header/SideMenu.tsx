@@ -32,7 +32,6 @@ const UserProfile = styled.div`
   height: 65px;
   padding: 0 1rem 0 0.7rem;
   background-color: var(--color-gray-1);
-  transition: background-color 0.3s;
   cursor: pointer;
 `;
 

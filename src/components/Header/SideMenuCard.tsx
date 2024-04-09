@@ -22,7 +22,6 @@ const CustomLink = styled(Link)<{ $isCurrentPage: boolean }>`
   height: 50px;
   display: flex;
   align-items: center;
-  transition: all 0.3s;
   font-weight: bold;
   color: ${(props) => (props.$isCurrentPage ? "var(--color-white)" : "var(--color-black)")};
   background-color: ${(props) =>
@@ -46,7 +45,6 @@ const MenuTitle = styled.p<{ $isSideMenuOpen: boolean }>`
 
 const SubList = styled.ul<{ $isMenuOpen: boolean; $state: string }>`
   position: relative;
-  transition: all 0.3s;
   background-color: ${(props) =>
     props.$isMenuOpen ? "var(--color-brand-orange)" : "var(--color-white)"};
   color: ${(props) => (props.$isMenuOpen ? "var(--color-white)" : "var(--color-black)")};
