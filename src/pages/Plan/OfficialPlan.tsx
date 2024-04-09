@@ -10,8 +10,8 @@ const Layout = styled.div`
 export default function OfficialPlan() {
     return (
         <Layout>
-            <main>
-                <h1>회사일정</h1>
+            <main className="main">
+                <h2 className="title">회사일정</h2>
                 <OfficialCalendar />
             </main>
         </Layout>

@@ -4,7 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import interactionPlugin from "@fullcalendar/interaction";
-import EventModal from "./EventModal";
+import EventForm from "./EventForm";
 
 const Layout = styled.div`
     width: 100%;
@@ -96,8 +96,9 @@ const CalendarCustomStyle = styled.div`
         background-color: var(--color-white);
 
         &:hover {
-            background-color: var(--color-brand-main);
+            border: 1px solid var(--color-brand-main);
         }
+
         .fc-daygrid-day-top {
             flex-direction: row;
             padding: 0.4rem 0.8rem;
@@ -193,7 +194,7 @@ export default function OfficialCalendar() {
                 />
             </CalendarCustomStyle>
 
-            <EventModal />
+            <EventForm />
         </Layout>
     );
 }
