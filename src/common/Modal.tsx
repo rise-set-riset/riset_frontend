@@ -19,31 +19,39 @@ const ModalWrapper = styled.div<{ $state: string }>`
   align-items: center;
   justify-content: center;
   z-index: 150;
-  opacity: 0;
-  background-color: var(--color-black);
+  transition: all 0.5s;
   ${(props) => {
     switch (props.$state) {
       case "entering":
         return css`
-          opacity: 0.6;
-          transition: opacity 0.5s;
+          background-color: var(--color-black-modal-enter);
+          &:first-child {
+            opacity: 1;
+          }
         `;
       case "entered":
         return css`
-          opacity: 0.6;
-          transition: opacity 0.5s;
+          background-color: var(--color-black-modal-enter);
+          &:first-child {
+            opacity: 1;
+          }
         `;
       case "exiting":
         return css`
-          opacity: 0;
-          transition: opacity 0.5s;
+          background-color: var(--color-black-modal-exit);
+          &:first-child {
+            opacity: 0;
+          }
         `;
       case "exiting":
         return css`
-          opacity: 0;
+          background-color: var(--color-black-modal-exit);
+          &:first-child {
+            opacity: 0;
+          }
         `;
     }
-  }}
+  }};
 `;
 
 export default function Modal({ children, isModalOpen, handleIsModalOpen }: Children) {
