@@ -22,6 +22,8 @@ import GroupMember from "./pages/Group/GroupMember";
 import Setting from "./pages/Setting/Setting";
 import { ResponsiveProvider } from "./contexts/ResponsiveContext";
 import DarkmodeProvider from "./contexts/DarkmodeContext";
+import { Provider } from "react-redux";
+import { store } from "./redux/store/store";
 
 const router = createBrowserRouter([
   {
@@ -46,24 +48,24 @@ const router = createBrowserRouter([
       { path: "/commute", element: <Commute /> },
 
       // Board
-      { path: "/postlist", element: <PostList /> },
-      { path: "/mypost", element: <MyPost /> },
+      { path: "/board/postlist", element: <PostList /> },
+      { path: "/board/mypost", element: <MyPost /> },
 
       // Plan
-      { path: "/official-plan", element: <OfficialPlan /> },
-      { path: "/personal-plan", element: <PersonalPlan /> },
+      { path: "/plan/official", element: <OfficialPlan /> },
+      { path: "/plan/personal", element: <PersonalPlan /> },
 
       // Dayoff
-      { path: "/apply-dayoff", element: <ApplyDayoff /> },
-      { path: "/accept-dayoff", element: <AcceptDayoff /> },
-      { path: "/current-dayoff", element: <CurrentDayoff /> },
+      { path: "/dayoff/apply", element: <ApplyDayoff /> },
+      { path: "/dayoff/accept", element: <AcceptDayoff /> },
+      { path: "/dayoff/current", element: <CurrentDayoff /> },
 
       // Salary
       { path: "/salary", element: <Salary /> },
 
       // Group
-      { path: "/group-chart", element: <GroupChart /> },
-      { path: "/group-member", element: <GroupMember /> },
+      { path: "/group/chart", element: <GroupChart /> },
+      { path: "/group/member", element: <GroupMember /> },
 
       // Setting
       { path: "/setting", element: <Setting /> },
@@ -75,7 +77,9 @@ function App() {
   return (
     <DarkmodeProvider>
       <ResponsiveProvider>
-        <RouterProvider router={router} />
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
       </ResponsiveProvider>
     </DarkmodeProvider>
   );

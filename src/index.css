@@ -10,9 +10,12 @@
   --color-error: #ff6228;
   --color-pass: #03ca5f;
   --color-black: #353535;
+  --color-black-modal-enter: rgba(53, 53, 53, 0.6);
+  --color-black-modal-exit: rgba(53, 53, 53, 0);
   --color-white: #ffffff;
   --color-svg-fill: #ffffff;
   --color-svg-stroke: #353535;
+  --color-gray-1: #f5f5f5;
 }
 
 html.darkmode {
@@ -43,7 +46,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.5s;
   background-color: var(--color-white);
 }
 
@@ -63,6 +65,7 @@ ul {
 
 a {
   text-decoration: none;
+  color: var(--color-black);
 }
 
 #root {
@@ -72,4 +75,21 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-brand-main);
+  border-radius: 10px;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: var(--color-white);
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 5px white;
 }

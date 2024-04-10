@@ -1,6 +1,6 @@
 {
   "user": {
-    "icon": "/data/cat.jpg",
+    "icon": "https://cdn.discordapp.com/attachments/1222016033737674815/1226933959234031626/KakaoTalk_20240403_180611025.png?ex=6626924b&is=66141d4b&hm=f89f763a141c70dcc33ce51b70b033d789fac1f3c56ee30a346611fb8b712a2b&",
     "name": "홍길동",
     "rank": "사원"
   },
@@ -21,17 +21,17 @@
       "id": 3,
       "title": "게시판",
       "icon": "board",
-      "link": "/postlist",
+      "link": "/board/postlist",
       "subMenus": [
         {
           "id": 4,
           "title": "게시글 목록",
-          "link": "/postlist"
+          "link": "/board/postlist"
         },
         {
           "id": 5,
           "title": "내 게시글",
-          "link": "/mypost"
+          "link": "/board/mypost"
         }
       ]
     },
@@ -39,17 +39,17 @@
       "id": 6,
       "title": "일정",
       "icon": "officialPlan",
-      "link": "/official-plan",
+      "link": "/plan/official",
       "subMenus": [
         {
           "id": 7,
           "title": "회사 일정",
-          "link": "/official-plan"
+          "link": "/plan/official"
         },
         {
           "id": 8,
           "title": "근무 일정",
-          "link": "/personal-plan"
+          "link": "/plan/personal"
         }
       ]
     },
@@ -57,22 +57,22 @@
       "id": 9,
       "title": "휴가",
       "icon": "applyDayoff",
-      "link": "/apply-dayoff",
+      "link": "/dayoff/apply",
       "subMenus": [
         {
           "id": 10,
           "title": "휴가 신청",
-          "link": "/apply-dayoff"
+          "link": "/dayoff/apply"
         },
         {
           "id": 11,
           "title": "휴가 현황",
-          "link": "/accept-dayoff"
+          "link": "/dayoff/current"
         },
         {
           "id": 12,
           "title": "휴가 승인",
-          "link": "/current-dayoff"
+          "link": "/dayoff/accept"
         }
       ]
     },
@@ -86,17 +86,17 @@
       "id": 14,
       "title": "조직",
       "icon": "groupChart",
-      "link": "/group-chart",
+      "link": "/group/chart",
       "subMenus": [
         {
           "id": 15,
           "title": "조직도",
-          "link": "/group-chart"
+          "link": "/group/chart"
         },
         {
           "id": 16,
           "title": "조직원 프로필",
-          "link": "/group-member"
+          "link": "/group/member"
         }
       ]
     },
