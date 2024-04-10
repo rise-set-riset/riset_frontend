@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import styled from "styled-components";
@@ -7,14 +7,14 @@ interface TextInputProps {
   label: string;
   type: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: () => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
   placeholder: string;
-  isValid: boolean;
-  validMessage: string;
-  inValidMessage: string;
-  helperText: string;
-}
+  helperText?: string;
+  isValid?: boolean; 
+  validMessage?: string;
+  inValidMessage?: string; 
+};
 
 const Input = styled.div`
   position: relative; 
@@ -31,6 +31,7 @@ const Input = styled.div`
   }
   
   input {
+    width: 100%;
     border-radius: 8px;
     border: 1px solid #c4c4c4;
     padding: 13px 20px;
@@ -62,25 +63,25 @@ const Input = styled.div`
     width: 20px;
     height: 20px;
   }
-`
+`;
 
 const HelperText = styled.p`
   margin-top: 4px;
   color: #353535;
   font-size: 12px;
-`
+`;
 
 const InvalidMsg = styled.p`
   margin-top: 4px;
   color: #ff6228;
   font-size: 12px;
-`
+`;
 
 const ValidMsg = styled.p`
   margin-top: 4px;
   color: #03ca5f; 
   font-size : 12px;
-`
+`;
 
 export default function TextInput({ label, type, value, onChange, onBlur, placeholder, isValid, validMessage, inValidMessage , helperText}:TextInputProps){
   const [isFirstBlur, setIsFirstBlur] = useState<boolean>(true);
@@ -89,11 +90,12 @@ export default function TextInput({ label, type, value, onChange, onBlur, placeh
 
 // 부모 컴포넌트에서 전달된 onBlur 이벤트 핸들러를 호출하고, 입력 필드가 포커스를 잃었음을 나타내는 상태를 업데이트하여 helperText를 숨기는 역할
   const handleBlur = () => {
+  if (onBlur) {
     onBlur(); 
     setIsFirstBlur(false); 
     setIsHelperTextVisible(false); 
-  };
-
+  }
+};
   const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e); 
     if (label === '아이디' && isValid) {
@@ -114,7 +116,7 @@ export default function TextInput({ label, type, value, onChange, onBlur, placeh
           type={type}
           value={value}
           onChange={label !== '아이디'? onChange: handleIdChange}
-          onBlur={handleBlur}
+          onBlur={onBlur ? handleBlur : undefined}
           placeholder={placeholder}
           className={!isValid && !isFirstBlur ? 'invalid' : ''}
         />

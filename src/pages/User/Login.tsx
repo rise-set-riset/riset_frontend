@@ -7,6 +7,8 @@ import loginLogo from "../../assets/login-logo.png"
 import naverLogo from "../../assets/naver-logo.png"
 import kakaoLogo from "../../assets/kakao-logo.png"
 import googleLogo from "../../assets/google-logo.png"
+import { useNavigate } from 'react-router-dom';
+
 
 const backgroundImageUrl = 'url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)';
 
@@ -18,14 +20,13 @@ const Background = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #c4c4c4;
 `;
 
 const SocialLogo= styled.img`
   width: 20px;
   height: 20px;
   margin-right: 20px;
-`
+`;
 
 const LoginContainer = styled.div`
   width: 90%;
@@ -148,32 +149,89 @@ const LoginQuestion = styled.div`
 export default function Login() {
   const [id, setId] = useState<string>('');
   const [password, setPasswrd] = useState<string>('');
-  const [isValidId, setIsValidId] = useState<boolean>(false);
-  const [isValidPassword, setIsValidPassword] = useState<boolean>(false);
+  const [isIdNotFound, setIsIdNotFound] = useState(false); 
+  const [isPasswordMismatch, setIsPasswordMismatch] = useState(false); 
+
+  const navigate = useNavigate();
 
   const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);
   }
 
-  const handleIdBlur = () => {
-    console.log('hi')
-  }
-
   const handleFindId = () => {
-    console.log("아이디 찾기 버튼 클릭");
+    navigate('/findid');
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPasswrd(e.target.value);
   }
 
-  const handlePasswordBlur = () => {
-    console.log('hi')
+  const handleFindPassword = () => {
+    navigate('/findpassword');
   }
 
-  const handleFindPassword = () => {
-    console.log('hi')
-  }
+  // 로그인 버튼 클릭 시 실행되는 함수
+  const handleLogin = () => {
+    // 로그인 API 엔드포인트 URL
+    const loginUrl = "http://your-server.com/login";
+
+    // POST 요청을 보낼 데이터
+    const data = {
+      id: id,
+      password: password
+    };
+
+    // Fetch API를 사용하여 서버에 POST 요청을 보냅니다.
+   fetch(loginUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      // 응답 데이터를 JSON 형태로 파싱합니다.
+      return response.json();
+    })
+    .then(data => {
+      // 서버로부터 받은 응답 데이터를 확인합니다.
+      if (data.success) {
+        // 로그인 성공 시 처리할 내용을 작성합니다.
+        console.log("로그인 성공!");
+      } else {
+        // 로그인 실패 시 처리할 내용을 작성합니다.
+        console.log("로그인 실패!");
+        // 아이디가 존재하지 않는 경우 경고 메시지를 표시합니다.
+        if (data.error === "id_not_found") {
+          setIsIdNotFound(true);
+        }
+        // 비밀번호가 일치하지 않는 경우 경고 메시지를 표시합니다.
+        if (data.error === "password_mismatch") {
+          setIsPasswordMismatch(true);
+        }
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
+    }); 
+  };
+
+
+// 네이버 로그인 버튼 클릭 이벤트 핸들러
+const handleNaverLogin = () => {
+  window.location.href = '네이버 로그인 URL';
+};
+
+// 카카오 로그인 버튼 클릭 이벤트 핸들러
+const handleKakaoLogin = () => {
+  window.location.href = '카카오 로그인 URL';
+};
+
+// 구글 로그인 버튼 클릭 이벤트 핸들러
+const handleGoogleLogin = () => {
+  window.location.href = '구글 로그인 URL';
+};
+  
 
   return (
     <Background>
@@ -189,12 +247,7 @@ export default function Login() {
             type="text"
             value={id}
             onChange={handleIdChange}
-            onBlur={handleIdBlur}
             placeholder="아이디를 입력하세요"
-            isValid={isValidId}
-            validMessage="아이디 중복 확인을 진행해 주세요"
-            inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
-            helperText=""
           />
            <FindIdButton onClick={handleFindId}>아이디 찾기</FindIdButton>
       </TextInputWrapper>
@@ -205,12 +258,7 @@ export default function Login() {
             type="password"
             value={password}
             onChange={handlePasswordChange}
-            onBlur={handlePasswordBlur}
             placeholder="아이디를 입력하세요"
-            isValid={isValidPassword}
-            validMessage="아이디 중복 확인을 진행해 주세요"
-            inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
-            helperText=""
           />
           <FindIdButton onClick={handleFindPassword}>비밀번호 찾기</FindIdButton>
       </TextInputWrapper>
@@ -219,21 +267,22 @@ export default function Login() {
           <CustomCheckbox/><span>아이디 기억하기</span>
           </RememberIdWrapper>
 
-          <LoginBtn>로그인</LoginBtn>
+          <LoginBtn onClick={handleLogin}>로그인</LoginBtn>
+
           <HorizontalLineWithText>OR</HorizontalLineWithText>
 
         <SocialLoginWrapper>
-          <SocialLoginBtn>
+          <SocialLoginBtn onClick={handleNaverLogin}>
             <SocialLogo src={naverLogo}/>
               <span>네이버 아이디로 로그인</span>
           </SocialLoginBtn>
           
-          <SocialLoginBtn>
+          <SocialLoginBtn onClick={handleKakaoLogin}>
             <SocialLogo src={kakaoLogo}/>
             <span>카카오 아이디로 로그인</span>
           </SocialLoginBtn>
           
-          <SocialLoginBtn>
+          <SocialLoginBtn onClick={handleGoogleLogin}>
             <SocialLogo src={googleLogo}/>
             <span>구글 아이디로 로그인</span>
           </SocialLoginBtn>

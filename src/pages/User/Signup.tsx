@@ -339,7 +339,6 @@ export default function SignUp (){
             onBlur={handlePasswordBlur}
             placeholder="비밀번호를 입력하세요"
             isValid={isValidPassword}
-            validMessage=""
             inValidMessage="8~12자의 영문/숫자/특수문자 조합만 사용 가능합니다."
             helperText="8~12자 영문, 숫자, 특수문자 조합"
             />
@@ -354,7 +353,6 @@ export default function SignUp (){
             isValid={isValidConfirmPassword}
             validMessage="비밀번호가 일치합니다"
             inValidMessage="비밀번호가 일치하지 않습니다"
-            helperText=""
             />      
 
         <TextInput
@@ -365,9 +363,7 @@ export default function SignUp (){
             onBlur={handleNameBlur}
             placeholder="이름을 입력하세요"
             isValid={isValidName}
-            validMessage=""
             inValidMessage ="올바른 이름을 입력하세요"
-            helperText=""
             />     
           
           
@@ -382,9 +378,7 @@ export default function SignUp (){
             onBlur={handlePhoneNumberBlur}
             placeholder="전화번호를 입력하세요"
             isValid={isValidPhoneNumber}
-            validMessage=""
             inValidMessage ="올바른 잔화번호를 입력하세요"
-            helperText=""
             />    
 
         <AgreeAllCheckbox>
