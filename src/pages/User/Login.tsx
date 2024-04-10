@@ -154,34 +154,35 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  // 입력 필드의 값이 변경되면 해당값을 id에 반영  
   const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);
   }
-
+  
+// 해당 URL 페이지로 이동
   const handleFindId = () => {
     navigate('/findid');
   };
 
+  // 입력 필드의 값이 변경되면 해당값을 password에 반영  
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPasswrd(e.target.value);
   }
 
+// 해당 URL 페이지로 이동
   const handleFindPassword = () => {
     navigate('/findpassword');
   }
 
-  // 로그인 버튼 클릭 시 실행되는 함수
+// 입력된 아이디와 이메일을 서버에 POST 요청으로 전송
   const handleLogin = () => {
-    // 로그인 API 엔드포인트 URL
     const loginUrl = "http://your-server.com/login";
 
-    // POST 요청을 보낼 데이터
     const data = {
       id: id,
       password: password
     };
 
-    // Fetch API를 사용하여 서버에 POST 요청을 보냅니다.
    fetch(loginUrl, {
       method: "POST",
       headers: {
@@ -190,22 +191,16 @@ export default function Login() {
       body: JSON.stringify(data)
     })
     .then(response => {
-      // 응답 데이터를 JSON 형태로 파싱합니다.
       return response.json();
     })
     .then(data => {
-      // 서버로부터 받은 응답 데이터를 확인합니다.
       if (data.success) {
-        // 로그인 성공 시 처리할 내용을 작성합니다.
         console.log("로그인 성공!");
       } else {
-        // 로그인 실패 시 처리할 내용을 작성합니다.
         console.log("로그인 실패!");
-        // 아이디가 존재하지 않는 경우 경고 메시지를 표시합니다.
         if (data.error === "id_not_found") {
           setIsIdNotFound(true);
         }
-        // 비밀번호가 일치하지 않는 경우 경고 메시지를 표시합니다.
         if (data.error === "password_mismatch") {
           setIsPasswordMismatch(true);
         }

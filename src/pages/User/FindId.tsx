@@ -11,8 +11,7 @@ const FindIdContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-`
+`;
 
 const FindIdHeaderWrapper = styled. div`
   width: 100%;
@@ -48,17 +47,50 @@ const FindIdBtn = styled.div`
   cursor: pointer;
 `;
 
+
 export default function FindId() {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
 
+  // 입력 필드의 값이 변경되면 해당값을 name에 반영
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   }
 
+  // 입력 필드의 값이 변경되면 해당값을 email에 반영
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   }
+
+// 입력된 이름과 이메일을 서버에 POST 요청으로 전송
+  const sendEmail = async () => {
+     const data = {
+      name: name,
+      email: email,
+    };
+  
+    try {
+      const response = await fetch('/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error('이메일 전송에 실패했습니다.');
+      }
+  
+      const responseData = await response.json();
+      console.log('이메일이 성공적으로 전송되었습니다.', responseData);
+    } catch (error: any) {
+      console.error('이메일 전송 중 오류가 발생했습니다.', error.message);
+    }
+  };
+
+  sendEmail();
+
 
   return <FindIdContainer>
     <FindIdHeaderWrapper>
@@ -79,7 +111,7 @@ export default function FindId() {
             onChange={handleEmailChange}
             placeholder="이메일을 입력하세요"
           />
-    <FindIdBtn>이메일 발송</FindIdBtn>
+    <FindIdBtn onClick={sendEmail}>이메일 발송</FindIdBtn>
 
   </FindIdContainer>
 }

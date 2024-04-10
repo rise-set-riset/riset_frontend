@@ -27,8 +27,7 @@ const Input = styled.div`
     font-size: 14px;
     color: #353535;
     letter-spacing: 0.1px;
-    margin-bottom: 4px;
-  }
+  };
   
   input {
     width: 100%;
@@ -38,6 +37,7 @@ const Input = styled.div`
     color: #353535;
     font-size: 16px;
     letter-spacing: 0.5px;
+    margin-top: 4px;
 
     &::placeholder {
       color: #c4c4c4;
