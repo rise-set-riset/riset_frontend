@@ -7,13 +7,13 @@ interface Children {
 export const ResponsiveContext = createContext<boolean>(false);
 
 export function ResponsiveProvider({ children }: Children) {
-  // 현재 화면 사이즈가 768px 보다 큰지 확인
-  const IS_MOBILE = matchMedia("screen and (max-width: 600px)").matches;
+  // 현재 화면 사이즈가 599px 보다 큰지 확인
+  const IS_MOBILE = matchMedia("screen and (max-width: 599px)").matches;
   const [isMobile, setIsMobile] = useState<boolean>(IS_MOBILE);
 
   // 화면 사이즈에 따른 상태값 지정
   const handleResize = () => {
-    if (window.innerWidth <= 600) {
+    if (window.innerWidth <= 599) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
