@@ -29,6 +29,8 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
     transition: background-color 0.3s;
   }
   .main {
+    min-height: calc(100vh - 60px);
+    height: calc(100% - 60px);
     margin-top: 60px;
     display: flex;
     flex-direction: column;
@@ -50,7 +52,6 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
   .title {
     height: 4rem;
     padding: 18px 24px;
-    font-size: 1.5rem;
     background-color: var(--color-white);
     color: var(--color-black);
   }
