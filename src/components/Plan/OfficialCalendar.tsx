@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -115,6 +115,23 @@ const CalendarCustomStyle = styled.div`
         border-radius: 50%;
         background-color: var(--color-brand-yellow);
     }
+
+    /* 이벤트 스타일 */
+    a.fc-h-event {
+        padding-left: 0.5rem;
+        border: none;
+        border-radius: 12px;
+        background-color: #ffbfa7;
+        &:hover {
+            background-color: var(--color-brand-main);
+            div {
+                color: white;
+            }
+        }
+        div {
+            color: var(--color-black);
+        }
+    }
 `;
 
 export interface EventFormType {
@@ -126,6 +143,7 @@ export interface ClickPositionType {
 }
 
 export default function OfficialCalendar() {
+    const formRef = useRef<any>(null);
     const calendarRef = useRef<any>(null);
     const [renderedYear, setRenderedYear] = useState<number>(
         new Date().getFullYear()
@@ -142,26 +160,73 @@ export default function OfficialCalendar() {
     }, []);
 
     /* 
-    eventForm: 추가하거나 수정할 이벤트 Form
     isFormOpen: Form 팝업 표시 여부
-
+    eventForm: 추가하거나 수정할 이벤트 Form
     */
-    /* 날짜 클릭시 */
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-    const [eventForm, setEventForm] = useState<EventFormType>({});
+    const [eventForm, setEventForm] = useState<EventFormType>({
+        startDate: "",
+        endDate: "",
+    });
+    const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
+
     const [dateClickPosition, setDateClickPosition] =
         useState<ClickPositionType>({
             x: 0,
             y: 0,
         });
 
-    const handleDateClick = (info: any) => {
+    /* 날짜 드래그할 때 */
+    const handleSelectPeriod = (info: any) => {
+        const date = new Date(info.endStr);
+        date.setDate(date.getDate() - 1);
+        const eventEnd: string = date.toISOString().split("T")[0];
+
         setIsFormOpen(true);
+        setEventForm((prevState) => ({
+            ...prevState,
+            startDate: info.startStr,
+            endDate: eventEnd,
+        }));
+
         setDateClickPosition({
             x: info.jsEvent.x,
             y: info.jsEvent.y,
         });
+
+        // 이벤트 추가
+        const calendarApi = calendarRef.current.getApi();
+        const newEvent = {
+            id: "unfixed",
+            title: "New Event",
+            start: info.startStr,
+            end: info.endStr,
+        };
+        // setUnfixedEvent(newEvent);
+        calendarApi.addEvent(newEvent);
+        setEventFormList((prevState) => [
+            ...prevState,
+            {
+                id: "unfixed",
+                title: "New Event",
+            },
+        ]);
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                formRef.current &&
+                !formRef.current.contains(event.target as Node)
+            ) {
+                setIsFormOpen(false);
+            }
+        };
+        document.body.addEventListener("click", handleClickOutside);
+        return () => {
+            document.body.removeEventListener("click", handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         setRenderedYear(
@@ -188,8 +253,10 @@ export default function OfficialCalendar() {
                     titleFormat: 연/월 제목 표시 방식
                     eventTimeFormat: 시간 표시 방식
                     editable: 수정 가능 여부
+                    events: 이벤트 목록
+                    selectable: 날짜 선택 가능 여부
+                    select: 날짜 드래그 함수
                     dayMaxEvents: 팝업으로 펼쳐보기
-                    dateClick: 날짜 클릭 이벤트
                     */
                     ref={calendarRef}
                     plugins={[
@@ -220,20 +287,24 @@ export default function OfficialCalendar() {
                         minute: "2-digit",
                         meridiem: "short",
                     }}
+                    events={eventFormList}
                     editable={true}
+                    selectable={true}
+                    select={(info) => handleSelectPeriod(info)}
                     dayMaxEvents={true}
-                    dateClick={(info) => handleDateClick(info)}
                 />
             </CalendarCustomStyle>
 
             {isFormOpen && (
-                <EventForm
-                    isFormOpen={isFormOpen}
-                    setIsFormOpen={setIsFormOpen}
-                    eventForm={eventForm}
-                    setEventForm={setEventForm}
-                    dateClickPosition={dateClickPosition}
-                />
+                <div ref={formRef}>
+                    <EventForm
+                        isFormOpen={isFormOpen}
+                        setIsFormOpen={setIsFormOpen}
+                        eventForm={eventForm}
+                        setEventForm={setEventForm}
+                        dateClickPosition={dateClickPosition}
+                    />
+                </div>
             )}
         </Layout>
     );

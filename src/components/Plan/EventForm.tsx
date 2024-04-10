@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import type { ClickPositionType, EventFormType } from "./OfficialCalendar";
 import styled, { keyframes } from "styled-components";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -41,8 +41,8 @@ const FormLayout = styled.form<{
     width: 375px;
     padding: 16px 24px 24px;
     position: fixed;
-    left: ${(props) => `${props.$dateClickPosition.x}px`};
-    top: ${(props) => `${props.$dateClickPosition.y}px`};
+    left: ${(props) => `${props.$dateClickPosition.x + 10}px`};
+    top: ${(props) => `${props.$dateClickPosition.y - 150}px`};
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -315,6 +315,17 @@ export default function EventForm({
     setEventForm,
     dateClickPosition,
 }: EventFormProps) {
+    /* Form 변경 */
+    const handleFormChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+        setEventForm((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
     /* 색상 선택 */
     const eventColorList = [
         "#FFBFA7",
@@ -327,9 +338,27 @@ export default function EventForm({
     const [selectedColor, setSelectedColor] = useState<string>(
         eventColorList[0]
     );
+
     const handleSelectColor = (colorcode: string) => {
         setSelectedColor(colorcode);
         setIsColorOpen(false);
+        setEventForm((prevState) => ({
+            ...prevState,
+            color: colorcode,
+        }));
+    };
+
+    /* 선택한 날짜와 시간 */
+    const [selectStartDate, setSelectStartDate] = useState(
+        new Date(eventForm.startDate)
+    );
+    const [selectEndDate, setSelectEndDate] = useState(
+        new Date(eventForm.endDate)
+    );
+
+    const handlePickerChange = (date: Date) => {
+        setIsOpen(!isOpen);
+        setStartDate(date);
     };
 
     /* 시간 선택 */
@@ -340,9 +369,8 @@ export default function EventForm({
         setHasTime(!hasTime);
     };
 
-    //
-    // setHours(setMinutes(new Date(), 30), 17)
-    const [startDate, setStartDate] = useState(new Date());
+    ////// selected~로 바꾸기
+    const [startDate, setStartDate] = useState(new Date(eventForm.startDate));
     const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (date: Date) => {
@@ -365,7 +393,13 @@ export default function EventForm({
             </CloseIconBox>
 
             <TitleInputBox>
-                <input type="text" placeholder="제목을 입력해주세요" />
+                <input
+                    type="text"
+                    placeholder="제목을 입력해주세요"
+                    name="title"
+                    value={eventForm?.title}
+                    onChange={handleFormChange}
+                />
                 <SelectColorButton
                     type="button"
                     onClick={() => setIsColorOpen(true)}
@@ -404,14 +438,14 @@ export default function EventForm({
                             className="event-input-date"
                             onClick={handleClick}
                         >
-                            {format(startDate, "M / d")}
+                            {format(selectStartDate, "M / d")}
                         </SelectDateButton>
                         {isOpen && (
                             <DatePicker
                                 // locale={ko}
                                 dateFormat="yyyy-MM-dd"
-                                selected={startDate}
-                                onChange={handleChange}
+                                selected={selectStartDate}
+                                onChange={handlePickerChange}
                                 inline
                                 shouldCloseOnSelect
                                 // showTimeSelect
@@ -428,13 +462,13 @@ export default function EventForm({
                             className="event-input-date"
                             onClick={handleClick}
                         >
-                            {format(startDate, "M / d")}
+                            {format(selectEndDate, "M / d")}
                         </SelectDateButton>
                         {isOpen && (
                             <DatePicker
                                 dateFormat="MM.dd"
-                                selected={startDate}
-                                onChange={handleChange}
+                                selected={selectEndDate}
+                                onChange={handlePickerChange}
                                 inline
                                 shouldCloseOnSelect
                             />
@@ -458,11 +492,11 @@ export default function EventForm({
                                         className="event-input-time"
                                         onClick={handleClick}
                                     >
-                                        {format(startDate, "hh:mm")}
+                                        {format(selectStartDate, "hh:mm")}
                                     </button>
                                     {isOpen && (
                                         <DatePicker
-                                            selected={startDate}
+                                            selected={selectStartDate}
                                             onChange={handleChange}
                                             showTimeSelect
                                             showTimeSelectOnly
@@ -491,11 +525,11 @@ export default function EventForm({
                                         className="event-input-time"
                                         onClick={handleClick}
                                     >
-                                        {format(startDate, "hh:mm")}
+                                        {format(selectEndDate, "hh:mm")}
                                     </button>
                                     {isOpen && (
                                         <DatePicker
-                                            selected={startDate}
+                                            selected={selectEndDate}
                                             onChange={handleChange}
                                             showTimeSelect
                                             showTimeSelectOnly
@@ -519,13 +553,21 @@ export default function EventForm({
 
             <WriterInputBox>
                 <label htmlFor="event-writer">작성자 :</label>
-                <input type="text" id="event-writer" name="event-writer" />
+                <input
+                    type="text"
+                    id="event-writer"
+                    name="writer"
+                    value={eventForm?.writer}
+                    onChange={handleFormChange}
+                />
             </WriterInputBox>
             <ContentInputBox>
                 <textarea
-                    name="event-content"
                     id="event-content"
                     placeholder="내용을 입력해주세요"
+                    name="content"
+                    value={eventForm?.content}
+                    onChange={handleFormChange}
                 ></textarea>
             </ContentInputBox>
             <EndButtonBox>
