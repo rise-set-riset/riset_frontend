@@ -1,16 +1,19 @@
-import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { RootState } from "../../redux/store/store";
+import CommuteRecord from "../../components/Commute/CommuteRecord";
 
-const Layout = styled.main<{ $isSideMenuOpen: boolean }>`
-  width: ${(props) => (props.$isSideMenuOpen ? "calc(100% - 60px)" : "100%")};
-  height: 100%;
-  margin-top: 60px;
-  border: 2px solid black;
+const Layout = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export default function Commute() {
-  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
-
-  return <Layout $isSideMenuOpen={isSideMenuOpen}>Commute</Layout>;
+  return (
+    <Layout>
+      <main className="main">
+        <h2 className="title">출퇴근</h2>
+        <CommuteRecord />
+      </main>
+    </Layout>
+  );
 }

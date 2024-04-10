@@ -5,8 +5,10 @@ import { ResponsiveContext } from "../contexts/ResponsiveContext";
 import BottomMenu from "../components/Header/BottomMenu";
 import SideMenu from "../components/Header/SideMenu";
 import { createGlobalStyle } from "styled-components";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store/store";
 
-export const GlobalStyle = createGlobalStyle`
+const GlobalSvgStyle = createGlobalStyle`
   svg {
     transition: all 0.3s;
     cursor: pointer;
@@ -22,34 +24,58 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
-export const GlobalOutletStyle = createGlobalStyle`
-  main {
-    max-width: 1200px;
-    width: 100%;
+const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
+  * {
+    transition: background-color 0.3s;
+  }
+  .main {
+    min-height: calc(100vh - 60px);
+    height: calc(100% - 60px);
     margin-top: 60px;
-    padding-left: 200px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     background-color: var(--color-gray-1);
+    transition: width 0.3s;
+    width: ${(props) => {
+        switch (props.$sideOpenState) {
+            case "mobile":
+                return "100%";
+            case "pcOpen":
+                return "calc(100% - 200px)";
+            case "pcClose":
+                return "calc(100% - 60px)";
+            default:
+                return null;
+        }
+    }}
   }
-
-h1 {
-  background-color: var(--color-white);
-  height: 4rem;
-  padding: 18px 24px;
-  font-size: 1.5rem;
-}
+  .title {
+    height: 4rem;
+    padding: 18px 24px;
+    background-color: var(--color-white);
+    color: var(--color-black);
+  }
 `;
+
+type SideOpenState = "mobile" | "pcOpen" | "pcClose";
 
 export default function Root() {
     const isMobile = useContext(ResponsiveContext);
     const location = useLocation();
     const isAuth = !["/", "/signup", "/authority"].includes(location.pathname);
+    const isSideMenuOpen = useSelector(
+        (state: RootState) => state.sideMenu.isSideMenuOpen
+    );
+    const sideOpenState: SideOpenState = isMobile
+        ? "mobile"
+        : isSideMenuOpen
+        ? "pcOpen"
+        : "pcClose";
 
     return (
         <>
-            <GlobalOutletStyle />
+            <GlobalOutletStyle $sideOpenState={sideOpenState} />
+            <GlobalSvgStyle />
             {isAuth && <Header />}
             <Outlet />
             {isAuth && <SideMenu />}

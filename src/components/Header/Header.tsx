@@ -8,7 +8,6 @@ import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { DarkModeContext } from "../../contexts/DarkmodeContext";
 import { Link } from "react-router-dom";
-import { GlobalStyle } from "../../pages/Root";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
@@ -20,7 +19,6 @@ const Layout = styled.header`
     background-color: var(--color-white);
     z-index: 100;
     border-bottom: 1px solid var(--color-brand-lightgray);
-    transition: background-color 0.3s;
     box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
     -webkit-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
@@ -94,7 +92,6 @@ export default function Header() {
 
     return (
         <>
-            <GlobalStyle />
             <Layout>
                 <Nav>
                     {!isMobile && (

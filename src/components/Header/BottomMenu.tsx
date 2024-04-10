@@ -4,7 +4,6 @@ import { ReactComponent as Board } from "../../assets/bottomMenu/bottom-board.sv
 import { ReactComponent as Home } from "../../assets/bottomMenu/bottom-home.svg";
 import { ReactComponent as Commute } from "../../assets/bottomMenu/bottom-commute.svg";
 import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg";
-import React from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 import { sideMenuAction } from "../../redux/slice/sideMenuSlice";

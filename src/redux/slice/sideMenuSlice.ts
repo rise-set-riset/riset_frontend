@@ -8,7 +8,7 @@ interface SideMenuState {
 
 // 초기값
 const initialState: SideMenuState = {
-  isSideMenuOpen: false,
+  isSideMenuOpen: true,
 };
 
 // reducer 정의
