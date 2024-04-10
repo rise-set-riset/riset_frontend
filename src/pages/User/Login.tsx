@@ -158,7 +158,7 @@ export default function Login() {
   const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);
   }
-  
+
 // 해당 URL 페이지로 이동
   const handleFindId = () => {
     navigate('/findid');
@@ -235,7 +235,7 @@ const handleGoogleLogin = () => {
     <img src={loginLogo} alt="logo"/>
    </LogoWrapper> 
     <LoginForm>
-      <form>
+      <form onSubmit={handleLogin}>
       <TextInputWrapper>
       <TextInput
             label="아이디"
@@ -253,7 +253,7 @@ const handleGoogleLogin = () => {
             type="password"
             value={password}
             onChange={handlePasswordChange}
-            placeholder="아이디를 입력하세요"
+            placeholder="비밀번호를 입력하세요"
           />
           <FindIdButton onClick={handleFindPassword}>비밀번호 찾기</FindIdButton>
       </TextInputWrapper>

@@ -13,7 +13,7 @@ const FindIdContainer = styled.div`
   justify-content: center;
 `;
 
-const FindIdHeaderWrapper = styled. div`
+const FindIdHeaderWrapper = styled.div`
   width: 100%;
   height: 50px;
   margin-bottom: 40px;
@@ -24,7 +24,7 @@ const FindIdHeaderWrapper = styled. div`
     margin-bottom: 10px;
     letter-spacing: 0.5px;
     color: #353535
-  };
+  }
 
   p:last-child{
     font-size: 16px;
@@ -59,7 +59,7 @@ export default function FindId() {
 
   // 입력 필드의 값이 변경되면 해당값을 email에 반영
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    setEmail(e.target.value);
   }
 
 // 입력된 이름과 이메일을 서버에 POST 요청으로 전송

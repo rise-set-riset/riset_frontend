@@ -14,7 +14,7 @@ const FindIdContainer = styled.div`
 
 `
 
-const FindIdHeaderWrapper = styled. div`
+const FindIdHeaderWrapper = styled.div`
   width: 100%;
   height: 50px;
   margin-bottom: 40px;
@@ -66,7 +66,7 @@ export default function FindPassword() {
 // 입력된 아이디와 이메일을 서버에 POST 요청으로 전송
   const sendEmail = async () => {
     const data = {
-      name: name,
+      id: id,
       email: email,
     };
   
