@@ -1,5 +1,5 @@
 [
   { "id": 1, "companyName": "본점", "latitude": 37.5950656, "longitude": 127.0808576 },
   { "id": 2, "companyName": "중랑구 상봉 지점", "latitude": 37.5930656, "longitude": 127.0808576 },
-  { "id": 3, "companyName": "테스트", "latitude": 37.54319, "longitude": 127.0611968 }
+  { "id": 3, "companyName": "테스트", "latitude": 37.5455744, "longitude": 127.0611968 }
 ]
