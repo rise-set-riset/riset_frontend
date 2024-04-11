@@ -383,27 +383,27 @@ export default function SignUp (){
 
         <AgreeAllCheckbox>
           <label>
-            <CustomCheckbox checked={agreeAll} onChange={handleAgreeAllChange} /><p>
+            <CustomCheckbox isChecked={agreeAll} onChange={handleAgreeAllChange} /><p>
             전체 동의하기<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeAllCheckbox>
 
         <AgreeCheckbox>
           <label>
-            <CustomCheckbox checked={agreeAge} onChange={handleAgreeAgeChange}  /><p>
+            <CustomCheckbox isChecked={agreeAge} onChange={handleAgreeAgeChange}  /><p>
             [필수] 만 14세 이상입니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
 
         <AgreeCheckbox>
           <label>
-            <CustomCheckbox checked={agreeFinal} onChange={handleAgreeFinalChange} />
+            <CustomCheckbox isChecked={agreeFinal} onChange={handleAgreeFinalChange} />
             <p>[필수] <span>최종이용자 이용약관</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
         <AgreeCheckbox>
           <label>
-            <CustomCheckbox checked={agreePrivacy} onChange={handleAgreePrivacyChange} />
+            <CustomCheckbox isChecked={agreePrivacy} onChange={handleAgreePrivacyChange} />
             <p>[필수] <span>개인정보 수집 및 이용</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
