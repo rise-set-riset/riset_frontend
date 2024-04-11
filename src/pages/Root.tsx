@@ -55,6 +55,12 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
     padding: 18px 24px;
     background-color: var(--color-white);
     color: var(--color-black);
+
+    @media screen and (max-width: 430px) {
+            font-size: 1.2rem;
+            height: 3rem;
+            padding: 14px 20px;
+        }
   }
 `;
 
@@ -63,11 +69,21 @@ type SideOpenState = "mobile" | "pcOpen" | "pcClose";
 export default function Root() {
   const isMobile = useContext(ResponsiveContext);
   const location = useLocation();
-  const isAuth = !["/", "/signup", "/authority", "/findid", "/findpassword"].includes(
-    location.pathname
+  const isAuth = ![
+    "/",
+    "/signup",
+    "/authority",
+    "/findid",
+    "/findpassword",
+  ].includes(location.pathname);
+  const isSideMenuOpen = useSelector(
+    (state: RootState) => state.sideMenu.isSideMenuOpen
   );
-  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
-  const sideOpenState: SideOpenState = isMobile ? "mobile" : isSideMenuOpen ? "pcOpen" : "pcClose";
+  const sideOpenState: SideOpenState = isMobile
+    ? "mobile"
+    : isSideMenuOpen
+    ? "pcOpen"
+    : "pcClose";
 
   return (
     <>
