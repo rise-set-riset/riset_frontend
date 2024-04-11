@@ -34,17 +34,10 @@ const Layout = styled.label`
   }
 `;
 
-export default function RadioButton({ name, title }: RadioButtonProps) {
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-
+export default function RadioButton({ name, value, checked, title, onChange }: RadioButtonProps) {
   return (
     <Layout>
-      <input
-        type="radio"
-        name={name}
-        checked={isChecked}
-        onChange={() => setIsChecked(!isChecked)}
-      />
+      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} />
       <span>{title}</span>
     </Layout>
   );

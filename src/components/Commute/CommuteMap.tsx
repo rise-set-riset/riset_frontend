@@ -45,8 +45,9 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     longitude: 0,
   });
 
-  /* 백엔드에서 회사명, 위도, 경도 데이터 받아오기 */
+  /* 회사명, 위도, 경도 데이터 받아오기 */
   useEffect(() => {
+    // API 필요
     fetch("/data/map.json")
       .then((res) => res.json())
       .then((data) => setMaps(data));
@@ -84,12 +85,11 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
 
     geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
 
-    // 사용자가 회사 반경 안에 들어왔는지 계산하기
+    // 사용자가 회사 반경 안에 들어왔는지 계산하기 (하버사인 공식)
     const toRadians = (deg: number) => {
       return deg * (Math.PI / 180);
     };
 
-    // 두 지점간의 거리 차이 계산식 (하버사인 공식)
     const handleInRange = (
       companyLat: number,
       companyLng: number,

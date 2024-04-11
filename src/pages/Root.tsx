@@ -38,16 +38,16 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
     transition: width 0.3s;
     padding-bottom: 60px;
     width: ${(props) => {
-        switch (props.$sideOpenState) {
-            case "mobile":
-                return "100%";
-            case "pcOpen":
-                return "calc(100% - 200px)";
-            case "pcClose":
-                return "calc(100% - 60px)";
-            default:
-                return null;
-        }
+      switch (props.$sideOpenState) {
+        case "mobile":
+          return "100%";
+        case "pcOpen":
+          return "calc(100% - 200px)";
+        case "pcClose":
+          return "calc(100% - 60px)";
+        default:
+          return null;
+      }
     }}
   }
   .title {
@@ -61,26 +61,22 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
 type SideOpenState = "mobile" | "pcOpen" | "pcClose";
 
 export default function Root() {
-    const isMobile = useContext(ResponsiveContext);
-    const location = useLocation();
-    const isAuth = !["/", "/signup", "/authority" , "/findid", "/findpassword"].includes(location.pathname);
-    const isSideMenuOpen = useSelector(
-        (state: RootState) => state.sideMenu.isSideMenuOpen
-    );
-    const sideOpenState: SideOpenState = isMobile
-        ? "mobile"
-        : isSideMenuOpen
-        ? "pcOpen"
-        : "pcClose";
+  const isMobile = useContext(ResponsiveContext);
+  const location = useLocation();
+  const isAuth = !["/", "/signup", "/authority", "/findid", "/findpassword"].includes(
+    location.pathname
+  );
+  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
+  const sideOpenState: SideOpenState = isMobile ? "mobile" : isSideMenuOpen ? "pcOpen" : "pcClose";
 
-    return (
-        <>
-            <GlobalOutletStyle $sideOpenState={sideOpenState} />
-            <GlobalSvgStyle />
-            {isAuth && <Header />}
-            <Outlet />
-            {isAuth && <SideMenu />}
-            {isMobile && isAuth && <BottomMenu />}
-        </>
-    );
+  return (
+    <>
+      <GlobalOutletStyle $sideOpenState={sideOpenState} />
+      <GlobalSvgStyle />
+      {isAuth && <Header />}
+      <Outlet />
+      {isAuth && <SideMenu />}
+      {isMobile && isAuth && <BottomMenu />}
+    </>
+  );
 }
