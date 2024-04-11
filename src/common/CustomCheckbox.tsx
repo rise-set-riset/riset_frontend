@@ -24,20 +24,18 @@ const InputCheckbox = styled.input`
 
 interface CheckboxProps {
     isChecked?: boolean;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleCheckbox?: () => void;
+    onChange?: (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => void | (() => void);
 }
 
-export default function CustomCheckbox({
-    isChecked,
-    handleCheckbox,
-}: CheckboxProps) {
+export default function CustomCheckbox({ isChecked, onChange }: CheckboxProps) {
     return (
         <InputCheckbox
             type="checkbox"
             className="checkbox"
             checked={isChecked}
-            onChange={handleCheckbox}
+            onChange={onChange}
         />
     );
 }
