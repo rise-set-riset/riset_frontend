@@ -113,21 +113,24 @@ interface Events {
   handleIsFormOpen: (info: any) => void;
 }
 
-export default function CommuteCalendar({ isEvents, handleIsFormOpen }: Events) {
+export default function Calendar({ isEvents, handleIsFormOpen }: Events) {
   const [datas, setData] = useState<EventType[]>([]);
   const [events, setEvents] = useState<EventType[]>([]);
+  const [currentEvents, setCurrentEvents] = useState<EventType[]>([]);
   const calendarRef = useRef<any | null>(null);
   const [month, setMonth] = useState<string>("");
 
-  // isEvents props가 true로 넘어올 경우 화면에 출근여부 색 이벤트 지정
+  /* 달력에서 이전달, 다음달 버튼 클릭 시 서버로부터 해당 달 데이터 가져오기 */
   useEffect(() => {
+    // isEvents props가 true로 넘어올 경우에만 화면에 출근여부 색 이벤트 지정
     if (isEvents) {
+      // 백엔드에 달 관련 정보 추후에 동적으로 넘겨주기
       fetch("/data/events.json")
         .then((res) => res.json())
         .then((data: EventType[]) => {
           // 전체 데이터 세팅
           setData(data);
-          // 필터링 된 events에 쓰일 데이터 세팅
+          // events에 사용할 데이터 세팅 (color는 근무 형식에 따른 색상으로 변경)
           const eventList = data.map(({ color, start }) => ({
             color:
               color === "full" || color === "today"
@@ -141,19 +144,21 @@ export default function CommuteCalendar({ isEvents, handleIsFormOpen }: Events) 
           setEvents(eventList);
         });
     }
-  }, []);
+  }, [month]);
 
-  // event 표시 색상 정해주기
+  /* 이벤트가 있을 경우 색상 정해주기 */
   useEffect(() => {
     if (calendarRef.current) {
       // FullCalendar 객체에 접근
       const calendarApi = calendarRef.current.getApi();
-
+      // 이벤트가 하나라도 있다면 = 칠해줄 일이 하나라도 있다면
       if (events.length > 0) {
         events.forEach(({ start }) => {
           const cell = calendarApi.el.querySelector(`.fc-day[data-date="${start}"] a`);
-          cell.style.color = "var(--color-white)";
-          cell.style.fontWeight = "bold";
+          if (cell) {
+            cell.style.color = "var(--color-white)";
+            cell.style.fontWeight = "bold";
+          }
         });
       }
     }
@@ -165,38 +170,60 @@ export default function CommuteCalendar({ isEvents, handleIsFormOpen }: Events) 
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        showNonCurrentDates={false} // 다음 달의 날짜를 숨김
-        aspectRatio={1.2} // 가로 세로 비율 조정
+        showNonCurrentDates={false} // 다음 달의 날짜 없애기 (칸은 남아있음)
+        aspectRatio={1.2} // 달력 가로 세로 비율 조정
         headerToolbar={{
-          left: "prev",
+          left: "prev", // 헤더 이전달 버튼
           center: "title", // 헤더 제목
-          right: "next",
+          right: "next", // 헤더 다음달 버튼
         }}
+        // 다음달 날짜 칸 없애기
         views={{
           dayGridMonth: {
-            fixedWeekCount: false, // 다음달 날짜 안보이게 하기
+            fixedWeekCount: false,
           },
         }}
+        // 달력 제목 format
         titleFormat={{
           year: "numeric",
         }}
+        // 달력에서 이전달, 다음달 버튼 클릭 시
         datesSet={(info) => {
           const currentMonth = new Date(info.start);
           setMonth((currentMonth.getMonth() + 1).toString());
         }}
+        // 특정 날짜 클릭 시
         dateClick={(info) => {
-          // 현재 날짜, 클릭한 달력 날짜 비교 후 적을 경우 처리 X
-          const currentDate = new Date().getDate();
-          const clickedDate = new Date(info.date).getDate();
-          if (currentDate < clickedDate) return;
+          if (isEvents) {
+            // 현재 날짜, 클릭한 달력 날짜 비교 후 적을 경우 처리 X
+            const currentDate = new Date().getDate();
+            const clickedDate = new Date(info.date).getDate();
+            if (currentDate < clickedDate) return;
 
-          // 데이터가 있는 경우에만 함수 호출
-          const data: EventType | undefined = datas.find((event) => event.start === info.dateStr);
-          if (data) {
-            handleIsFormOpen(data);
+            // 데이터가 있는 경우에만 함수 호출
+            const data: EventType | undefined = datas.find((event) => event.start === info.dateStr);
+            if (data) {
+              handleIsFormOpen(data);
+            }
+          } else {
+            // 현재 날짜 Date 형식
+            const date = new Date(info.date);
+
+            // 이벤트 생성
+            const newEvent = {
+              id: "unfixed",
+              start: "2024-04-10",
+              end: "2024-04-12",
+              color: "var(--color-brand-main)",
+            };
+
+            // 이벤트 등록
+            setCurrentEvents((prev) => [...prev, newEvent]);
+
+            // 이벤트 삭제는 알아서
           }
         }}
-        events={events}
+        events={isEvents ? events : currentEvents}
       />
     </Layout>
   );
