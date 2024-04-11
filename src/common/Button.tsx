@@ -4,10 +4,10 @@ import styled from "styled-components";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active: boolean;
   title: string;
-  handleBtnClick: () => void;
+  handleBtnClick?: () => void;
 }
 
-const CustomButton = styled.button<{ $active: boolean }>`
+const Layout = styled.button<{ $active: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,8 +28,8 @@ const CustomButton = styled.button<{ $active: boolean }>`
 
 export default function Button({ type, active, title, handleBtnClick }: ButtonProps) {
   return (
-    <CustomButton type={type} className="custom-button" $active={active} onClick={handleBtnClick}>
+    <Layout type={type} className="custom-button" $active={active} onClick={handleBtnClick}>
       {title}
-    </CustomButton>
+    </Layout>
   );
 }
