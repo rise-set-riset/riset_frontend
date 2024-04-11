@@ -448,7 +448,7 @@ export default function EventForm({
                             >
                                 <CustomCheckbox
                                     isChecked={colorcode === selectedColor}
-                                    handleCheckbox={() =>
+                                    onChange={() =>
                                         handleSelectColor(colorcode)
                                     }
                                 />
@@ -460,10 +460,7 @@ export default function EventForm({
 
             {/* 시간포함 여부 */}
             <DecideTimeOpen onClick={handleHasTime}>
-                <CustomCheckbox
-                    isChecked={hasTime}
-                    handleCheckbox={handleHasTime}
-                />
+                <CustomCheckbox isChecked={hasTime} onChange={handleHasTime} />
                 <span>시간포함</span>
             </DecideTimeOpen>
 

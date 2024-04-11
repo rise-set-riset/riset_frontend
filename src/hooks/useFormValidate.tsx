@@ -57,28 +57,28 @@ export const useFormValidate = (form: FormState): {
     return regex.test(input); 
   };
 
-// 아이디 입력 필드가 포커스를 잃었을 때, handleValidateId 함수를 통해 아이디의 유효성을 검사하고, 그 결과에 따라 isValidId 상태를 업데이트
+// 아이디 입력 필드가 포커스를 잃었을 때, handleValidateId 통해 아이디의 유효성을 검사하고, isValidId 상태를 업데이트
   const handleIdBlur = () => {
     setIsValidId(handleValidateId(form.id));
   };
 
-// 비밀번호 입력 필드가 포커스를 잃었을 때,handleValidatePassword 함수를 통해 아이디의 유효성을 검사하고, 그 결과에 따라 isValidPassword 상태를 업데이트
+// 비밀번호 입력 필드가 포커스를 잃었을 때,handleValidatePassword 통해 아이디의 유효성을 검사하고, isValidPassword 상태를 업데이트
   const handlePasswordBlur = () => {
     setIsValidPassword(handleValidatePassword(form.password));
   };
 
-// 비밀번호 입력 필드가 포커스를 잃었을 때, 비밀번호 값과 비밀번호 확인 값이 같으면, 그 결과에 따라 isValidConfirmPassword 상태를 업데이트
+// 비밀번호 입력 필드가 포커스를 잃었을 때, 비밀번호 값과 비밀번호 확인 값이 같으면, isValidConfirmPassword 상태를 업데이트
   const handleConfirmPasswordBlur = () => {
     setIsValidConfirmPassword(form.confirmPassword === form.password && isValidPassword);
   };
   
-// 비밀번호 입력 필드가 포커스를 잃었을 때,handleValidateName 함수를 통해 아이디의 유효성을 검사하고, 그 결과에 따라 isValidName 상태를 업데이트
+// 비밀번호 입력 필드가 포커스를 잃었을 때,handleValidateName 통해 아이디의 유효성을 검사하고, isValidName 상태를 업데이트
   const handleNameBlur = () => {
     setIsValidName(handleValidateName(form.name));
   };
   
 
-// 비밀번호 입력 필드가 포커스를 잃었을 때,handleValidatePhoneNumber 함수를 통해 아이디의 유효성을 검사하고, 그 결과에 따라 isValidPhoneNumber 상태를 업데이트
+// 비밀번호 입력 필드가 포커스를 잃었을 때,handleValidatePhoneNumber 통해 아이디의 유효성을 검사하고, isValidPhoneNumber 상태를 업데이트
   const handlePhoneNumberBlur = () => {
     setIsValidPhoneNumber(handleValidatePhoneNumber(form.phoneNumber));
   };

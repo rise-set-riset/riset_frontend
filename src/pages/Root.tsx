@@ -36,6 +36,7 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
     flex-direction: column;
     background-color: var(--color-gray-1);
     transition: width 0.3s;
+    padding-bottom: 60px;
     width: ${(props) => {
         switch (props.$sideOpenState) {
             case "mobile":
@@ -62,7 +63,7 @@ type SideOpenState = "mobile" | "pcOpen" | "pcClose";
 export default function Root() {
     const isMobile = useContext(ResponsiveContext);
     const location = useLocation();
-    const isAuth = !["/", "/signup", "/authority"].includes(location.pathname);
+    const isAuth = !["/", "/signup", "/authority" , "/findid", "/findpassword"].includes(location.pathname);
     const isSideMenuOpen = useSelector(
         (state: RootState) => state.sideMenu.isSideMenuOpen
     );
