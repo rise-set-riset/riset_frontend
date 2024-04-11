@@ -146,6 +146,7 @@ export default function Calendar({
     // isEvents props가 true로 넘어올 경우에만 화면에 출근여부 색 이벤트 지정
     if (isEvents) {
       // 백엔드에 달 관련 정보 추후에 동적으로 넘겨주기
+      // API 필요
       fetch("/data/events.json")
         .then((res) => res.json())
         .then((data: EventType[]) => {

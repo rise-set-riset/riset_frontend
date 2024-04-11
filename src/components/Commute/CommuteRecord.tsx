@@ -2,7 +2,7 @@ import styled from "styled-components";
 import CommuteMap from "./CommuteMap";
 import { GoPlusCircle } from "react-icons/go";
 import Button from "../../common/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Calendar from "../../common/Calendar";
 import Modal from "../../common/Modal";
 import CommuteForm from "./CommuteForm";
@@ -26,11 +26,14 @@ const CommuteCard = styled.div`
   flex-direction: column;
   align-items: center;
   width: 460px;
-  min-width: 460px;
   height: 570px;
   border-radius: 1rem;
   padding: 1rem;
   background-color: var(--color-white);
+
+  @media screen and (max-width: 500px) {
+    width: 350px;
+  }
 `;
 
 const Title = styled.div`
@@ -75,27 +78,97 @@ export interface EventType {
 export default function CommuteRecord() {
   const [address, setAddress] = useState<string>("");
   const [isInRange, setIsInRange] = useState<boolean>(false);
-  const [isWork, setIsWork] = useState<boolean>(false);
+  const [workStatus, setWorkStatus] = useState<string>("");
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [form, setForm] = useState<EventType>({});
 
-  /* 출/퇴근 버튼 클릭에 따른 active 버튼 전환 */
-  const handleIsWork = () => {
-    setIsWork((prev) => !prev);
+  /* 근무, 재택, 외근 여부 */
+  const handleFormWay = (way: string) => {
+    setForm((prev) => ({ ...prev, way }));
   };
 
-  /* Form Submit */
-  const handleIsFormOpen = (data: any) => {
-    setIsFormOpen(true);
-    setForm(data);
+  /* 시간 여부 */
+  const handleStartTime = (startTime: string) => {
+    setForm((prev) => ({ ...prev, startTime }));
   };
+
+  /* 시간 여부 */
+  const handleEndTime = (endTime: string) => {
+    setForm((prev) => ({ ...prev, endTime }));
+  };
+
+  /* 출근, 퇴근 버튼 클릭 시 */
+  const handleSubmit = async () => {
+    // const now: Date = new Date();
+    // 출/퇴근 날짜
+    // const year = now.getFullYear();
+    // const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    // const day = now.getDate().toString().padStart(2, "0");
+    // const commuteDate = `${year}-${month}-${day}`;
+
+    // // 출/퇴근 시간
+    // const hours = now.getHours().toString().padStart(2, "0");
+    // const minutes = now.getMinutes().toString().padStart(2, "0");
+    // const commuteTime = `${hours}:${minutes}`;
+
+    // API 필요
+    if (workStatus === "") {
+      // 출근 데이터
+      // await fetch("url", {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: "Bearer 토큰명",
+      //   },
+      //   body: JSON.stringify({
+      //     commuteDate,
+      //     commuteStart: commuteTime,
+      //     commutePlace,
+      //   }),
+      // });
+      setWorkStatus("start");
+    } else if (workStatus === "start") {
+      // 퇴근 데이터
+      // await fetch("url", {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: "Bearer 토큰명",
+      //   },
+      //   body: JSON.stringify({
+      //     commuteEnd: commuteTime,
+      //   }),
+      // });
+      setWorkStatus("end");
+    }
+  };
+
+  /* 달력 클릭해서 Form 열기 */
+  const handleIsFormOpen = (data: any) => {
+    setForm(data);
+    setIsFormOpen(true);
+  };
+
+  /* 버튼(+) 클릭해서 Form 열기 */
+  const handleAddFormBtn = () => {
+    fetch("/data/user.json")
+      .then((res) => res.json())
+      .then((data) => setForm(data));
+    setIsFormOpen(true);
+  };
+
+  /* 새로고침, 재접속 시 출근, 퇴근 버튼 클릭 여부 판단하기 */
+  useEffect(() => {
+    // API 필요
+    fetch("/data/btn-click.json")
+      .then((res) => res.json())
+      .then((data) => setWorkStatus(data));
+  }, []);
 
   return (
     <Layout>
       <CommuteCard>
         <Title>
           <h2>출퇴근 기록</h2>
-          <PlusBtn onClick={() => setIsFormOpen(true)} />
+          <PlusBtn onClick={handleAddFormBtn} />
         </Title>
         <CommuteMap setAddress={setAddress} setIsInRange={setIsInRange} />
         <CurrentPosition>
@@ -105,15 +178,17 @@ export default function CommuteRecord() {
         <CommuteButtons>
           <Button
             type="button"
-            active={!isWork && isInRange}
+            active={workStatus === "" && isInRange}
             title="출근"
-            handleBtnClick={handleIsWork}
+            handleBtnClick={handleSubmit}
+            disabled={workStatus === "start" || workStatus === "end"}
           />
           <Button
             type="button"
-            active={isWork && isInRange}
+            active={workStatus === "start" && isInRange}
             title="퇴근"
-            handleBtnClick={handleIsWork}
+            disabled={workStatus === "end" || workStatus === ""}
+            handleBtnClick={handleSubmit}
           />
         </CommuteButtons>
       </CommuteCard>
@@ -126,7 +201,13 @@ export default function CommuteRecord() {
         </CalendarWrapper>
       </CommuteCard>
       <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
-        <CommuteForm setIsFormOpen={setIsFormOpen} form={form} />
+        <CommuteForm
+          form={form}
+          setIsFormOpen={setIsFormOpen}
+          handleFormWay={handleFormWay}
+          handleStartTime={handleStartTime}
+          handleEndTime={handleEndTime}
+        />
       </Modal>
     </Layout>
   );

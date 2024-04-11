@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
+const Layout = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+`;
+
 /* 최종 시간값 표시되는 버튼 */
 const SelectDateButton = styled.button`
-  position: relative;
   font-size: 18px;
   font-weight: 500;
   border: none;
@@ -13,10 +18,10 @@ const SelectDateButton = styled.button`
 
 /* 시간 선택 팝업창 */
 const TimePickerLayout = styled.div`
+  position: absolute;
   z-index: 10;
   height: 220px;
-  margin-top: 30px;
-  position: absolute;
+  top: 30px;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -72,7 +77,7 @@ interface TimePickerProps {
     setSelectedTime: 선택한 시간 상태 설정 함수
     */
   selectedTime: string;
-  setSelectedTime: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedTime: (time: string) => void;
 }
 
 export default function TimePicker({
@@ -113,17 +118,8 @@ export default function TimePicker({
     }
   }, [isFixedHour, isFixedMin]);
 
-  /* 시간 선택 팝업창 표시 중에 스크롤 막기 */
-  useEffect(() => {
-    if (isPickerOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [isPickerOpen]);
-
   return (
-    <div>
+    <Layout>
       <SelectDateButton
         type="button"
         id="event-input-start-time"
@@ -160,6 +156,6 @@ export default function TimePicker({
           </TimeListBox>
         </TimePickerLayout>
       )}
-    </div>
+    </Layout>
   );
 }

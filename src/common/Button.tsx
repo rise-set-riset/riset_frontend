@@ -26,9 +26,15 @@ const Layout = styled.button<{ $active: boolean }>`
   }
 `;
 
-export default function Button({ type, active, title, handleBtnClick }: ButtonProps) {
+export default function Button({ type, active, title, disabled, handleBtnClick }: ButtonProps) {
   return (
-    <Layout type={type} className="custom-button" $active={active} onClick={handleBtnClick}>
+    <Layout
+      type={type}
+      className="custom-button"
+      $active={active}
+      disabled={disabled}
+      onClick={handleBtnClick}
+    >
       {title}
     </Layout>
   );
