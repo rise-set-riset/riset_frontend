@@ -36,6 +36,7 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
     flex-direction: column;
     background-color: var(--color-gray-1);
     transition: width 0.3s;
+    padding-bottom: 60px;
     width: ${(props) => {
         switch (props.$sideOpenState) {
             case "mobile":

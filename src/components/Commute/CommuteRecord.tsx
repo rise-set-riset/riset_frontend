@@ -3,6 +3,9 @@ import CommuteMap from "./CommuteMap";
 import { GoPlusCircle } from "react-icons/go";
 import Button from "../../common/Button";
 import { useState } from "react";
+import Calendar from "../../common/Calendar";
+import Modal from "../../common/Modal";
+import CommuteForm from "./CommuteForm";
 
 const Layout = styled.div`
   width: 100%;
@@ -24,6 +27,7 @@ const CommuteCard = styled.div`
   align-items: center;
   width: 460px;
   min-width: 460px;
+  height: 570px;
   border-radius: 1rem;
   padding: 1rem;
   background-color: var(--color-white);
@@ -59,10 +63,21 @@ const CommuteButtons = styled.div`
   }
 `;
 
+const CalendarWrapper = styled.div`
+  width: 100%;
+  margin-top: 1rem;
+`;
+
+export interface EventType {
+  [key: string]: string;
+}
+
 export default function CommuteRecord() {
   const [address, setAddress] = useState<string>("");
   const [isInRange, setIsInRange] = useState<boolean>(false);
   const [isWork, setIsWork] = useState<boolean>(false);
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+  const [form, setForm] = useState<EventType>({});
 
   // 출/퇴근 버튼 클릭에 따른 active 버튼 전환
   const handleIsWork = () => {
@@ -70,12 +85,18 @@ export default function CommuteRecord() {
     setIsWork((prev) => !prev);
   };
 
+  // Form 처리 함수
+  const handleIsFormOpen = (data: any) => {
+    setIsFormOpen(true);
+    setForm(data);
+  };
+
   return (
     <Layout>
       <CommuteCard>
         <Title>
           <h2>출퇴근 기록</h2>
-          <PlusBtn />
+          <PlusBtn onClick={() => setIsFormOpen(true)} />
         </Title>
         <CommuteMap setAddress={setAddress} setIsInRange={setIsInRange} />
         <CurrentPosition>
@@ -98,8 +119,16 @@ export default function CommuteRecord() {
         </CommuteButtons>
       </CommuteCard>
       <CommuteCard>
-        <h2>출퇴근 현황</h2>
+        <Title>
+          <h2>출퇴근 현황</h2>
+        </Title>
+        <CalendarWrapper>
+          <Calendar isEvents={true} handleIsFormOpen={handleIsFormOpen} />
+        </CalendarWrapper>
       </CommuteCard>
+      <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
+        <CommuteForm setIsFormOpen={setIsFormOpen} form={form} />
+      </Modal>
     </Layout>
   );
 }
