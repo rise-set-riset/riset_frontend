@@ -73,17 +73,17 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
   /* 위도, 경도를 기반으로한 사용자가 회사 반경 안에 들어왔는지 계산하기 및 주소값 구하기 */
   useEffect(() => {
     // 주소값 구하기
-    const geocoder = new kakao.maps.services.Geocoder();
-    const coord = new kakao.maps.LatLng(position.latitude, position.longitude);
+    // const geocoder = new kakao.maps.services.Geocoder();
+    // const coord = new kakao.maps.LatLng(position.latitude, position.longitude);
 
-    const callback = function (result: any, status: string) {
-      if (status === kakao.maps.services.Status.OK) {
-        const arr = [...result];
-        setAddress(arr[0].address.address_name);
-      }
-    };
+    // const callback = function (result: any, status: string) {
+    //   if (status === kakao.maps.services.Status.OK) {
+    //     const arr = [...result];
+    //     setAddress(arr[0].address.address_name);
+    //   }
+    // };
 
-    geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+    // geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
 
     // 사용자가 회사 반경 안에 들어왔는지 계산하기 (하버사인 공식)
     const toRadians = (deg: number) => {
