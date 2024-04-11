@@ -24,6 +24,7 @@ const InputCheckbox = styled.input`
 
 interface CheckboxProps {
     isChecked?: boolean;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleCheckbox?: () => void;
 }
 

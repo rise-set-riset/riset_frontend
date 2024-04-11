@@ -5,6 +5,8 @@ import Signup from "./pages/User/Signup";
 import Login from "./pages/User/Login";
 import Mypage from "./pages/User/Mypage";
 import Authority from "./pages/User/Authority";
+import FindId from "./pages/User/FindId";
+import FindPassword from "./pages/User/FindPassword";
 import Commute from "./pages/Commute/Commute";
 import Home from "./pages/Home/Home";
 import PostList from "./pages/Board/PostList";
@@ -36,6 +38,8 @@ const router = createBrowserRouter([
       { path: "/signup", element: <Signup /> },
       { path: "/authority", element: <Authority /> },
       { path: "/mypage", element: <Mypage /> },
+      { path: "/findid", element: <FindId /> },
+      { path: "/findpassword", element: <FindPassword /> },
 
       // Home
       { path: "/home", element: <Home /> },
