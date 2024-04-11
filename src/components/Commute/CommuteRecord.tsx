@@ -33,6 +33,7 @@ const CommuteCard = styled.div`
 
   @media screen and (max-width: 500px) {
     width: 350px;
+    height: 100%;
   }
 `;
 
