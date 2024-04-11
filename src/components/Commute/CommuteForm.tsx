@@ -7,6 +7,7 @@ import { FiClock } from "react-icons/fi";
 import Button from "../../common/Button";
 import { EventType } from "./CommuteRecord";
 import TimePicker from "../../common/TimePicker";
+import { FiArrowRight } from "react-icons/fi";
 
 const Layout = styled.div`
   width: 373px;
@@ -187,7 +188,7 @@ export default function CommuteForm({
               <TimeZoneText>출근</TimeZoneText>
               <TimePicker selectedTime={form?.startTime} setSelectedTime={handleStartTime} />
             </Times>
-            <p>--</p>
+            <FiArrowRight />
             <Times>
               <TimeZoneText>퇴근</TimeZoneText>
               <TimePicker selectedTime={form?.endTime} setSelectedTime={handleEndTime} />
@@ -201,7 +202,7 @@ export default function CommuteForm({
             title="취소"
             handleBtnClick={() => setIsFormOpen(false)}
           />
-          <Button type="submit" active={true} title="추가하기" />
+          <Button type="submit" active={true} title="저장" />
         </Buttons>
       </Form>
     </Layout>
