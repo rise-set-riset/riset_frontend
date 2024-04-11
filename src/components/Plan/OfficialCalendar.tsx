@@ -98,7 +98,7 @@ const CalendarCustomStyle = styled.div<{ $month: string }>`
     background-color: var(--color-white);
 
     &:hover {
-      background-color: var(--color-brand-lightgray);
+      border-color: var(--color-brand-main);
     }
 
     .fc-daygrid-day-top {

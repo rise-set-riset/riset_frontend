@@ -79,13 +79,12 @@ export default function CommuteRecord() {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [form, setForm] = useState<EventType>({});
 
-  // 출/퇴근 버튼 클릭에 따른 active 버튼 전환
+  /* 출/퇴근 버튼 클릭에 따른 active 버튼 전환 */
   const handleIsWork = () => {
-    // 오늘 날짜에 해당하는 출근 기록이 있을 경우 비활성화 필요
     setIsWork((prev) => !prev);
   };
 
-  // Form 처리 함수
+  /* Form Submit */
   const handleIsFormOpen = (data: any) => {
     setIsFormOpen(true);
     setForm(data);
