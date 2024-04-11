@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { sideMenuIcon } from "./SideMenuIcons";
 import { Link, useLocation } from "react-router-dom";
 import SideMenuCard from "./SideMenuCard";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store/store";
+import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
 
 const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number }>`
   position: fixed;
@@ -11,14 +14,15 @@ const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number 
   top: 60px;
   z-index: 50;
   width: ${(props) => (props.$isSideMenuOpen ? "200px" : "60px")};
-  height: calc(100vh - 120px);
+  height: calc(100vh - 60px);
   background-color: var(--color-white);
   border-right: 1px solid var(--color-brand-lightgray);
-  transition: all 0.3s;
+  transition: background-color 0.3s, width 0.3s;
   overflow: auto;
   overflow-x: hidden;
   @media screen and (max-width: 600px) {
     width: ${(props) => (props.$isSideMenuOpen ? "200px" : "0")};
+    height: calc(100vh - 120px);
   }
 `;
 
@@ -28,7 +32,6 @@ const UserProfile = styled.div`
   height: 65px;
   padding: 0 1rem 0 0.7rem;
   background-color: var(--color-gray-1);
-  transition: all 0.3s;
   cursor: pointer;
 `;
 
@@ -67,11 +70,6 @@ const UserInfo = styled.div`
   }
 `;
 
-interface IsMenuOpen {
-  isSideMenuOpen: boolean;
-  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 interface User {
   [key: string]: string;
 }
@@ -93,18 +91,20 @@ interface SlideMenus {
   menus: Menus[];
 }
 
-export default function SideMenu({ isSideMenuOpen, setIsSideMenuOpen }: IsMenuOpen) {
+export default function SideMenu() {
   const [sideMenus, setSideMenus] = useState<SlideMenus | null>(null);
   const [sideMenuPosition, setSideMenuPosition] = useState<number>(0);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean[]>([]);
   const location = useLocation();
   const pathname = location.pathname;
   const isMobile = useContext(ResponsiveContext);
+  const dispatch = useDispatch<AppDispatch>();
+  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 
   // 현재 보고있는 메뉴만 열리게하기
   const handleIsMenuOpen = (idx: number) => {
     setIsMenuOpen((prev) => prev.map((_, i) => (i === idx ? true : false)));
-    if (isMobile) setIsSideMenuOpen(false);
+    if (isMobile) dispatch(sideMenuAction.toggleSideMenu());
   };
 
   // 현재 보고 있는 메뉴 확인용
@@ -138,6 +138,21 @@ export default function SideMenu({ isSideMenuOpen, setIsSideMenuOpen }: IsMenuOp
     fetch("/data/side-menu.json")
       .then((res) => res.json())
       .then((data) => setSideMenus(data));
+    // API 필요
+    // const fetchMenus = async () => {
+    //   try {
+    //     fetch("https://dev.risetconstruction.net/api/menus")
+    //       .then((res) => res.json())
+    //       .then((data) => setSideMenus(data));
+    //   } catch (err: any) {
+    //     console.log(err);
+    //     fetch("/data/side-menu.json")
+    //       .then((res) => res.json())
+    //       .then((data) => setSideMenus(data));
+    //   }
+    // };
+
+    // fetchMenus();
   }, []);
 
   return (
@@ -164,7 +179,6 @@ export default function SideMenu({ isSideMenuOpen, setIsSideMenuOpen }: IsMenuOp
             <SideMenuCard
               key={menu.id}
               menu={menu}
-              isSideMenuOpen={isSideMenuOpen}
               sideMenuIcon={sideMenuIcon}
               isMenuOpen={isMenuOpen[idx]}
               idx={idx}

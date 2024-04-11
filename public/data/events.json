@@ -1,0 +1,90 @@
+[
+  {
+    "name": "손다니엘",
+    "way": "HOME",
+    "color": "full",
+    "start": "2024-04-01",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "HEADQUARTERS",
+    "color": "full",
+    "start": "2024-04-02",
+    "startTime": "10:00",
+    "endTime": "12:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "HEADQUARTERS",
+    "color": "dayoff",
+    "start": "2024-04-03",
+    "startTime": "10:00",
+    "endTime": "13:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "HEADQUARTERS",
+    "color": "full",
+    "start": "2024-04-04",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "HEADQUARTERS",
+    "color": "full",
+    "start": "2024-04-05",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "HEADQUARTERS",
+    "color": "full",
+    "start": "2024-04-06",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "외근",
+    "color": "HEADQUARTERS",
+    "start": "2024-04-07",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "OUTSIDE",
+    "color": "dayoff",
+    "start": "2024-04-08",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "OUTSIDE",
+    "color": "full",
+    "start": "2024-04-09",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "HOME",
+    "color": "today",
+    "start": "2024-04-10",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  },
+  {
+    "name": "손다니엘",
+    "way": "OUTSIDE",
+    "color": "half",
+    "start": "2024-04-11",
+    "startTime": "10:00",
+    "endTime": "18:00"
+  }
+]

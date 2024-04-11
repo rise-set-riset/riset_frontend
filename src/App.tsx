@@ -5,6 +5,8 @@ import Signup from "./pages/User/Signup";
 import Login from "./pages/User/Login";
 import Mypage from "./pages/User/Mypage";
 import Authority from "./pages/User/Authority";
+import FindId from "./pages/User/FindId";
+import FindPassword from "./pages/User/FindPassword";
 import Commute from "./pages/Commute/Commute";
 import Home from "./pages/Home/Home";
 import PostList from "./pages/Board/PostList";
@@ -20,6 +22,8 @@ import GroupMember from "./pages/Group/GroupMember";
 import Setting from "./pages/Setting/Setting";
 import { ResponsiveProvider } from "./contexts/ResponsiveContext";
 import DarkmodeProvider from "./contexts/DarkmodeContext";
+import { Provider } from "react-redux";
+import { store } from "./redux/store/store";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +38,8 @@ const router = createBrowserRouter([
       { path: "/signup", element: <Signup /> },
       { path: "/authority", element: <Authority /> },
       { path: "/mypage", element: <Mypage /> },
+      { path: "/findid", element: <FindId /> },
+      { path: "/findpassword", element: <FindPassword /> },
 
       // Home
       { path: "/home", element: <Home /> },
@@ -71,7 +77,9 @@ function App() {
   return (
     <DarkmodeProvider>
       <ResponsiveProvider>
-        <RouterProvider router={router} />
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
       </ResponsiveProvider>
     </DarkmodeProvider>
   );

@@ -4,6 +4,8 @@ import { Menus } from "./SideMenu";
 import { useContext, useState } from "react";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { Transition } from "react-transition-group";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/store";
 
 const Item = styled.li`
   width: 200px;
@@ -20,7 +22,6 @@ const CustomLink = styled(Link)<{ $isCurrentPage: boolean }>`
   height: 50px;
   display: flex;
   align-items: center;
-  transition: all 0.3s;
   font-weight: bold;
   color: ${(props) => (props.$isCurrentPage ? "var(--color-white)" : "var(--color-black)")};
   background-color: ${(props) =>
@@ -39,7 +40,6 @@ const MenuWrapper = styled.div`
 `;
 
 const MenuTitle = styled.p<{ $isSideMenuOpen: boolean }>`
-  transition: all 0.3s;
   opacity: ${(props) => (props.$isSideMenuOpen ? "1" : "0")};
 `;
 
@@ -71,6 +71,8 @@ const SubList = styled.ul<{ $isMenuOpen: boolean; $state: string }>`
           z-index: -1;
           opacity: 0;
         `;
+      default:
+        return null;
     }
   }};
 `;
@@ -92,7 +94,6 @@ const SelectedDot = styled.div<{ $isSelected: boolean }>`
 
 interface Card {
   menu: Menus;
-  isSideMenuOpen: boolean;
   sideMenuIcon: any;
   isMenuOpen: boolean;
   idx: number;
@@ -101,7 +102,6 @@ interface Card {
 
 export default function SideMenuCard({
   menu,
-  isSideMenuOpen,
   sideMenuIcon,
   isMenuOpen,
   idx,
@@ -112,6 +112,7 @@ export default function SideMenuCard({
   const pathname = location.pathname;
   const isMobile = useContext(ResponsiveContext);
   const [isMenuEnter, setIsMenuEnter] = useState<boolean>(false);
+  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 
   // 서브 메뉴가 열리는 조건
   const isSubOpen = isMobile
@@ -132,7 +133,7 @@ export default function SideMenuCard({
         <MenuWrapper>{sideMenuIcon[menu.icon]()}</MenuWrapper>
         <MenuTitle $isSideMenuOpen={isSideMenuOpen}>{menu.title}</MenuTitle>
       </CustomLink>
-      <Transition in={Boolean(isSubOpen)} timeout={500} unmountOnExit mountOnEnter>
+      <Transition in={Boolean(isSubOpen)} timeout={300} unmountOnExit mountOnEnter>
         {(state) => (
           <SubList $isMenuOpen={isMenuOpen} $state={state}>
             {menu.subMenus?.map((sub) => (

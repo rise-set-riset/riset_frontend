@@ -10,6 +10,8 @@
   --color-error: #ff6228;
   --color-pass: #03ca5f;
   --color-black: #353535;
+  --color-black-modal-enter: rgba(53, 53, 53, 0.6);
+  --color-black-modal-exit: rgba(53, 53, 53, 0);
   --color-white: #ffffff;
   --color-svg-fill: #ffffff;
   --color-svg-stroke: #353535;
@@ -44,7 +46,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.3s;
   background-color: var(--color-white);
 }
 
