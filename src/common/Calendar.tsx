@@ -67,30 +67,44 @@ const Layout = styled.div<{ $month: string }>`
     justify-content: center;
     cursor: pointer;
   }
-  // 이벤트 조절
-  .fc-daygrid-day-events,
-  .fc-daygrid-day-events * {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-  }
+
   // 가운데 숫자
   .fc-daygrid-day-top {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-    margin-left: 2px;
-    padding: 0.7rem;
-    transition: transform 0.3s;
+    cursor: pointer;
+    z-index: 50;
   }
+
+  .fc-daygrid-bg-harness {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .fc-event {
+    width: 80%;
+    aspect-ratio: 1/1;
+    position: relative;
+    border-radius: 50%;
+    background-color: var(--color-brand-main);
+    transition: transform 0.3s;
+    &:hover {
+      transform: scale(1.2);
+    }
+    z-index: 10;
+  }
+
+  .fc-bg-event {
+    opacity: 1;
+  }
+
   // 오늘 날짜
   .fc-day-today {
     background-color: transparent !important;
   }
+
   .fc-day-today .fc-daygrid-day-top {
+    margin-top: 4px;
     &::before {
       content: "TODAY";
       font-size: 8px;
@@ -101,6 +115,9 @@ const Layout = styled.div<{ $month: string }>`
       position: absolute;
     }
   }
+  .fc-event-container .fc-daygrid-day-number {
+    color: white;
+  }
 `;
 
 interface EventType {
@@ -109,10 +126,15 @@ interface EventType {
 
 interface Events {
   isEvents?: boolean;
+  defaultEvents?: EventType[];
   handleIsFormOpen: (info: any) => void;
 }
 
-export default function Calendar({ isEvents, handleIsFormOpen }: Events) {
+export default function Calendar({
+  isEvents,
+  defaultEvents,
+  handleIsFormOpen,
+}: Events) {
   const [datas, setData] = useState<EventType[]>([]);
   const [events, setEvents] = useState<EventType[]>([]);
   const [currentEvents, setCurrentEvents] = useState<EventType[]>([]);
@@ -143,6 +165,10 @@ export default function Calendar({ isEvents, handleIsFormOpen }: Events) {
 
           setEvents(eventList);
         });
+    } else {
+      if (defaultEvents) {
+        setCurrentEvents((prev) => [...prev, ...defaultEvents]);
+      }
     }
   }, [month]);
 
@@ -154,7 +180,9 @@ export default function Calendar({ isEvents, handleIsFormOpen }: Events) {
       // 이벤트가 하나라도 있다면 = 칠해줄 일이 하나라도 있다면
       if (events.length > 0) {
         events.forEach(({ start }) => {
-          const cell = calendarApi.el.querySelector(`.fc-day[data-date="${start}"] a`);
+          const cell = calendarApi.el.querySelector(
+            `td.fc-day[data-date="${start}"] div a`
+          );
           if (cell) {
             cell.style.color = "var(--color-white)";
             cell.style.fontWeight = "bold";
@@ -201,7 +229,9 @@ export default function Calendar({ isEvents, handleIsFormOpen }: Events) {
             if (currentDate < clickedDate) return;
 
             // 데이터가 있는 경우에만 함수 호출
-            const data: EventType | undefined = datas.find((event) => event.start === info.dateStr);
+            const data: EventType | undefined = datas.find(
+              (event) => event.start === info.dateStr
+            );
             if (data) {
               handleIsFormOpen(data);
             }
@@ -209,21 +239,29 @@ export default function Calendar({ isEvents, handleIsFormOpen }: Events) {
             // 현재 날짜 Date 형식
             const date = new Date(info.date);
 
+            const setDateForm = (now: Date) => {
+              const year = now.getFullYear();
+              const month = (now.getMonth() + 1).toString().padStart(2, "0");
+              const day = now.getDate().toString().padStart(2, "0");
+              return `${year}-${month}-${day}`;
+            };
+
             // 이벤트 생성
             const newEvent = {
               id: "unfixed",
-              start: "2024-04-10",
-              end: "2024-04-12",
+              start: setDateForm(date),
               color: "var(--color-brand-main)",
             };
 
             // 이벤트 등록
-            setCurrentEvents((prev) => [...prev, newEvent]);
-
-            // 이벤트 삭제는 알아서
+            if (currentEvents) {
+              setCurrentEvents((prev) => [...prev, newEvent]);
+            }
+            handleIsFormOpen(date);
           }
         }}
         events={isEvents ? events : currentEvents}
+        eventDisplay={"background"}
       />
     </Layout>
   );
