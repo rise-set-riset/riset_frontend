@@ -26,6 +26,7 @@ const CommuteCard = styled.div`
   flex-direction: column;
   align-items: center;
   width: 460px;
+  min-width: 460px;
   height: 570px;
   border-radius: 1rem;
   padding: 1rem;
