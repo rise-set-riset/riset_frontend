@@ -31,6 +31,7 @@ const Input = styled.div`
   
   input {
     width: 100%;
+    height: 50px;
     border-radius: 8px;
     border: 1px solid #c4c4c4;
     padding: 13px 20px;

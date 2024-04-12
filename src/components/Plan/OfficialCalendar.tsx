@@ -6,8 +6,6 @@ import multiMonthPlugin from "@fullcalendar/multimonth";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventForm from "./EventForm";
 import { ResponsiveContext } from "../../contexts/ResponsiveContext";
-import { isSideMenuOpen } from "../../redux/slice/sideMenuSlice";
-import { useSelector } from "react-redux";
 
 /* 캘린더 레이아웃 */
 const Layout = styled.div`
@@ -240,12 +238,10 @@ export default function OfficialCalendar() {
     writer: "",
     content: "",
   });
-  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>(
-    {
-      x: 0,
-      y: 0,
-    }
-  );
+  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>({
+    x: 0,
+    y: 0,
+  });
 
   /* 날짜 선택시 */
   const handleDateClick = (info: any) => {
@@ -375,15 +371,7 @@ export default function OfficialCalendar() {
     }
   });
 
-  const isMobile = useContext(ResponsiveContext);
-  const isSideMenuOpen = useSelector(
-    (state: any) => state.sideMenu.isSideMenuOpen
-  );
-  const [updateSize, setUpdateSize] = useState<boolean>(isSideMenuOpen);
-
-  useEffect(() => {
-    setUpdateSize(updateSize);
-  }, [isSideMenuOpen]);
+  const { isMobile } = useContext(ResponsiveContext);
 
   return (
     <Layout>

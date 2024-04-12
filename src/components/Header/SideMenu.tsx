@@ -97,7 +97,7 @@ export default function SideMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean[]>([]);
   const location = useLocation();
   const pathname = location.pathname;
-  const isMobile = useContext(ResponsiveContext);
+  const { isMobile } = useContext(ResponsiveContext);
   const dispatch = useDispatch<AppDispatch>();
   const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 

@@ -15,6 +15,9 @@ const Item = styled.li`
   svg {
     margin-left: 3px;
   }
+  &:hover svg {
+    transform: scale(1.2);
+  }
 `;
 
 const CustomLink = styled(Link)<{ $isCurrentPage: boolean }>`
@@ -110,7 +113,7 @@ export default function SideMenuCard({
   const naviagte = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
-  const isMobile = useContext(ResponsiveContext);
+  const { isMobile } = useContext(ResponsiveContext);
   const [isMenuEnter, setIsMenuEnter] = useState<boolean>(false);
   const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 

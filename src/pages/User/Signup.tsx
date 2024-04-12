@@ -39,14 +39,6 @@ const SignUpContainer = styled.div`
 `;
 
 const SignupHeader = styled.div`
-    h2 {
-        text-align: center;
-        font-size: 32px;
-        font-family: Pretendard Medium;
-        margin-bottom: 8px;
-        letter-spacing: 0.5px;
-    }
-
     p:first-child {
         text-align: center;
         font-size: 32px;
@@ -175,6 +167,7 @@ const SignUpQuestion = styled.div`
         margin-left: 10px;
         color: #ff7f50;
     }
+    
 `;
 export default function SignUp() {
     const [form, setForm] = useForm();
@@ -500,3 +493,4 @@ export default function SignUp() {
         </Background>
     );
 }
+

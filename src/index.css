@@ -93,3 +93,23 @@ a {
   border-radius: 10px;
   box-shadow: inset 0px 0px 5px white;
 }
+
+::-webkit-input-placeholder {
+  /* 웹킷 기반 브라우저(크롬, 사파리 등) */
+  color: var(--color-brand-lightgray); /* 원하는 색상으로 변경 */
+}
+
+:-moz-placeholder {
+  /* 파이어폭스 */
+  color: var(--color-brand-lightgray); /* 원하는 색상으로 변경 */
+}
+
+::-moz-placeholder {
+  /* 오래된 파이어폭스 */
+  color: var(--color-brand-lightgray); /* 원하는 색상으로 변경 */
+}
+
+:-ms-input-placeholder {
+  /* 인터넷 익스플로러 */
+  color: var(--color-brand-lightgray); /* 원하는 색상으로 변경 */
+}

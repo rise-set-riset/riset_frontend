@@ -130,11 +130,7 @@ interface Events {
   handleIsFormOpen: (info: any) => void;
 }
 
-export default function Calendar({
-  isEvents,
-  defaultEvents,
-  handleIsFormOpen,
-}: Events) {
+export default function Calendar({ isEvents, defaultEvents, handleIsFormOpen }: Events) {
   const [datas, setData] = useState<EventType[]>([]);
   const [events, setEvents] = useState<EventType[]>([]);
   const [currentEvents, setCurrentEvents] = useState<EventType[]>([]);
@@ -170,7 +166,7 @@ export default function Calendar({
         setCurrentEvents((prev) => [...prev, ...defaultEvents]);
       }
     }
-  }, [month]);
+  }, [month, isEvents, defaultEvents]);
 
   /* 이벤트가 있을 경우 색상 정해주기 */
   useEffect(() => {
@@ -180,9 +176,7 @@ export default function Calendar({
       // 이벤트가 하나라도 있다면 = 칠해줄 일이 하나라도 있다면
       if (events.length > 0) {
         events.forEach(({ start }) => {
-          const cell = calendarApi.el.querySelector(
-            `td.fc-day[data-date="${start}"] div a`
-          );
+          const cell = calendarApi.el.querySelector(`td.fc-day[data-date="${start}"] div a`);
           if (cell) {
             cell.style.color = "var(--color-white)";
             cell.style.fontWeight = "bold";
@@ -229,9 +223,7 @@ export default function Calendar({
             if (currentDate < clickedDate) return;
 
             // 데이터가 있는 경우에만 함수 호출
-            const data: EventType | undefined = datas.find(
-              (event) => event.start === info.dateStr
-            );
+            const data: EventType | undefined = datas.find((event) => event.start === info.dateStr);
             if (data) {
               handleIsFormOpen(data);
             }
