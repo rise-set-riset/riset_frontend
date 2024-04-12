@@ -27,11 +27,24 @@ const Input = styled.input`
 
 interface SearchBarType extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-export default function SearchBar({ name, value, placeholder, onChange }: SearchBarType) {
+export default function SearchBar({
+  name,
+  value,
+  placeholder,
+  autoComplete,
+  onChange,
+}: SearchBarType) {
   return (
     <Layout>
       <SearchIcon />
-      <Input type="text" name={name} value={value} onChange={onChange} placeholder={placeholder} />
+      <Input
+        type="text"
+        name={name}
+        value={value}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        onChange={onChange}
+      />
     </Layout>
   );
 }
