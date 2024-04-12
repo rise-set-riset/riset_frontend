@@ -15,6 +15,9 @@ const Item = styled.li`
   svg {
     margin-left: 3px;
   }
+  &:hover svg {
+    transform: scale(1.2);
+  }
 `;
 
 const CustomLink = styled(Link)<{ $isCurrentPage: boolean }>`
