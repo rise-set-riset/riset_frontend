@@ -138,6 +138,7 @@ export default function SideMenu() {
     fetch("/data/side-menu.json")
       .then((res) => res.json())
       .then((data) => setSideMenus(data));
+    // API 필요
     // const fetchMenus = async () => {
     //   try {
     //     fetch("https://dev.risetconstruction.net/api/menus")

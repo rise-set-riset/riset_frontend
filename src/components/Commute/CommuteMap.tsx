@@ -45,13 +45,14 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     longitude: 0,
   });
 
+  /* 회사명, 위도, 경도 데이터 받아오기 */
   useEffect(() => {
-    // 백엔드에서 회사 관련 위도/경도 데이터 받아오기
+    // API 필요
     fetch("/data/map.json")
       .then((res) => res.json())
       .then((data) => setMaps(data));
 
-    // 현재 내 위치 받아오기
+    // 현재 내 위치 데이터
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         setPosition({ latitude: position.coords.latitude, longitude: position.coords.longitude });
@@ -69,9 +70,9 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     };
   }, []);
 
-  // 현재 주소값, 반경 계산하기
+  /* 위도, 경도를 기반으로한 사용자가 회사 반경 안에 들어왔는지 계산하기 및 주소값 구하기 */
   useEffect(() => {
-    // 현재 위치 주소값 구하기
+    // 주소값 구하기
     const geocoder = new kakao.maps.services.Geocoder();
     const coord = new kakao.maps.LatLng(position.latitude, position.longitude);
 
@@ -84,12 +85,11 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
 
     geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
 
-    // 반경 계산하기 (회사 반경 안에 들어왔는지 판단)
+    // 사용자가 회사 반경 안에 들어왔는지 계산하기 (하버사인 공식)
     const toRadians = (deg: number) => {
       return deg * (Math.PI / 180);
     };
 
-    // 두 지점간의 거리 차이 계산식 (하버사인 공식)
     const handleInRange = (
       companyLat: number,
       companyLng: number,
@@ -105,8 +105,9 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(phi1) * Math.cos(phi2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distance = R * c; // 두 지점 간의 거리 (단위: km)
+      const distance = R * c; // 두 지점 간의 거리 (단위: m)
 
+      // 100m 안으로 진입 여부 판단
       if (distance <= 100) {
         return true;
       } else {
@@ -114,7 +115,7 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
       }
     };
 
-    // 한 지점에라도 반경에 들어갔을 경우
+    // 어떤 지점이라도 상관없이 반경 안에 들어왔을 경우
     const isInRange = maps.some((map) =>
       handleInRange(map.latitude, map.longitude, position.latitude, position.longitude)
     );
