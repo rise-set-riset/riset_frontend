@@ -1,10 +1,11 @@
 import styled, { css } from "styled-components";
 import SearchBar from "../../../common/SearchBar";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import PostCard from "../PostCard";
-import { GoPlusCircle } from "react-icons/go";
 import { Reorder } from "framer-motion";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import usePosts from "../../../hooks/usePosts";
+import { ResponsiveContext } from "../../../contexts/ResponsiveContext";
 
 const Layout = styled.div`
   width: 100%;
@@ -12,10 +13,18 @@ const Layout = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 1.5rem;
+
+  @media screen and (max-width: 599px) {
+    padding: 0;
+  }
 `;
 
 const Search = styled.div`
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
+  @media screen and (max-width: 599px) {
+    padding: 1rem 1rem 0 1rem;
+  }
 `;
 
 const Contents = styled.section`
@@ -32,7 +41,7 @@ const Content = styled.div`
 const MidLine = styled.div`
   height: calc(100% - 50px);
   width: 1px;
-  margin: 0 2rem;
+  margin: 3.5rem 2rem;
   background-color: var(--color-brand-lightgray);
 `;
 
@@ -41,6 +50,7 @@ const ContentHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
+  padding: 0 1rem;
 `;
 
 const HeaderTitle = styled.p`
@@ -49,6 +59,7 @@ const HeaderTitle = styled.p`
 `;
 
 const ManageBtn = styled.button`
+  font-weight: bold;
   border: none;
   outline: none;
   background-color: transparent;
@@ -61,11 +72,14 @@ const ManageBtn = styled.button`
 `;
 
 const CommonSection = css`
+  height: 100%;
+  max-height: 600px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 0 1rem 0 0;
+  padding: 0 1rem;
   overflow-y: scroll;
+  overflow-x: hidden;
   li {
     margin-bottom: 1.5rem;
   }
@@ -79,54 +93,45 @@ const Posts = styled.div`
   ${CommonSection}
 `;
 
-const PlusIcon = styled(GoPlusCircle)`
-  font-size: 30px;
-`;
-
 const Loading = styled.div`
   margin: auto;
 `;
 
 export default function PostList() {
-  // 제목 검색
   const [searchTitle, setSearchTitle] = useState<string>("");
-  // 즐겨찾기 게시글
-  const [favoritePosts, setFavoritePosts] = useState<any[]>([]);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [skip, setSkip] = useState<number>(0);
-  // 전체 게시글
-  const [posts, setPosts] = useState<any[]>([]);
-  // observer 탐지용 ref
-  const lastPostRef = useRef<HTMLDivElement | null>(null);
+  const [isFavoriteManageClick, setIsFavoriteManageClick] = useState<boolean>(false);
+  const [isManageClick, setIsManageClick] = useState<boolean>(false);
+  const { isTablet } = useContext(ResponsiveContext);
+  const { posts, hasMore, lastItemRef, setSearchWord } = usePosts();
+  const {
+    posts: favoritePosts,
+    hasMore: hasFavoriteMore,
+    lastItemRef: lastFavoriteItemRef,
+    setPosts: setFavoritePosts,
+    setSearchWord: setFavoriteSearchWord,
+  } = usePosts();
 
-  /* 즐겨찾기 게시글 */
-  useEffect(() => {
-    const fetchMorePosts = async () => {
-      const data = await fetch(
-        `https://dummyjson.com/posts?limit=10&skip=${skip * 10}&searchTitle=${searchTitle}`
-      ).then((res) => res.json());
+  console.log(isTablet);
 
-      // 추가 게시글이 있는지 확인
-      if (data.posts.length === 0) {
-        setHasMore(false);
-      } else {
-        setFavoritePosts((prevPosts) => [...prevPosts, ...data.posts]);
-        setSkip((prevSkip) => prevSkip + 1);
-      }
-    };
+  /* 검색창 검색 */
+  const handleSearchtitle = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTitle(value);
+    setSearchWord(value);
+    setFavoriteSearchWord(value);
+  };
 
-    // 관찰자 지정
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore) fetchMorePosts();
-    });
+  /* 즐겨찾기 삭제 */
+  const handleRemoveFavorite = (postId: string) => {
+    setFavoritePosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+    // API 요청 필요 (서버에서도 삭제)
+  };
 
-    if (observer && lastPostRef.current) observer.observe(lastPostRef.current);
-
-    // 관찰자 해제
-    return () => {
-      if (observer) observer.disconnect();
-    };
-  }, [skip, hasMore]);
+  /* 즐겨찾기 추가 */
+  const handleAddFavorite = (post: any) => {
+    setFavoritePosts((prevPosts) => [post, ...prevPosts]);
+    // API 요청 필요 (서버에서도 추가)
+  };
 
   return (
     <Layout>
@@ -136,7 +141,7 @@ export default function PostList() {
           value={searchTitle}
           placeholder="제목 검색"
           autoComplete="false"
-          onChange={(e) => setSearchTitle(e.target.value)}
+          onChange={handleSearchtitle}
         />
       </Search>
 
@@ -144,45 +149,74 @@ export default function PostList() {
         <Content>
           <ContentHeader>
             <HeaderTitle>즐겨찾기</HeaderTitle>
-            <ManageBtn type="button">관리</ManageBtn>
+            <ManageBtn
+              type="button"
+              onClick={() => setIsFavoriteManageClick(!isFavoriteManageClick)}
+            >
+              관리
+            </ManageBtn>
           </ContentHeader>
           <Favorites>
             <Reorder.Group values={favoritePosts} onReorder={setFavoritePosts}>
               {favoritePosts &&
                 favoritePosts.map((post) => (
                   <Reorder.Item value={post} key={post.id} drag>
-                    <PostCard title={post.title} writer="갱얼쥐" date="2024-04-11" fileCnt="1" />
+                    <PostCard
+                      postId={post.id}
+                      title={post.title}
+                      writer="갱얼쥐"
+                      date="2024-04-11"
+                      fileCnt="1"
+                      isManageClick={isFavoriteManageClick}
+                      handleIconClick={handleRemoveFavorite}
+                      isAllPosts={false}
+                    />
                   </Reorder.Item>
                 ))}
             </Reorder.Group>
-            {hasMore && (
-              <Loading ref={lastPostRef}>
+            {hasFavoriteMore && (
+              <Loading ref={lastFavoriteItemRef}>
                 <AiOutlineLoading3Quarters />
               </Loading>
             )}
           </Favorites>
         </Content>
 
-        <MidLine />
+        {!isTablet && (
+          <>
+            <MidLine />
 
-        <Content>
-          <ContentHeader>
-            <HeaderTitle>게시글</HeaderTitle>
-            <PlusIcon />
-          </ContentHeader>
-          <Posts>
-            {favoritePosts &&
-              favoritePosts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  title={post.title}
-                  writer="야옹이"
-                  date="2024-04-11"
-                  fileCnt="1"
-                />
-              ))}
-          </Posts>
-        </Content>
+            <Content>
+              <ContentHeader>
+                <HeaderTitle>게시글</HeaderTitle>
+                <ManageBtn type="button" onClick={() => setIsManageClick(!isManageClick)}>
+                  관리
+                </ManageBtn>
+              </ContentHeader>
+              <Posts>
+                {posts &&
+                  posts.map((post) => (
+                    <PostCard
+                      key={post.id}
+                      postId={post.id}
+                      title={post.title}
+                      writer="야옹이"
+                      date="2024-04-11"
+                      fileCnt="1"
+                      isManageClick={isManageClick}
+                      handleIconClick={handleAddFavorite}
+                      isAllPosts={true}
+                    />
+                  ))}
+                {hasMore && (
+                  <Loading ref={lastItemRef}>
+                    <AiOutlineLoading3Quarters />
+                  </Loading>
+                )}
+              </Posts>
+            </Content>
+          </>
+        )}
       </Contents>
     </Layout>
   );
