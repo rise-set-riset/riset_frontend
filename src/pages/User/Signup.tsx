@@ -10,6 +10,7 @@ import TextInput from "../../common/TextInput";
 import CustomCheckbox from "../../common/CustomCheckbox";
 import HorizontalLineWithText from "../../common/HorizontalLineWithText";
 
+
 const backgroundImageUrl = 'url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)';
 
 const Background = styled.div`
@@ -38,14 +39,7 @@ const SignUpContainer = styled.div`
 `;
 
 const SignupHeader = styled.div`
-  h2 {
-    text-align: center;
-    font-size: 32px;
-    font-family: Pretendard Medium;
-    margin-bottom: 8px;
-    letter-spacing: 0.5px;
-  }
-
+ 
 p:first-child{  
   text-align: center;
   font-size: 32px;
@@ -397,13 +391,16 @@ export default function SignUp (){
 
         <AgreeCheckbox>
           <label>
-            <CustomCheckbox isChecked={agreeFinal} onChange={handleAgreeFinalChange} />
+            <CustomCheckbox 
+              isChecked={agreeFinal}
+              onChange={handleAgreeFinalChange} />
             <p>[필수] <span>최종이용자 이용약관</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
         <AgreeCheckbox>
           <label>
-            <CustomCheckbox isChecked={agreePrivacy} onChange={handleAgreePrivacyChange} />
+            <CustomCheckbox 
+            isChecked={agreePrivacy} onChange={handleAgreePrivacyChange} />
             <p>[필수] <span>개인정보 수집 및 이용</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
           </label>
         </AgreeCheckbox>
