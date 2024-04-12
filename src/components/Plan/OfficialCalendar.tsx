@@ -372,7 +372,7 @@ export default function OfficialCalendar() {
     }
   });
 
-  const isMobile = useContext(ResponsiveContext);
+  const { isMobile } = useContext(ResponsiveContext);
 
   return (
     <Layout>

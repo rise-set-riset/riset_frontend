@@ -68,7 +68,7 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
 type SideOpenState = "mobile" | "pcOpen" | "pcClose";
 
 export default function Root() {
-  const isMobile = useContext(ResponsiveContext);
+  const { isMobile } = useContext(ResponsiveContext);
   const location = useLocation();
   const isAuth = !["/", "/signup", "/authority", "/findid", "/findpassword"].includes(
     location.pathname

@@ -44,6 +44,7 @@ export default function SearchBar({
         placeholder={placeholder}
         autoComplete={autoComplete}
         onChange={onChange}
+        spellCheck={false}
       />
     </Layout>
   );
