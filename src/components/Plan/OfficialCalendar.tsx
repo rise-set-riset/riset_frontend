@@ -298,7 +298,6 @@ export default function OfficialCalendar() {
       color: getEvent?._def.ui.backgroundColor,
       ...getEvent?._def.extendedProps,
     });
-    console.log(eventForm);
 
     setIsFormOpen(true);
     setDateClickPosition({

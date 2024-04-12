@@ -450,7 +450,6 @@ export default function EventForm({
 
   /* Date Picker 달력 내 종료 날짜 조정 함수 */
   const handleEndCalendar = (date: any) => {
-    console.log(date);
     setIsEndPickerOpen(!isEndPickerOpen);
     if (isStartPickerOpen) {
       setIsStartPickerOpen(false);
