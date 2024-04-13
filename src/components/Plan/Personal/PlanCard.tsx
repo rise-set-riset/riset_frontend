@@ -178,7 +178,7 @@ export default function PlanCard({ clickToAdd, planContent }: PlanCardProps) {
   /* 일정 삭제 */
   const handlRemovePlan = () => {
     // 삭제요청
-    //fetch
+    // fetch
   };
 
   return (

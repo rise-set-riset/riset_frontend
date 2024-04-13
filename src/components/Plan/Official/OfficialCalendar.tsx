@@ -277,24 +277,6 @@ export default function OfficialCalendar() {
     }
   };
 
-  /* 이벤트 클릭시 */
-  const handleEventClick = (info: any) => {
-    const getEvent = info.event;
-    setIsFormOpen(true);
-    setEventForm({
-      title: getEvent?._def.title,
-      start: getEvent?._instance.range.start,
-      end: getEvent?._instance.range.end,
-      color: getEvent?._def.ui.backgroundColor,
-      ...getEvent?._def.extendedProps,
-    });
-
-    setDateClickPosition({
-      x: info.jsEvent.x,
-      y: info.jsEvent.y,
-    });
-  };
-
   /* 이벤트 저장 취소 */
   const handleFormCancel = () => {
     setIsFormOpen(false);
@@ -345,6 +327,35 @@ export default function OfficialCalendar() {
     });
   };
 
+  const handleEditEvent = () => {
+    setIsFormOpen(true);
+    console.log("--render");
+  };
+
+  /* 이벤트 클릭시 */
+  const handleEventClick = (info: any) => {
+    // setDateClickPosition({
+    //   x: info.jsEvent.x,
+    //   y: info.jsEvent.y,
+    // });
+    const getEvent = info.event;
+    handleEditEvent();
+    setEventForm({
+      title: getEvent?._def.title,
+      start: getEvent?._instance.range.start,
+      end: getEvent?._instance.range.end,
+      color: getEvent?._def.ui.backgroundColor,
+      ...getEvent?._def.extendedProps,
+    });
+    console.log({
+      title: getEvent?._def.title,
+      start: getEvent?._instance.range.start,
+      end: getEvent?._instance.range.end,
+      color: getEvent?._def.ui.backgroundColor,
+      ...getEvent?._def.extendedProps,
+    });
+  };
+
   /* Event Form 팝업창 외 클릭 감지 */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -377,8 +388,6 @@ export default function OfficialCalendar() {
     }
   });
 
-  console.log(eventFormList);
-
   return (
     <Layout>
       <CalendarCustomStyle ref={todayRef} $month={month}>
@@ -392,7 +401,6 @@ export default function OfficialCalendar() {
             titleFormat: 연/월 제목 표시 방식
             eventTimeFormat: 시간 표시 방식
             events: 이벤트 목록
-            editable: 수정 가능 여부
             selectable: 날짜 선택 가능 여부
             select: 날짜 드래그 함수
             eventClick: 이벤트 클릭시 실행되는 함수
@@ -402,6 +410,7 @@ export default function OfficialCalendar() {
             views: 현재 월만 표시
             dateSet: 월 이동시 실행되는 함수
             aspectRatio: 가로/세로 비율
+            editable: 드래그 가능 여부
             displayEventTime: 이벤트 시간 표시
             */
           ref={calendarRef}
@@ -443,7 +452,6 @@ export default function OfficialCalendar() {
             meridiem: "short",
           }}
           events={eventFormList}
-          editable={true}
           selectable={!isFormOpen}
           select={(info) => handleDateClick(info)}
           eventClick={(info) => handleEventClick(info)}
@@ -467,6 +475,8 @@ export default function OfficialCalendar() {
           }}
           aspectRatio={isMobile ? 0.8 : 1.2}
           displayEventTime={false}
+          editable={false}
+          eventDrop={(info) => console.log(info)}
         />
       </CalendarCustomStyle>
 
