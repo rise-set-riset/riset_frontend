@@ -99,7 +99,8 @@ const Loading = styled.div`
 
 export default function PostList() {
   const [searchTitle, setSearchTitle] = useState<string>("");
-  const [isFavoriteManageClick, setIsFavoriteManageClick] = useState<boolean>(false);
+  const [isFavoriteManageClick, setIsFavoriteManageClick] =
+    useState<boolean>(false);
   const [isManageClick, setIsManageClick] = useState<boolean>(false);
   const { isTablet } = useContext(ResponsiveContext);
   const { posts, hasMore, lastItemRef, setSearchWord } = usePosts();
@@ -123,7 +124,9 @@ export default function PostList() {
 
   /* 즐겨찾기 삭제 */
   const handleRemoveFavorite = (postId: string) => {
-    setFavoritePosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+    setFavoritePosts((prevPosts) =>
+      prevPosts.filter((post) => post.id !== postId)
+    );
     // API 요청 필요 (서버에서도 삭제)
   };
 
@@ -189,7 +192,10 @@ export default function PostList() {
             <Content>
               <ContentHeader>
                 <HeaderTitle>게시글</HeaderTitle>
-                <ManageBtn type="button" onClick={() => setIsManageClick(!isManageClick)}>
+                <ManageBtn
+                  type="button"
+                  onClick={() => setIsManageClick(!isManageClick)}
+                >
                   관리
                 </ManageBtn>
               </ContentHeader>

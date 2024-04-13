@@ -1,14 +1,14 @@
+import React, { useRef, useState } from "react";
+import styled from "styled-components";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
 
 const Layout = styled.div<{ $month: string }>`
   width: 320px;
 
   div.fc-media-screen.fc-direction-ltr.fc-theme-standard {
-    position: relative;
     height: 140px;
+    position: relative;
     table,
     th {
       border: none;
@@ -25,34 +25,34 @@ const Layout = styled.div<{ $month: string }>`
       text-align: center;
 
       .fc-toolbar-title {
+        margin-bottom: 0.5rem;
         font-size: 1.2rem;
         font-weight: 500;
-        margin-bottom: 0.5rem;
       }
 
       &::after {
         content: "${(props) => props.$month}월";
-        font-weight: bold;
         font-size: 1.5rem;
+        font-weight: bold;
       }
     }
 
     /* 헤더 버튼 */
     button.fc-button.fc-button-primary {
+      z-index: 10;
       width: 40px;
       height: 40px;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
+      color: var(--color-black);
       font-weight: bold;
       border: none;
       border-radius: 50%;
       box-shadow: none !important;
-      color: var(--color-black);
       background-color: rgba(255, 255, 255, 0.5);
       cursor: pointer;
-      z-index: 10;
-      margin: 0;
 
       span {
         display: flex;
@@ -68,8 +68,8 @@ const Layout = styled.div<{ $month: string }>`
     }
 
     button.fc-prev-button.fc-button-primary {
-      position: absolute;
       margin: 0;
+      position: absolute;
       top: 92px;
       left: -5px;
     }
@@ -114,13 +114,13 @@ const Layout = styled.div<{ $month: string }>`
             a {
               width: 40px;
               height: 40px;
-              border-radius: 50%;
-              background-color: var(--color-white);
-              color: var(--color-brand-lightgray);
-              font-size: 1rem;
               display: flex;
               justify-content: center;
               align-items: center;
+              font-size: 1rem;
+              color: var(--color-brand-lightgray);
+              background-color: var(--color-white);
+              border-radius: 50%;
 
               &:active {
                 color: var(--color-white);
@@ -150,14 +150,22 @@ const Layout = styled.div<{ $month: string }>`
   }
 `;
 
-export default function DateSlider() {
+interface DateSliderProps {
+  /* 날짜 이동시 현재 날짜 설정 */
+  setCurrentDate: React.Dispatch<React.SetStateAction<Date>>;
+}
+
+export default function DateSlider({ setCurrentDate }: DateSliderProps) {
+  /*
+  month: Title 표시용
+  calendarRef: Fullcalendar useRef 설정
+  */
   const [month, setMonth] = useState<string>("");
   const calendarRef = useRef<any>(null);
 
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
-
   /* 날짜 클릭시 현재 날짜로 설정 */
   const handleDateClick = (date: any) => {
+    setCurrentDate(date);
     if (calendarRef.current) {
       calendarRef.current
         .getApi()
@@ -171,22 +179,26 @@ export default function DateSlider() {
   const prevMonth = () => {
     if (calendarRef.current) {
       const currentStart = calendarRef.current?.getApi().view.currentStart;
-      calendarRef.current
-        .getApi()
-        .gotoDate(
-          new Date(
-            currentStart.getFullYear(),
-            currentStart.getMonth() - 1,
-            currentStart.getDate()
-          )
-        );
+      const selectedDate = new Date(
+        currentStart.getFullYear(),
+        currentStart.getMonth() - 1,
+        currentStart.getDate()
+      );
+      calendarRef.current.getApi().gotoDate(selectedDate);
+      setCurrentDate(
+        new Date(
+          currentStart.getFullYear(),
+          currentStart.getMonth() - 1,
+          currentStart.getDate() + 2
+        )
+      );
     }
   };
 
   /* 다음 월로 이동 */
   const nextMonth = () => {
-    const currentStart = calendarRef.current.getApi().view.currentStart;
     if (calendarRef.current) {
+      const currentStart = calendarRef.current.getApi().view.currentStart;
       calendarRef.current
         .getApi()
         .gotoDate(
@@ -196,18 +208,23 @@ export default function DateSlider() {
             currentStart.getDate()
           )
         );
+      setCurrentDate(
+        new Date(
+          currentStart.getFullYear(),
+          currentStart.getMonth() + 1,
+          currentStart.getDate() + 2
+        )
+      );
     }
-
-    // setCurrentDate()
   };
-
-  useEffect(() => {
-    console.log(calendarRef.current.getApi().currentData.currentDate);
-  });
 
   return (
     <Layout $month={month}>
       <FullCalendar
+        /* 
+      ref:
+      
+      */
         ref={calendarRef}
         plugins={[dayGridPlugin]}
         initialView="dayGrid"
@@ -242,6 +259,15 @@ export default function DateSlider() {
           return `${centerDay.getFullYear()}`;
         }}
         dayHeaderFormat={{ day: "numeric" }}
+        datesSet={(date) => {
+          setCurrentDate(
+            new Date(
+              date.start.getFullYear(),
+              date.start.getMonth() + 1,
+              date.start.getDate() + 2
+            )
+          );
+        }}
         navLinks={true}
         navLinkDayClick={(date, jsEvent) => {
           handleDateClick(date);

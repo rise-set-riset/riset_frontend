@@ -1,6 +1,8 @@
+import { useState } from "react";
 import styled from "styled-components";
-import PlanList from "../../components/Plan/PlanList";
-import DateSlider from "../../components/Plan/DateSlider";
+import PlanList from "../../components/Plan/Personal/PlanList";
+import DateSlider from "../../components/Plan/Personal/DateSlider";
+import PlanSearch from "../../components/Plan/Personal/PlanSearch";
 
 const Layout = styled.div`
   width: 100%;
@@ -17,14 +19,16 @@ const MainContentLayout = styled.div`
 `;
 
 export default function PersonalPlan() {
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+
   return (
     <Layout>
       <main className="main">
         <h2 className="title">근무일정</h2>
         <MainContentLayout>
-          <DateSlider />
-          <div>검색</div>
-          <PlanList />
+          <DateSlider setCurrentDate={setCurrentDate} />
+          <PlanSearch currentDate={currentDate} />
+          <PlanList currentDate={currentDate} />
         </MainContentLayout>
       </main>
     </Layout>

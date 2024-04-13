@@ -3,16 +3,12 @@ import styled from "styled-components";
 
 const Layout = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
   background-color: var(--color-white);
   cursor: pointer;
-
-  &:active {
-    border: 2px solid var(--color-brand-main);
-  }
 `;
 
 const ImageBox = styled.div`
@@ -48,21 +44,26 @@ const MoreInfo = styled.div`
   font-size: 14px;
 `;
 
-export default function MemberCard() {
+interface MemberCardProps {
+  memberInfo: {
+    [key: string]: string;
+  };
+}
+
+export default function MemberCard({ memberInfo }: MemberCardProps) {
   return (
     <Layout>
       <ImageBox>
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
-          alt="member"
-        />
+        <img src={memberInfo.image} alt={memberInfo.alt} />
       </ImageBox>
       <MemberInfoBox>
         <MemberName>
-          <div>홍길동</div>
-          <span>사원</span>
+          <div>{memberInfo.name}</div>
+          <span>{memberInfo.rank}</span>
         </MemberName>
-        <MoreInfo>개발팀 / 프론트</MoreInfo>
+        <MoreInfo>
+          {memberInfo.department} / {memberInfo.position}
+        </MoreInfo>
       </MemberInfoBox>
     </Layout>
   );

@@ -9,7 +9,10 @@ interface ScreenType {
   isTablet: boolean;
 }
 
-export const ResponsiveContext = createContext<ScreenType>({ isMobile: false, isTablet: false });
+export const ResponsiveContext = createContext<ScreenType>({
+  isMobile: false,
+  isTablet: false,
+});
 
 export function ResponsiveProvider({ children }: Children) {
   // 현재 화면 사이즈가 599px 보다 큰지 확인

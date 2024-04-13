@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventForm from "./EventForm";
-import { ResponsiveContext } from "../../contexts/ResponsiveContext";
+import { ResponsiveContext } from "../../../contexts/ResponsiveContext";
 
 /* 캘린더 레이아웃 */
 const Layout = styled.div`
@@ -238,10 +238,12 @@ export default function OfficialCalendar() {
     writer: "",
     content: "",
   });
-  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>({
-    x: 0,
-    y: 0,
-  });
+  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>(
+    {
+      x: 0,
+      y: 0,
+    }
+  );
 
   /* 날짜 선택시 */
   const handleDateClick = (info: any) => {

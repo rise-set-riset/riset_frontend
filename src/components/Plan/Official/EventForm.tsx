@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import type { ClickPositionType, EventFormType } from "./OfficialCalendar";
 import styled, { keyframes } from "styled-components";
-import CustomCheckbox from "../../common/CustomCheckbox";
-import Calendar from "../../common/Calendar";
-import TimePicker from "../../common/TimePicker";
-import Button from "../../common/Button";
+import CustomCheckbox from "../../../common/CustomCheckbox";
+import Calendar from "../../../common/Calendar";
+import TimePicker from "../../../common/TimePicker";
+import Button from "../../../common/Button";
 import { IoClose } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
 import { FiArrowRight } from "react-icons/fi";

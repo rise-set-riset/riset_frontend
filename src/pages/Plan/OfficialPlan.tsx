@@ -1,4 +1,4 @@
-import OfficialCalendar from "../../components/Plan/OfficialCalendar";
+import OfficialCalendar from "../../components/Plan/Official/OfficialCalendar";
 import styled from "styled-components";
 
 const Layout = styled.div`
