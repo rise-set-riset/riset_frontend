@@ -12,6 +12,7 @@ interface TextInputProps {
   placeholder: string;
   helperText?: string;
   isValid?: boolean; 
+  isValidatingCode?: boolean; 
   validMessage?: string;
   inValidMessage?: string; 
 };
@@ -84,7 +85,7 @@ const ValidMsg = styled.p`
   font-size : 12px;
 `;
 
-export default function TextInput({ label, type, value, onChange, onBlur, placeholder, isValid, validMessage, inValidMessage , helperText}:TextInputProps){
+export default function TextInput({ label, type, value, onChange, onBlur, placeholder, isValid, isValidatingCode, validMessage, inValidMessage , helperText}:TextInputProps){
   const [isFirstBlur, setIsFirstBlur] = useState<boolean>(true);
   const [isHelperTextVisible, setIsHelperTextVisible] = useState<boolean>(true);
   const [isDuplicateChecking, setIsDuplicateChecking] = useState<boolean>(false);
@@ -141,6 +142,20 @@ export default function TextInput({ label, type, value, onChange, onBlur, placeh
         <span className="icon invalid"><FaCircleExclamation /></span>
         <InvalidMsg>{inValidMessage}</InvalidMsg>
         </>} 
+
+        {!isValid && value && label === '코드' && isValidatingCode &&
+      <>
+        <span className="icon valid"><FaCheckCircle /></span>
+        <ValidMsg>{validMessage}</ValidMsg>
+      </>
+    }
+
+       {isValid && value && label === '코드' && isValidatingCode &&
+      <>
+        <span className="icon invalid"><FaCircleExclamation /></span>
+        <InvalidMsg>{inValidMessage}</InvalidMsg>
+      </>
+    }
       </div>
     </Input>
   );
