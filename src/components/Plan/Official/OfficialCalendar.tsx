@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventForm from "./EventForm";
-import { ResponsiveContext } from "../../contexts/ResponsiveContext";
+import { ResponsiveContext } from "../../../contexts/ResponsiveContext";
 
 /* 캘린더 레이아웃 */
 const Layout = styled.div`
@@ -215,6 +215,7 @@ export interface ClickPositionType {
 
 export default function OfficialCalendar() {
   /* 
+    isMobile: 모바일화면 여부
     formRef: Form 팝업 외 클릭 감지시 필요
     todayRef: Today 버튼 제어시 필요
     calendarRef: fullcalendar API 사용시 필요
@@ -224,6 +225,7 @@ export default function OfficialCalendar() {
     eventForm: 추가하거나 수정할 이벤트 Form
     dateClickPosition: 날짜 선택시 마우스 위치
     */
+  const { isMobile } = useContext(ResponsiveContext);
   const formRef = useRef<any>(null);
   const todayRef = useRef<any>(null);
   const calendarRef = useRef<any>(null);
@@ -238,10 +240,12 @@ export default function OfficialCalendar() {
     writer: "",
     content: "",
   });
-  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>({
-    x: 0,
-    y: 0,
-  });
+  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>(
+    {
+      x: 0,
+      y: 0,
+    }
+  );
 
   /* 날짜 선택시 */
   const handleDateClick = (info: any) => {
@@ -251,25 +255,14 @@ export default function OfficialCalendar() {
       y: info.jsEvent.y,
     });
 
-    /* 드래그시 */
-    if (info.endStr) {
-      const date = new Date(info.endStr);
-      date.setDate(date.getDate() - 1);
-      const eventEnd: string = date.toISOString().split("T")[0];
-
-      setEventForm((prevState) => ({
-        ...prevState,
-        start: info.startStr,
-        end: eventEnd,
-      }));
-    } else {
-      /* 클릭시 */
-      setEventForm((prevState) => ({
-        ...prevState,
-        start: info.dateStr,
-        end: info.dateStr,
-      }));
-    }
+    const date = new Date(info.endStr);
+    date.setDate(date.getDate() - 1);
+    const eventEnd: string = date.toISOString().split("T")[0];
+    setEventForm((prevState) => ({
+      ...prevState,
+      start: info.startStr,
+      end: eventEnd,
+    }));
 
     /* 이벤트 추가 */
     if (calendarRef.current) {
@@ -287,6 +280,7 @@ export default function OfficialCalendar() {
   /* 이벤트 클릭시 */
   const handleEventClick = (info: any) => {
     const getEvent = info.event;
+    setIsFormOpen(true);
     setEventForm({
       title: getEvent?._def.title,
       start: getEvent?._instance.range.start,
@@ -294,9 +288,7 @@ export default function OfficialCalendar() {
       color: getEvent?._def.ui.backgroundColor,
       ...getEvent?._def.extendedProps,
     });
-    console.log(eventForm);
 
-    setIsFormOpen(true);
     setDateClickPosition({
       x: info.jsEvent.x,
       y: info.jsEvent.y,
@@ -328,8 +320,21 @@ export default function OfficialCalendar() {
   const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     setIsFormOpen(false);
+    // 종료 시간이 없다면 24:00 추가
+    if (!eventForm.end.includes("T")) {
+      const modifiedForm = {
+        ...eventForm,
+        end: `${eventForm.end}T24:00:00`,
+      };
+      setEventFormList((prevState) => [...prevState, modifiedForm]);
+    } else {
+      setEventFormList((prevState) => [...prevState, eventForm]);
+    }
 
-    setEventFormList((prevState) => [...prevState, eventForm]);
+    /* 서버에 데이터 전송 */
+    // fetch
+
+    /* 초기화 */
     setEventForm({
       title: "",
       color: "#FFBFA7",
@@ -372,7 +377,7 @@ export default function OfficialCalendar() {
     }
   });
 
-  const { isMobile } = useContext(ResponsiveContext);
+  console.log(eventFormList);
 
   return (
     <Layout>
@@ -397,6 +402,7 @@ export default function OfficialCalendar() {
             views: 현재 월만 표시
             dateSet: 월 이동시 실행되는 함수
             aspectRatio: 가로/세로 비율
+            displayEventTime: 이벤트 시간 표시
             */
           ref={calendarRef}
           plugins={[dayGridPlugin, multiMonthPlugin, interactionPlugin]}
@@ -460,6 +466,7 @@ export default function OfficialCalendar() {
             setMonth((currentMonth.getMonth() + 1).toString());
           }}
           aspectRatio={isMobile ? 0.8 : 1.2}
+          displayEventTime={false}
         />
       </CalendarCustomStyle>
 
