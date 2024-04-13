@@ -19,6 +19,7 @@ const MainContentLayout = styled.div`
 `;
 
 export default function PersonalPlan() {
+  /* 선택한 날짜 상태값 */
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   return (

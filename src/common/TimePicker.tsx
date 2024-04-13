@@ -63,7 +63,7 @@ const TimeTitle = styled.li`
 `;
 
 /* 시간, 날짜 리스트 */
-const hourList = Array.from({ length: 25 }, (_, index) =>
+const hourList = Array.from({ length: 24 }, (_, index) =>
   index.toString().padStart(2, "0")
 );
 

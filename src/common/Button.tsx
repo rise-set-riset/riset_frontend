@@ -16,7 +16,8 @@ const Layout = styled.button<{ $active: boolean }>`
   border-radius: 8px;
   font-weight: bold;
   letter-spacing: 1px;
-  color: ${(props) => (props.$active ? "var(--color-white)" : "var(--color-brand-main)")};
+  color: ${(props) =>
+    props.$active ? "var(--color-white)" : "var(--color-brand-main)"};
   background-color: ${(props) =>
     props.$active ? "var(--color-brand-main)" : "var(--color-white)"};
   cursor: pointer;
@@ -24,9 +25,21 @@ const Layout = styled.button<{ $active: boolean }>`
     transition: transform 0.3s;
     transform: scale(1.05);
   }
+
+  &:disabled {
+    background-color: var(--color-brand-lightgray);
+    border-color: var(--color-brand-lightgray);
+    cursor: not-allowed;
+  }
 `;
 
-export default function Button({ type, active, title, disabled, handleBtnClick }: ButtonProps) {
+export default function Button({
+  type,
+  active,
+  title,
+  disabled,
+  handleBtnClick,
+}: ButtonProps) {
   return (
     <Layout
       type={type}

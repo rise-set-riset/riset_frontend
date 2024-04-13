@@ -4,6 +4,7 @@ import MemberCard from "../../../common/MemberCard";
 import PlanCard from "./PlanCard";
 import { GoPlusCircle } from "react-icons/go";
 
+/* 전체 레이아웃 */
 const Layout = styled.div`
   width: 100%;
   display: flex;
@@ -11,6 +12,7 @@ const Layout = styled.div`
   gap: 1.5rem;
 `;
 
+/* 직원 리스트 */
 const MemberCardList = styled.div`
   width: 100%;
   display: flex;
@@ -18,13 +20,13 @@ const MemberCardList = styled.div`
   gap: 1.5rem;
 
   > div:active {
-    outline: 4px solid var(--color-brand-main);
     border-radius: 16px;
+    outline: 4px solid var(--color-brand-main);
   }
 
   > div:nth-child(1) {
-    outline: 4px solid var(--color-brand-main);
     border-radius: 16px;
+    outline: 4px solid var(--color-brand-main);
   }
 `;
 
@@ -35,6 +37,7 @@ const MemberCardStyle = styled.div`
   }
 `;
 
+/* 일정 리스트 */
 const PlanCardList = styled.div`
   width: 100%;
   display: flex;
@@ -42,18 +45,20 @@ const PlanCardList = styled.div`
   gap: 1.5rem;
 `;
 
-const Divider = styled.div<{ $lineHeight: number }>`
-  width: 2px;
-  background-color: var(--color-brand-lightgray);
-  height: ${(props) => props.$lineHeight}px;
-`;
-
+/* 일정 추가 버튼 */
 const PlusPlanButton = styled.div`
-  color: var(--color-black);
-  font-size: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 2.5rem;
+  color: var(--color-black);
+`;
+
+/* 중간 구분선 */
+const Divider = styled.div<{ $lineHeight: number }>`
+  width: 2px;
+  height: ${(props) => props.$lineHeight}px;
+  background-color: var(--color-brand-lightgray);
 `;
 
 interface MembersDataType {
@@ -65,10 +70,18 @@ interface PlanListProps {
 }
 
 export default function PlanList({ currentDate }: PlanListProps) {
+  /* 
+  memberListRef, planListRef, lineHeight: 중간 구분선 길이 조정 위해 필요
+  allPlanData: 근무 일정 페이지의 모든 데이터
+  planComponents: Plan 컴포넌트 목록
+  */
   const memberListRef = useRef<HTMLDivElement>(null);
   const planListRef = useRef<HTMLDivElement>(null);
   const [lineHeight, setLineHeight] = useState<number>(0);
+  const [allPlanData, setAllPlanData] = useState<MembersDataType[]>([]);
+  const [planComponents, setPlanComponents] = useState<JSX.Element[]>([]);
 
+  /* 중간 구분선 길이 조정 */
   useEffect(() => {
     const memberHeight = memberListRef.current?.clientHeight || 0;
     const planHeight = planListRef.current?.clientHeight || 0;
@@ -76,7 +89,6 @@ export default function PlanList({ currentDate }: PlanListProps) {
   }, []);
 
   /* 현재 날짜의 모든 데이터 받아오기 */
-  const [allPlanData, setAllPlanData] = useState<MembersDataType[]>([]);
   useEffect(() => {
     // currentData 같이 보내기
     // fetch("url", )
@@ -84,12 +96,9 @@ export default function PlanList({ currentDate }: PlanListProps) {
     //   .then((data) => setAllPlanData(data));
   }, []);
 
-  // 추가된 컴포넌트 목록을 저장하는 상태
-  const [components, setComponents] = useState<JSX.Element[]>([]);
-
-  // Plus 버튼을 클릭할 때마다 새로운 컴포넌트 추가
+  /* Plus 버튼 클릭시 새로운 Plan 컴포넌트 추가*/
   const handleAddComponent = () => {
-    setComponents((prevComponents) => [
+    setPlanComponents((prevComponents) => [
       ...prevComponents,
       <PlanCard
         clickToAdd={true}
@@ -151,7 +160,7 @@ export default function PlanList({ currentDate }: PlanListProps) {
         <PlanCard clickToAdd={false} planContent={planContent} />
         <PlanCard clickToAdd={false} planContent={planContent} />
 
-        {components}
+        {planComponents}
         <PlusPlanButton>
           <GoPlusCircle onClick={handleAddComponent} />
         </PlusPlanButton>

@@ -90,7 +90,6 @@ const Layout = styled.div<{ $month: string }>`
       width: 250px;
       margin: 0 auto;
 
-      /* thead */
       thead {
         height: 40px;
 
@@ -222,9 +221,19 @@ export default function DateSlider({ setCurrentDate }: DateSliderProps) {
     <Layout $month={month}>
       <FullCalendar
         /* 
-      ref:
-      
-      */
+        ref: 달력 api 접근용
+        plugins: 달력 내 사용할 기능
+        initialView: 처음 보여주는 방식
+        views: 5일씩만 보여주도록 Custom
+        headerToolbar: 헤더 버튼
+        customButtons: 월이동 버튼 Custom
+        buttonIcons: 버튼 아이콘 모양
+        titleFormat: 연/월 title 형식
+        dayHeaderFormat: 날짜 형식
+        datesSet: 월/일 이동시 호출
+        navLinks: 날짜 링크
+        navLinkDayClick: 날짜 클릭시 호출
+        */
         ref={calendarRef}
         plugins={[dayGridPlugin]}
         initialView="dayGrid"
@@ -241,10 +250,10 @@ export default function DateSlider({ setCurrentDate }: DateSliderProps) {
         }}
         customButtons={{
           customPrevButton: {
-            click: prevMonth, // 이전 월로 이동하는 함수 연결
+            click: prevMonth,
           },
           customNextButton: {
-            click: nextMonth, // 다음 월로 이동하는 함수 연결
+            click: nextMonth,
           },
         }}
         buttonIcons={{

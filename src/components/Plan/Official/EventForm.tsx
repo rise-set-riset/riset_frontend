@@ -220,9 +220,8 @@ const SelectDateEndButton = styled(SelectDateButton)<{
   $isSelected: boolean;
   $isDateValid: boolean;
 }>`
-  background-color: ${(props) =>
-    props.$isDateValid ? "var(--color-white)" : "var(--color-brand-orange)"};
-  border-radius: 10px;
+  color: ${(props) =>
+    props.$isDateValid ? "var(--color-black)" : "var(--color-error)"};
 `;
 
 /* Date Picker 스타일 */
@@ -354,14 +353,15 @@ export default function EventForm({
   isColorOpen: 색상 선택 팝업 표시 여부
   selectedColor: 선택한 색상
   hasTime: 시간 선택 여부
+  hasStartTime: 시작 시간 선택 여부
+  hasEndTime: 종료 시간 선택 여부
   selectStartDate: 선택한 시작 날짜
   selectEndDate: 선택한 끝나는 날짜
   selectedStartTime: 시작 시간
   selectedEndTime: 끝나는 시간
-  hasStartTime: 시작 시간 선택 여부
-  hasEndTime: 종료 시간 선택 여부
   isStartPickerOpen: 시작 날짜 선택창 표시 여부
   isEndPickerOpen: 종료 날짜 선택창 표시 여부
+  isDateValid: 종료 날짜가 시작 날짜와 같거나 이후에 있는지
   */
   const eventColorList = [
     "#FFBFA7",
@@ -373,16 +373,17 @@ export default function EventForm({
   const [isColorOpen, setIsColorOpen] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string>(eventColorList[0]);
   const [hasTime, setHasTime] = useState<boolean>(false);
+  const [hasStartTime, setHasStartTime] = useState<boolean>(false);
+  const [hasEndTime, setHasEndTime] = useState<boolean>(false);
   const [selectedStartDate, setSelectedStartDate] = useState<string>(
     eventForm.start
   );
   const [selectedEndDate, setSelectedEndDate] = useState<string>(eventForm.end);
   const [selectedStartTime, setSelectedStartTime] = useState<string>("00:00");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("00:00");
-  const [hasStartTime, setHasStartTime] = useState<boolean>(false);
-  const [hasEndTime, setHasEndTime] = useState<boolean>(false);
   const [isStartPickerOpen, setIsStartPickerOpen] = useState<boolean>(false);
   const [isEndPickerOpen, setIsEndPickerOpen] = useState<boolean>(false);
+  const [isDateValid, setIsDateValid] = useState<boolean>(true);
 
   /* Event Form 변경 */
   const handleFormChange = (
@@ -421,42 +422,6 @@ export default function EventForm({
     setHasTime(!hasTime);
   };
 
-  /* Date Picker 시작 날짜 달력 표시 조정 */
-  const handleStartPickerOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
-    /* StartPicker와 EndPicker가 동시에 열리지 않도록 */
-    setIsStartPickerOpen(!isStartPickerOpen);
-    if (isEndPickerOpen) {
-      setIsEndPickerOpen(false);
-    }
-  };
-
-  /* Date Picker 시작 날짜 달력 표시 조정 */
-  const handleEndPickerOpen = (date: any) => {
-    /* StartPicker와 EndPicker가 동시에 열리지 않도록 */
-    setIsEndPickerOpen(!isEndPickerOpen);
-    if (isStartPickerOpen) {
-      setIsStartPickerOpen(false);
-    }
-  };
-
-  /* Date Picker 달력 내 시작 날짜 조정 함수 */
-  const handleStartCalendar = (date: any) => {
-    setIsStartPickerOpen(!isStartPickerOpen);
-    if (isEndPickerOpen) {
-      setIsEndPickerOpen(false);
-    }
-    setSelectedStartDate(setDateForm(date));
-  };
-
-  /* Date Picker 달력 내 종료 날짜 조정 함수 */
-  const handleEndCalendar = (date: any) => {
-    setIsEndPickerOpen(!isEndPickerOpen);
-    if (isStartPickerOpen) {
-      setIsStartPickerOpen(false);
-    }
-    setSelectedEndDate(setDateForm(date));
-  };
-
   /* 시작 시간 또는 종료 시간 추가 */
   const handleAddSelectTime = (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -470,15 +435,51 @@ export default function EventForm({
     }
   };
 
-  /* 날짜 형식 조정 */
-  const setDateForm = (now: Date) => {
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, "0");
-    const day = now.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  /* 시작 날짜 달력 표시 여부 */
+  const handlePickerOpen = (name: string) => {
+    /* StartPicker와 EndPicker가 동시에 열리지 않도록 */
+    if (name === "start") {
+      setIsStartPickerOpen(!isStartPickerOpen);
+      if (isEndPickerOpen) {
+        setIsEndPickerOpen(false);
+      }
+    } else {
+      setIsEndPickerOpen(!isEndPickerOpen);
+      if (isStartPickerOpen) {
+        setIsStartPickerOpen(false);
+      }
+    }
   };
 
-  const [isDateValid, setIsDateValid] = useState<boolean>(true);
+  /* Date Picker 달력 내 시작 날짜 선택 */
+  const handleStartCalendar = (date: any) => {
+    handlePickerOpen("start");
+    setSelectedStartDate(setDateForm(date));
+    setEventForm((prev) => {
+      return {
+        ...prev,
+        start: hasStartTime
+          ? `${setDateForm(date)}T${selectedStartTime}`
+          : `${setDateForm(date)}`,
+      };
+    });
+  };
+
+  /* Date Picker 달력 내 종료 날짜 선택 */
+  const handleEndCalendar = (date: any) => {
+    handlePickerOpen("end");
+    setSelectedEndDate(setDateForm(date));
+    setEventForm((prev) => {
+      return {
+        ...prev,
+        end: hasEndTime
+          ? `${setDateForm(date)}T${selectedEndTime}`
+          : `${setDateForm(date)}`,
+      };
+    });
+  };
+
+  /* 시작 날짜와 종료 날짜 유효성 검사 */
   useEffect(() => {
     if (new Date(selectedStartDate) > new Date(selectedEndDate)) {
       setIsDateValid(false);
@@ -486,6 +487,36 @@ export default function EventForm({
       setIsDateValid(true);
     }
   }, [selectedStartDate, selectedEndDate]);
+
+  useEffect(() => {
+    setEventForm((prev) => {
+      return {
+        ...prev,
+        start: hasStartTime
+          ? `${selectedStartDate.split("T")[0]}T${selectedStartTime}`
+          : selectedStartDate,
+      };
+    });
+  }, [selectedStartTime]);
+
+  useEffect(() => {
+    setEventForm((prev) => {
+      return {
+        ...prev,
+        end: hasEndTime
+          ? `${selectedEndDate.split("T")[0]}T${selectedEndTime}`
+          : selectedEndDate,
+      };
+    });
+  }, [selectedEndTime]);
+
+  /* 날짜 형식 조정 */
+  const setDateForm = (now: Date) => {
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const day = now.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   return (
     <FormLayout
@@ -548,7 +579,7 @@ export default function EventForm({
             type="button"
             id="event-input-start-date"
             className="event-input-date"
-            onClick={handleStartPickerOpen}
+            onClick={() => handlePickerOpen("start")}
             $isSelected={isStartPickerOpen}
           >
             {dateFormat(selectedStartDate)}
@@ -563,7 +594,7 @@ export default function EventForm({
             type="button"
             id="event-input-end-date"
             className="event-input-date"
-            onClick={handleEndPickerOpen}
+            onClick={() => handlePickerOpen("end")}
             $isSelected={isEndPickerOpen}
             $isDateValid={isDateValid}
           >
@@ -694,7 +725,12 @@ export default function EventForm({
           title={"취소"}
           handleBtnClick={handleFormCancel}
         />
-        <Button type={"submit"} active={true} title={"저장"} />
+        <Button
+          type={"submit"}
+          active={true}
+          title={"저장"}
+          disabled={!isDateValid}
+        />
       </ButtonBox>
     </FormLayout>
   );
