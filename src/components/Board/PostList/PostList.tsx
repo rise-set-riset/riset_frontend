@@ -146,6 +146,8 @@ export default function PostList() {
   // 즐겨찾기, 게시물 열리는 조건
   const isFavoriteOpen = ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
   const isAllOpen = ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
+  // jwt
+  const jwt = localStorage.getItem("jwt");
 
   /* 검색창 검색 */
   const handleSearchtitle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -156,15 +158,29 @@ export default function PostList() {
   };
 
   /* 즐겨찾기 삭제 */
-  const handleRemoveFavorite = (postId: string) => {
-    setFavoritePosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
-    // API 요청 필요 (서버에서도 삭제)
+  const handleRemoveFavorite = async (e: React.MouseEvent<SVGElement>, postId: number) => {
+    e.stopPropagation();
+    await fetch(`https://dev.risetconstruction.net/board/favorite/delete/${postId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setFavoritePosts(data));
   };
 
   /* 즐겨찾기 추가 */
-  const handleAddFavorite = (post: any) => {
-    setFavoritePosts((prevPosts) => [post, ...prevPosts]);
-    // API 요청 필요 (서버에서도 추가)
+  const handleAddFavorite = (e: React.MouseEvent<SVGElement>, post: any) => {
+    e.stopPropagation();
+    fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setFavoritePosts(data));
   };
 
   /* 휴대폰 화면에서 클릭 시 */
@@ -179,6 +195,23 @@ export default function PostList() {
       setIsMenuClick(false);
     } else {
       setIsMenuClick(true);
+    }
+  };
+
+  /* 즐겨찾기 드랍 후 실행될 함수 */
+  const handleDragUp = (idx: number) => {
+    if (idx > 0) {
+      const beforePostIdx = favoritePosts[idx - 1].indexNumber;
+      const movedPostId = favoritePosts[idx].post.id;
+
+      fetch(`https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(beforePostIdx),
+      });
     }
   };
 
@@ -218,13 +251,15 @@ export default function PostList() {
           <Favorites>
             <Reorder.Group values={favoritePosts} onReorder={setFavoritePosts}>
               {favoritePosts &&
-                favoritePosts.map((post) => (
-                  <Reorder.Item value={post} key={post.post.id} drag>
+                favoritePosts.map((post, idx) => (
+                  <Reorder.Item
+                    value={post}
+                    key={post.id}
+                    drag="y"
+                    onPointerUp={() => handleDragUp(idx)}
+                  >
                     <PostCard
                       post={post}
-                      writer="갱얼쥐"
-                      date="2024-04-11"
-                      fileCnt="1"
                       isManageClick={isFavoriteManageClick}
                       handleIconClick={handleRemoveFavorite}
                       isAllPosts={false}
@@ -265,9 +300,6 @@ export default function PostList() {
                 <PostCard
                   key={post.post.id}
                   post={post}
-                  writer="야옹이"
-                  date="2024-04-11"
-                  fileCnt="1"
                   isManageClick={isManageClick}
                   handleIconClick={handleAddFavorite}
                   isAllPosts={true}
