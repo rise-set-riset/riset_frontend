@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
 import React from "react";
+import MemberCard from "../../common/MemberCard";
+import FileCard from "./FileCard";
 
 const Layout = styled.form`
   width: 900px;
@@ -52,12 +54,25 @@ const Date = styled.p`
   letter-spacing: 1px;
 `;
 
+const Member = styled.div`
+  height: 83px;
+  margin-top: 1rem;
+  border-top: 1px solid var(--color-brand-lightgray);
+  border-bottom: 1px solid var(--color-brand-lightgray);
+`;
+
+const Content = styled.div`
+  height: 500px;
+  padding: 2rem 1rem;
+  border: 1px solid black;
+`;
+
 interface Post {
   post: any;
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function PostEdit({ post, setIsFormOpen }: Post) {
+export default function PostShow({ post, setIsFormOpen }: Post) {
   return (
     <Layout>
       <PostWrapper>
@@ -72,8 +87,24 @@ export default function PostEdit({ post, setIsFormOpen }: Post) {
           </div>
         </Header>
         <Date>2024.04.10</Date>
+        <Member>
+          <MemberCard
+            memberInfo={{
+              image: "/assets/default-emoji.png",
+              alt: "이미지",
+              name: "손다니엘",
+              rank: "사원",
+              department: "개발팀",
+              position: "프론트",
+            }}
+          />
+        </Member>
+        <Content>내용이 들어갈 부분입니다.</Content>
+        <FileCard />
       </PostWrapper>
-      <CommentWrapper></CommentWrapper>
+      <CommentWrapper>
+        <div>댓글 0개</div>
+      </CommentWrapper>
     </Layout>
   );
 }

@@ -184,13 +184,13 @@ export default function CommuteRecord() {
             active={workStatus === "" && isInRange}
             title="출근"
             handleBtnClick={handleSubmit}
-            disabled={workStatus === "start" || workStatus === "end"}
+            disabled={!isInRange}
           />
           <Button
             type="button"
             active={workStatus === "start" && isInRange}
             title="퇴근"
-            disabled={workStatus === "end" || workStatus === ""}
+            disabled={!isInRange}
             handleBtnClick={handleSubmit}
           />
         </CommuteButtons>

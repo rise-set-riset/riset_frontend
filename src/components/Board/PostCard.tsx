@@ -1,11 +1,11 @@
 import styled, { css } from "styled-components";
-import { ReactComponent as File } from "../../assets/board/file.svg";
+import { ReactComponent as File } from "../../assets/board/file-orange.svg";
 import { ReactComponent as Minus } from "../../assets/board/minus.svg";
 import { ReactComponent as Star } from "../../assets/board/star.svg";
 import { Transition } from "react-transition-group";
 import { useState } from "react";
 import Modal from "../../common/Modal";
-import PostEdit from "./PostEdit";
+import PostShow from "./PostShow";
 
 const Layout = styled.div`
   position: relative;
@@ -161,7 +161,7 @@ export default function PostCard({
       </Info>
       {+fileCnt > 0 && <FileIcon />}
       <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
-        <PostEdit post={post} setIsFormOpen={setIsFormOpen} />
+        <PostShow post={post} setIsFormOpen={setIsFormOpen} />
       </Modal>
     </Layout>
   );

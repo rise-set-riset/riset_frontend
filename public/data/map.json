@@ -8,5 +8,11 @@
     "companyName": "정왕 6공원",
     "latitude": 37.35268168446307,
     "longitude": 126.7456600776126
+  },
+  {
+    "id": 6,
+    "companyName": "테스트",
+    "latitude": 37.585270347,
+    "longitude": 127.07107414997
   }
 ]
