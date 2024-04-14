@@ -1,23 +1,29 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { ResponsiveContext } from "../contexts/ResponsiveContext";
 
-export default function usePosts() {
+export default function usePosts(url: string) {
   const [posts, setPosts] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [skip, setSkip] = useState<number>(0);
   const [searchWord, setSearchWord] = useState<string>("");
   const lastItemRef = useRef<HTMLDivElement | null>(null);
   const { isTablet, isMobile } = useContext(ResponsiveContext);
+  const jwt = localStorage.getItem("jwt");
+  const urlFull = `${url}?size=10&page=${skip}${searchWord ? `&searchTitle=${searchWord}` : ""}`;
 
   /* 게시글 조회 */
   useEffect(() => {
     const fetchMorePosts = async () => {
-      const data = await fetch(
-        `https://dummyjson.com/posts?limit=10&skip=${skip * 10}&searchTitle=${searchWord}`
-      ).then((res) => res.json());
+      const data = await fetch(urlFull, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }).then((res) => res.json());
 
+      console.log(data);
       // 추가 게시글이 있는지 확인
-      if (data.posts.length === 0) {
+      if (data.length === 0) {
         setHasMore(false);
       } else {
         setPosts((prevPosts) => [...prevPosts, ...data.posts]);

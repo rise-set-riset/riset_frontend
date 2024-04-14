@@ -29,8 +29,6 @@ const FileName = styled.span`
 
 const DownLoadIcon = styled(Download)``;
 
-interface FileType {}
-
 export default function FileCard() {
   return (
     <Layout>
