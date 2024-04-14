@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Modal from "../../common/Modal";
 import ChatMain from "./ChatMain";
+import ChatList from "./ChatRoomList";
+import ChatMessage from "./ChatMessage";
 
 const Layout = styled.div`
   z-index: 1000;
@@ -44,7 +46,9 @@ export default function ChatScreen() {
       {isChatOpen && (
         <Modal isModalOpen={isChatOpen} handleIsModalOpen={setIsChatOpen}>
           <ChatPageLayout>
-            <ChatMain />
+            {/* <ChatMain /> */}
+            {/* <ChatList /> */}
+            <ChatMessage />
           </ChatPageLayout>
         </Modal>
       )}

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { IoClose } from "react-icons/io5";
+import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
 import MemberCard from "../../common/MemberCard";
 import { FiPlusCircle } from "react-icons/fi";
@@ -8,9 +8,6 @@ import { PiChatCircleDots } from "react-icons/pi";
 
 const Layout = styled.div`
   position: relative;
-  /* display: flex;
-  flex-direction: column;
-  gap: 1.5rem; */
 `;
 
 const TitleBox = styled.header`
@@ -20,7 +17,11 @@ const TitleBox = styled.header`
   margin-bottom: 1.5rem;
 `;
 
-const MemberCardList = styled.div`
+const CloseIcon = styled(CgClose)`
+  font-size: 1.2rem;
+`;
+
+const MemberCardList = styled.main`
   margin-top: 1rem;
   height: 700px;
   overflow-y: auto;
@@ -68,6 +69,7 @@ const ButtonBox = styled.footer`
     border: none;
     border-radius: 0.5rem;
     border: 1px solid var(--color-brand-main);
+    cursor: pointer;
   }
 
   button:nth-child(2) {
@@ -75,8 +77,6 @@ const ButtonBox = styled.footer`
     color: var(--color-brand-main);
   }
 `;
-
-const ButtonStyle = styled.button``;
 
 export default function ChatMain() {
   const TestInfo = {
@@ -92,7 +92,7 @@ export default function ChatMain() {
     <Layout>
       <TitleBox>
         <h2>채팅</h2>
-        <IoClose />
+        <CloseIcon />
       </TitleBox>
 
       <SearchBar />
@@ -129,10 +129,10 @@ export default function ChatMain() {
           <PlusChatIcon />
           <div>새 채팅</div>
         </button>
-        <ButtonStyle>
+        <button>
           <ChatBubbleIcon />
           <div>채팅목록</div>
-        </ButtonStyle>
+        </button>
       </ButtonBox>
     </Layout>
   );
