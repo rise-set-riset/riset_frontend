@@ -133,14 +133,16 @@ export default function PostList() {
   // 모바일, 태블릿 여부 판단
   const { isTablet, isMobile } = useContext(ResponsiveContext);
   // Hook 사용
-  const { posts, hasMore, lastItemRef, setSearchWord } = usePosts();
+  const { posts, hasMore, lastItemRef, setSearchWord } = usePosts(
+    "https://dev.risetconstruction.net/board"
+  );
   const {
     posts: favoritePosts,
     hasMore: hasFavoriteMore,
     lastItemRef: lastFavoriteItemRef,
     setPosts: setFavoritePosts,
     setSearchWord: setFavoriteSearchWord,
-  } = usePosts();
+  } = usePosts("https://dev.risetconstruction.net/board/favorite");
   // 즐겨찾기, 게시물 열리는 조건
   const isFavoriteOpen = ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
   const isAllOpen = ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
@@ -217,7 +219,7 @@ export default function PostList() {
             <Reorder.Group values={favoritePosts} onReorder={setFavoritePosts}>
               {favoritePosts &&
                 favoritePosts.map((post) => (
-                  <Reorder.Item value={post} key={post.id} drag>
+                  <Reorder.Item value={post} key={post.post.id} drag>
                     <PostCard
                       post={post}
                       writer="갱얼쥐"
@@ -261,7 +263,7 @@ export default function PostList() {
             {posts &&
               posts.map((post) => (
                 <PostCard
-                  key={post.id}
+                  key={post.post.id}
                   post={post}
                   writer="야옹이"
                   date="2024-04-11"
