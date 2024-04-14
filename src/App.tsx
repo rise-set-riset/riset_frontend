@@ -9,8 +9,8 @@ import FindId from "./pages/User/FindId";
 import FindPassword from "./pages/User/FindPassword";
 import Commute from "./pages/Commute/Commute";
 import Home from "./pages/Home/Home";
-import PostList from "./pages/Board/PostList";
-import MyPost from "./pages/Board/MyPost";
+import Board from "./pages/Board/Board";
+import MyBoard from "./pages/Board/MyBoard";
 import OfficialPlan from "./pages/Plan/OfficialPlan";
 import PersonalPlan from "./pages/Plan/PersonalPlan";
 import ApplyDayoff from "./pages/Dayoff/ApplyDayoff";
@@ -48,8 +48,8 @@ const router = createBrowserRouter([
       { path: "/commute", element: <Commute /> },
 
       // Board
-      { path: "/board/postlist", element: <PostList /> },
-      { path: "/board/mypost", element: <MyPost /> },
+      { path: "/board/postlist", element: <Board /> },
+      { path: "/board/mypost", element: <MyBoard /> },
 
       // Plan
       { path: "/plan/official", element: <OfficialPlan /> },

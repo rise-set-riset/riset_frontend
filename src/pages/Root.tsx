@@ -13,11 +13,12 @@ const GlobalSvgStyle = createGlobalStyle`
     transition: all 0.3s;
     cursor: pointer;
   }
-  li:hover svg,
+
   span:hover svg,
   svg:hover {
     transform: scale(1.2);
   }
+  
   path {
     transition: all 0.3s;
     stroke: var(--color-svg-stroke);
@@ -67,23 +68,13 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
 type SideOpenState = "mobile" | "pcOpen" | "pcClose";
 
 export default function Root() {
-  const isMobile = useContext(ResponsiveContext);
+  const { isMobile } = useContext(ResponsiveContext);
   const location = useLocation();
-  const isAuth = ![
-    "/",
-    "/signup",
-    "/authority",
-    "/findid",
-    "/findpassword",
-  ].includes(location.pathname);
-  const isSideMenuOpen = useSelector(
-    (state: RootState) => state.sideMenu.isSideMenuOpen
+  const isAuth = !["/", "/signup", "/authority", "/findid", "/findpassword"].includes(
+    location.pathname
   );
-  const sideOpenState: SideOpenState = isMobile
-    ? "mobile"
-    : isSideMenuOpen
-    ? "pcOpen"
-    : "pcClose";
+  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
+  const sideOpenState: SideOpenState = isMobile ? "mobile" : isSideMenuOpen ? "pcOpen" : "pcClose";
 
   return (
     <>

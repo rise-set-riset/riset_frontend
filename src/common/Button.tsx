@@ -1,12 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  active: boolean;
-  title: string;
-  handleBtnClick?: () => void;
-}
-
 const Layout = styled.button<{ $active: boolean }>`
   display: flex;
   align-items: center;
@@ -20,11 +14,27 @@ const Layout = styled.button<{ $active: boolean }>`
   background-color: ${(props) =>
     props.$active ? "var(--color-brand-main)" : "var(--color-white)"};
   cursor: pointer;
+
   &:hover {
     transition: transform 0.3s;
     transform: scale(1.05);
   }
+
+  &:disabled {
+    background-color: var(--color-brand-lightgray);
+    border-color: var(--color-brand-lightgray);
+    color: var(--color-white);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 `;
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  active: boolean;
+  title: string;
+  isInRange?: boolean;
+  handleBtnClick?: () => void;
+}
 
 export default function Button({ type, active, title, disabled, handleBtnClick }: ButtonProps) {
   return (

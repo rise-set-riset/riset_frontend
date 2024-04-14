@@ -97,7 +97,7 @@ export default function SideMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean[]>([]);
   const location = useLocation();
   const pathname = location.pathname;
-  const isMobile = useContext(ResponsiveContext);
+  const { isMobile } = useContext(ResponsiveContext);
   const dispatch = useDispatch<AppDispatch>();
   const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 
@@ -135,24 +135,20 @@ export default function SideMenu() {
 
   // 사이드 메뉴 받아오기
   useEffect(() => {
-    fetch("/data/side-menu.json")
-      .then((res) => res.json())
-      .then((data) => setSideMenus(data));
-    // API 필요
-    // const fetchMenus = async () => {
-    //   try {
-    //     fetch("https://dev.risetconstruction.net/api/menus")
-    //       .then((res) => res.json())
-    //       .then((data) => setSideMenus(data));
-    //   } catch (err: any) {
-    //     console.log(err);
-    //     fetch("/data/side-menu.json")
-    //       .then((res) => res.json())
-    //       .then((data) => setSideMenus(data));
-    //   }
-    // };
+    const fetchMenus = async () => {
+      try {
+        fetch("https://dev.risetconstruction.net/api/menus")
+          .then((res) => res.json())
+          .then((data) => setSideMenus(data));
+      } catch (err: any) {
+        console.log(err);
+        fetch("/data/side-menu.json")
+          .then((res) => res.json())
+          .then((data) => setSideMenus(data));
+      }
+    };
 
-    // fetchMenus();
+    fetchMenus();
   }, []);
 
   return (

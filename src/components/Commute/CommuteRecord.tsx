@@ -102,50 +102,54 @@ export default function CommuteRecord() {
 
   /* 출근, 퇴근 버튼 클릭 시 */
   const handleSubmit = async () => {
-    // const now: Date = new Date();
+    const now: Date = new Date();
     // 출/퇴근 날짜
-    // const year = now.getFullYear();
-    // const month = (now.getMonth() + 1).toString().padStart(2, "0");
-    // const day = now.getDate().toString().padStart(2, "0");
-    // const commuteDate = `${year}-${month}-${day}`;
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const day = now.getDate().toString().padStart(2, "0");
+    const commuteDate = `${year}-${month}-${day}`;
+    // 출/퇴근 시간
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const commuteTime = `${hours}:${minutes}`;
+    // jwt
+    const jwt = localStorage.getItem("jwt");
 
-    // // 출/퇴근 시간
-    // const hours = now.getHours().toString().padStart(2, "0");
-    // const minutes = now.getMinutes().toString().padStart(2, "0");
-    // const commuteTime = `${hours}:${minutes}`;
-
-    // API 필요
     if (workStatus === "") {
       // 출근 데이터
-      // await fetch("url", {
-      //   method: "POST",
-      //   headers: {
-      //     Authorization: "Bearer 토큰명",
-      //   },
-      //   body: JSON.stringify({
-      //     commuteDate,
-      //     commuteStart: commuteTime,
-      //     commutePlace,
-      //   }),
-      // });
-      setWorkStatus("start");
-    } else if (workStatus === "start") {
+      await fetch("https://dev.risetconstruction.net/commute/register-commute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({
+          commuteDate,
+          commuteStart: commuteTime,
+          commutePlace: "HEADQUARTERS",
+          commuteStatus: "START",
+        }),
+      });
+      setWorkStatus("START");
+    } else if (workStatus === "START") {
       // 퇴근 데이터
-      // await fetch("url", {
-      //   method: "POST",
-      //   headers: {
-      //     Authorization: "Bearer 토큰명",
-      //   },
-      //   body: JSON.stringify({
-      //     commuteEnd: commuteTime,
-      //   }),
-      // });
-      setWorkStatus("end");
+      await fetch("https://dev.risetconstruction.net/commute/get-off", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({
+          commuteEnd: commuteTime,
+          commuteStatus: "END",
+        }),
+      });
+      setWorkStatus("END");
     }
   };
 
   /* 달력 클릭해서 Form 열기 */
-  const handleIsFormOpen = (data: any) => {
+  const handleIsFormOpen = (data: EventType) => {
     setForm(data);
     setIsFormOpen(true);
   };
@@ -160,10 +164,16 @@ export default function CommuteRecord() {
 
   /* 새로고침, 재접속 시 출근, 퇴근 버튼 클릭 여부 판단하기 */
   useEffect(() => {
-    // API 필요
-    fetch("/data/btn-click.json")
+    const jwt = localStorage.getItem("jwt");
+
+    fetch("https://dev.risetconstruction.net/commute/get-status", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
       .then((res) => res.json())
-      .then((data) => setWorkStatus(data));
+      .then((data) => setWorkStatus(data.status));
   }, []);
 
   return (
@@ -184,13 +194,13 @@ export default function CommuteRecord() {
             active={workStatus === "" && isInRange}
             title="출근"
             handleBtnClick={handleSubmit}
-            disabled={workStatus === "start" || workStatus === "end"}
+            disabled={!isInRange}
           />
           <Button
             type="button"
-            active={workStatus === "start" && isInRange}
+            active={workStatus === "START" && isInRange}
             title="퇴근"
-            disabled={workStatus === "end" || workStatus === ""}
+            disabled={!isInRange}
             handleBtnClick={handleSubmit}
           />
         </CommuteButtons>

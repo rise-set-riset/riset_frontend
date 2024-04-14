@@ -131,16 +131,27 @@ export default function CommuteForm({
   handleStartTime,
   handleEndTime,
 }: CommuteModalProp) {
-  const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  // form submit
+  const handleFormSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const jwt = localStorage.getItem("jwt");
 
-    // API 필요
-    // await fetch("url", {
-    //   method: "POST",
-    //   headers: {
-    //     Authorization: "Bearer 토큰명",
-    //   },
-    //   body: JSON.stringify(form),
+    const data = {
+      commuteDate: form.start,
+      commuteStart: form.startTime,
+      commuteEnd: form.endTime,
+      commutePlace: form.way,
+      commuteStatus: "END",
+    };
+
+    fetch("https://dev.risetconstruction.net/commute/register-commute", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify(data),
+    });
   };
 
   /* 날짜 형식 변환 */
@@ -179,7 +190,7 @@ export default function CommuteForm({
         </User>
         <DateWrapper>
           <DateIcon />
-          <DateText>{dateFormat(form?.start)}</DateText>
+          <DateText>{form && dateFormat(form?.start)}</DateText>
         </DateWrapper>
         <Time>
           <TimeIcon />
