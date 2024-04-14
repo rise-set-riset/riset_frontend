@@ -151,7 +151,6 @@ export default function Login() {
   const [password, setPasswrd] = useState<string>("");
   const [isIdNotFound, setIsIdNotFound] = useState(false);
   const [isPasswordMismatch, setIsPasswordMismatch] = useState(false);
-
   const navigate = useNavigate();
 
   // 입력 필드의 값이 변경되면 해당값을 id에 반영
@@ -175,36 +174,26 @@ export default function Login() {
   };
 
   // 입력된 아이디와 이메일을 서버에 POST 요청으로 전송
-  const handleLogin = () => {
-    const loginUrl = "http://your-server.com/login";
+  const handleLogin = async () => {
+    const loginUrl = "https://dev.risetconstruction.net/auth/login";
 
     const data = {
       id: id,
       password: password,
     };
 
-    fetch(loginUrl, {
+    const response = await fetch(loginUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     })
-      .then((response) => {
-        return response.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        if (data.success) {
-          console.log("로그인 성공!");
-        } else {
-          console.log("로그인 실패!");
-          if (data.error === "id_not_found") {
-            setIsIdNotFound(true);
-          }
-          if (data.error === "password_mismatch") {
-            setIsPasswordMismatch(true);
-          }
-        }
+        console.log("로그인 성공!");
+        localStorage.setItem("jwt", data.access_token);
+        navigate("/authority");
       })
       .catch((error) => {
         console.error("Error:", error);
