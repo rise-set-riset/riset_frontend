@@ -115,7 +115,6 @@ export default function CommuteRecord() {
     // jwt
     const jwt = localStorage.getItem("jwt");
 
-    // API 필요
     if (workStatus === "") {
       // 출근 데이터
       await fetch("https://dev.risetconstruction.net/commute/register-commute", {
@@ -131,11 +130,11 @@ export default function CommuteRecord() {
           commuteStatus: "START",
         }),
       });
-      setWorkStatus("start");
+      setWorkStatus("START");
     } else if (workStatus === "START") {
       // 퇴근 데이터
-      await fetch("https://dev.risetconstruction.net/commute/commute/get-off", {
-        method: "POST",
+      await fetch("https://dev.risetconstruction.net/commute/get-off", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
@@ -150,7 +149,7 @@ export default function CommuteRecord() {
   };
 
   /* 달력 클릭해서 Form 열기 */
-  const handleIsFormOpen = (data: any) => {
+  const handleIsFormOpen = (data: EventType) => {
     setForm(data);
     setIsFormOpen(true);
   };
@@ -165,26 +164,16 @@ export default function CommuteRecord() {
 
   /* 새로고침, 재접속 시 출근, 퇴근 버튼 클릭 여부 판단하기 */
   useEffect(() => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
     const jwt = localStorage.getItem("jwt");
 
-    fetch(`https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`, {
+    fetch("https://dev.risetconstruction.net/commute/get-status", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data.status);
-        if (data.length === 0) {
-          setWorkStatus("");
-        } else {
-          setWorkStatus(data);
-        }
-      });
+      .then((data) => setWorkStatus(data.status));
   }, []);
 
   return (

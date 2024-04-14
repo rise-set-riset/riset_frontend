@@ -47,8 +47,14 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
 
   /* 회사명, 위도, 경도 데이터 받아오기 */
   useEffect(() => {
-    // API 필요
-    fetch("/data/map.json")
+    const jwt = localStorage.getItem("jwt");
+
+    fetch("https://dev.risetconstruction.net/commute/company-location", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setMaps(data));
 

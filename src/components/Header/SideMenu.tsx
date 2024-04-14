@@ -135,10 +135,6 @@ export default function SideMenu() {
 
   // 사이드 메뉴 받아오기
   useEffect(() => {
-    // fetch("/data/side-menu.json")
-    //   .then((res) => res.json())
-    // .then((data) => setSideMenus(data));
-    // API 필요
     const fetchMenus = async () => {
       try {
         fetch("https://dev.risetconstruction.net/api/menus")

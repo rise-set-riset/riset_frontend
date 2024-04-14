@@ -73,37 +73,44 @@ interface Post {
 }
 
 export default function PostShow({ post, setIsFormOpen }: Post) {
+  const { user, post: postItem } = post;
+
+  /* 날짜 형식 변환 */
+  const convertDateTime = (date: string) => {
+    return date.split("T")[0];
+  };
+
   return (
     <Layout>
       <PostWrapper>
         <Header>
           <Title>
             <EmojiIcon src="/assets/default-emoji.png" alt="emoji" />
-            {post.title}
+            {postItem.title}
           </Title>
           <div>
             <ModifyIcon />
             <CloseIcon onClick={() => setIsFormOpen(false)} />
           </div>
         </Header>
-        <Date>2024.04.10</Date>
+        <Date>{convertDateTime(postItem.date)}</Date>
         <Member>
           <MemberCard
             memberInfo={{
               image: "/assets/default-emoji.png",
               alt: "이미지",
-              name: "손다니엘",
-              rank: "사원",
-              department: "개발팀",
-              position: "프론트",
+              name: user.name,
+              rank: user.jobGrade,
+              department: user.department,
+              position: user.position,
             }}
           />
         </Member>
-        <Content>내용이 들어갈 부분입니다.</Content>
+        <Content>{postItem.content}</Content>
         <FileCard />
       </PostWrapper>
       <CommentWrapper>
-        <div>댓글 0개</div>
+        <div>댓글 {postItem.comment.length}개</div>
       </CommentWrapper>
     </Layout>
   );
