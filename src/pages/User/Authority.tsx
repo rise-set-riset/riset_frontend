@@ -159,6 +159,59 @@ export default function Authority() {
     setIsPopupOpen(false); 
   };
 
+// 회사명과 회사주소를 서버로 전송
+  const sendCompanyInfoToServer = () => {
+    const companyInfo = {
+      companyName: companyName,
+      companyAddress: companyAddress
+    };
+  
+    fetch("/save-company-info", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(companyInfo)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('서버 응답이 실패했습니다.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('서버 응답:', data);
+    })
+    .catch(error => {
+      console.error('서버 요청 오류:', error);
+      alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    });
+  };
+
+// 유효한 코드 서버로 전송
+  const sendCodeToServer = (code : any) => {
+    fetch("/send-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("서버 응답이 실패했습니다.");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("코드 전송 완료:", data);
+      })
+      .catch((error) => {
+        console.error("코드 전송 오류:", error);
+        alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      });
+  };
+
 // 서버로부터 코드의 유효성을 검증하는 함수, 서버에 POST 요청을 보내어 코드의 유효성을 확인하고, 그 결과에 따라 isValidCode 상태를 업데이트
 const validateCode = () => {
   // 코드 유효성을 확인하는 중이라는 상태로 설정
@@ -179,6 +232,11 @@ const validateCode = () => {
     })
     .then((data) => {
       setIsValidCode(data.isValid);
+
+      // 코드가 유효한 경우에만 서버로 전송
+      if (data.isValid) {
+        sendCodeToServer(authorityCode);
+      }
     })
     .catch((error) => {
       console.error("코드 검증 오류:", error);
@@ -188,7 +246,9 @@ const validateCode = () => {
       setIsValidatingCode(false);
     });
 };
-  
+
+
+
   return (
     <AuthorityContainer>
       <AuthorityHeaderWrapper>
@@ -245,7 +305,7 @@ const validateCode = () => {
           )}
         </CompanyAddressWrapper>
           
-        <CompleteBtn type="submit" disabled={isDisabled}>
+        <CompleteBtn type="submit" disabled={isDisabled} onClick={sendCompanyInfoToServer}>
           완료
         </CompleteBtn>
       </InfoWrapper>
