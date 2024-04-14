@@ -34,7 +34,16 @@ const Contents = styled.section`
   margin-top: 50px;
 `;
 
-const Content = styled.div`
+const ContentFavorite = styled.div<{ $isOpen: boolean; $isChangeMenu: boolean }>`
+  display: ${(props) => (props.$isOpen ? "block" : "none")};
+  width: 100%;
+  li {
+    transform: ${(props) => props.$isChangeMenu && "none !important"};
+  }
+`;
+
+const ContentAll = styled.div<{ $isOpen: boolean }>`
+  display: ${(props) => (props.$isOpen ? "block" : "none")};
   width: 100%;
 `;
 
@@ -53,9 +62,27 @@ const ContentHeader = styled.div`
   padding: 0 1rem;
 `;
 
+const HeaderWrapper = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
 const HeaderTitle = styled.p`
   font-size: 1.5rem;
   font-weight: bold;
+  transition: transform 0.3s;
+
+  @media screen and (max-width: 1023px) {
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+`;
+
+const HeaderLine = styled.div`
+  width: 1px;
+  background-color: var(--color-brand-lightgray);
 `;
 
 const ManageBtn = styled.button`
@@ -99,10 +126,13 @@ const Loading = styled.div`
 
 export default function PostList() {
   const [searchTitle, setSearchTitle] = useState<string>("");
-  const [isFavoriteManageClick, setIsFavoriteManageClick] =
-    useState<boolean>(false);
+  const [isFavoriteManageClick, setIsFavoriteManageClick] = useState<boolean>(false);
   const [isManageClick, setIsManageClick] = useState<boolean>(false);
-  const { isTablet } = useContext(ResponsiveContext);
+  const [isMenuClick, setIsMenuClick] = useState<boolean>(false);
+  const [isChangeMenu, setIsChangeMenu] = useState<boolean>(false);
+  // 모바일, 태블릿 여부 판단
+  const { isTablet, isMobile } = useContext(ResponsiveContext);
+  // Hook 사용
   const { posts, hasMore, lastItemRef, setSearchWord } = usePosts();
   const {
     posts: favoritePosts,
@@ -111,8 +141,9 @@ export default function PostList() {
     setPosts: setFavoritePosts,
     setSearchWord: setFavoriteSearchWord,
   } = usePosts();
-
-  console.log(isTablet);
+  // 즐겨찾기, 게시물 열리는 조건
+  const isFavoriteOpen = ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
+  const isAllOpen = ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
 
   /* 검색창 검색 */
   const handleSearchtitle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -124,9 +155,7 @@ export default function PostList() {
 
   /* 즐겨찾기 삭제 */
   const handleRemoveFavorite = (postId: string) => {
-    setFavoritePosts((prevPosts) =>
-      prevPosts.filter((post) => post.id !== postId)
-    );
+    setFavoritePosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
     // API 요청 필요 (서버에서도 삭제)
   };
 
@@ -134,6 +163,21 @@ export default function PostList() {
   const handleAddFavorite = (post: any) => {
     setFavoritePosts((prevPosts) => [post, ...prevPosts]);
     // API 요청 필요 (서버에서도 추가)
+  };
+
+  /* 휴대폰 화면에서 클릭 시 */
+  const handleMenuClick = async (type: string) => {
+    // 메뉴 변경 시 Framer-motion의 dragging 이펙트 일시중지하기 (화면 전환 시 멀리서부터 끌려오는 현상 방지)
+    setIsChangeMenu(true);
+    setTimeout(() => {
+      setIsChangeMenu(false);
+    }, 500);
+
+    if (type === "favorite") {
+      setIsMenuClick(false);
+    } else {
+      setIsMenuClick(true);
+    }
   };
 
   return (
@@ -149,9 +193,19 @@ export default function PostList() {
       </Search>
 
       <Contents>
-        <Content>
+        <ContentFavorite $isOpen={isFavoriteOpen} $isChangeMenu={isChangeMenu}>
           <ContentHeader>
-            <HeaderTitle>즐겨찾기</HeaderTitle>
+            <HeaderWrapper>
+              {isTablet || isMobile ? (
+                <>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
+                  <HeaderLine />
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
+                </>
+              ) : (
+                <HeaderTitle>즐겨찾기</HeaderTitle>
+              )}
+            </HeaderWrapper>
             <ManageBtn
               type="button"
               onClick={() => setIsFavoriteManageClick(!isFavoriteManageClick)}
@@ -165,8 +219,7 @@ export default function PostList() {
                 favoritePosts.map((post) => (
                   <Reorder.Item value={post} key={post.id} drag>
                     <PostCard
-                      postId={post.id}
-                      title={post.title}
+                      post={post}
                       writer="갱얼쥐"
                       date="2024-04-11"
                       fileCnt="1"
@@ -183,46 +236,48 @@ export default function PostList() {
               </Loading>
             )}
           </Favorites>
-        </Content>
+        </ContentFavorite>
 
-        {!isTablet && (
-          <>
-            <MidLine />
+        {!isMobile && !isTablet && <MidLine />}
 
-            <Content>
-              <ContentHeader>
-                <HeaderTitle>게시글</HeaderTitle>
-                <ManageBtn
-                  type="button"
-                  onClick={() => setIsManageClick(!isManageClick)}
-                >
-                  관리
-                </ManageBtn>
-              </ContentHeader>
-              <Posts>
-                {posts &&
-                  posts.map((post) => (
-                    <PostCard
-                      key={post.id}
-                      postId={post.id}
-                      title={post.title}
-                      writer="야옹이"
-                      date="2024-04-11"
-                      fileCnt="1"
-                      isManageClick={isManageClick}
-                      handleIconClick={handleAddFavorite}
-                      isAllPosts={true}
-                    />
-                  ))}
-                {hasMore && (
-                  <Loading ref={lastItemRef}>
-                    <AiOutlineLoading3Quarters />
-                  </Loading>
-                )}
-              </Posts>
-            </Content>
-          </>
-        )}
+        <ContentAll $isOpen={isAllOpen}>
+          <ContentHeader>
+            <HeaderWrapper>
+              {isTablet || isMobile ? (
+                <>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
+                  <HeaderLine />
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
+                </>
+              ) : (
+                <HeaderTitle>게시물</HeaderTitle>
+              )}
+            </HeaderWrapper>
+            <ManageBtn type="button" onClick={() => setIsManageClick(!isManageClick)}>
+              관리
+            </ManageBtn>
+          </ContentHeader>
+          <Posts>
+            {posts &&
+              posts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  writer="야옹이"
+                  date="2024-04-11"
+                  fileCnt="1"
+                  isManageClick={isManageClick}
+                  handleIconClick={handleAddFavorite}
+                  isAllPosts={true}
+                />
+              ))}
+            {hasMore && (
+              <Loading ref={lastItemRef}>
+                <AiOutlineLoading3Quarters />
+              </Loading>
+            )}
+          </Posts>
+        </ContentAll>
       </Contents>
     </Layout>
   );

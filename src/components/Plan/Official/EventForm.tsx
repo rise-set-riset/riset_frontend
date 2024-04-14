@@ -207,8 +207,7 @@ const SelectDateButton = styled.button<{ $isSelected: boolean }>`
     display: block;
     width: 80%;
     margin: 0.2rem auto;
-    border-bottom: ${(props) =>
-      props.$isSelected ? "1px solid var(--color-brand-main)" : "none"};
+    border-bottom: ${(props) => (props.$isSelected ? "1px solid var(--color-brand-main)" : "none")};
   }
 
   &:active {
@@ -220,8 +219,7 @@ const SelectDateEndButton = styled(SelectDateButton)<{
   $isSelected: boolean;
   $isDateValid: boolean;
 }>`
-  color: ${(props) =>
-    props.$isDateValid ? "var(--color-black)" : "var(--color-error)"};
+  color: ${(props) => (props.$isDateValid ? "var(--color-black)" : "var(--color-error)")};
 `;
 
 /* Date Picker 스타일 */
@@ -363,21 +361,13 @@ export default function EventForm({
   isEndPickerOpen: 종료 날짜 선택창 표시 여부
   isDateValid: 종료 날짜가 시작 날짜와 같거나 이후에 있는지
   */
-  const eventColorList = [
-    "#FFBFA7",
-    "#FFE7A7",
-    "#E1FFB0",
-    "#C5DAFF",
-    "#DECFFF",
-  ];
+  const eventColorList = ["#FFBFA7", "#FFE7A7", "#E1FFB0", "#C5DAFF", "#DECFFF"];
   const [isColorOpen, setIsColorOpen] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string>(eventColorList[0]);
   const [hasTime, setHasTime] = useState<boolean>(false);
   const [hasStartTime, setHasStartTime] = useState<boolean>(false);
   const [hasEndTime, setHasEndTime] = useState<boolean>(false);
-  const [selectedStartDate, setSelectedStartDate] = useState<string>(
-    eventForm.start
-  );
+  const [selectedStartDate, setSelectedStartDate] = useState<string>(eventForm.start);
   const [selectedEndDate, setSelectedEndDate] = useState<string>(eventForm.end);
   const [selectedStartTime, setSelectedStartTime] = useState<string>("00:00");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("00:00");
@@ -386,9 +376,7 @@ export default function EventForm({
   const [isDateValid, setIsDateValid] = useState<boolean>(true);
 
   /* Event Form 변경 */
-  const handleFormChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEventForm((prevState) => ({
       ...prevState,
@@ -423,10 +411,7 @@ export default function EventForm({
   };
 
   /* 시작 시간 또는 종료 시간 추가 */
-  const handleAddSelectTime = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    name: string
-  ) => {
+  const handleAddSelectTime = (e: React.MouseEvent<HTMLButtonElement>, name: string) => {
     e.stopPropagation();
     if (name === "start") {
       setHasStartTime(true);
@@ -458,9 +443,7 @@ export default function EventForm({
     setEventForm((prev) => {
       return {
         ...prev,
-        start: hasStartTime
-          ? `${setDateForm(date)}T${selectedStartTime}`
-          : `${setDateForm(date)}`,
+        start: hasStartTime ? `${setDateForm(date)}T${selectedStartTime}` : `${setDateForm(date)}`,
       };
     });
   };
@@ -472,9 +455,7 @@ export default function EventForm({
     setEventForm((prev) => {
       return {
         ...prev,
-        end: hasEndTime
-          ? `${setDateForm(date)}T${selectedEndTime}`
-          : `${setDateForm(date)}`,
+        end: hasEndTime ? `${setDateForm(date)}T${selectedEndTime}` : `${setDateForm(date)}`,
       };
     });
   };
@@ -503,9 +484,7 @@ export default function EventForm({
     setEventForm((prev) => {
       return {
         ...prev,
-        end: hasEndTime
-          ? `${selectedEndDate.split("T")[0]}T${selectedEndTime}`
-          : selectedEndDate,
+        end: hasEndTime ? `${selectedEndDate.split("T")[0]}T${selectedEndTime}` : selectedEndDate,
       };
     });
   }, [selectedEndTime]);
@@ -519,10 +498,7 @@ export default function EventForm({
   };
 
   return (
-    <FormLayout
-      $dateClickPosition={dateClickPosition}
-      onSubmit={handleFormSubmit}
-    >
+    <FormLayout $dateClickPosition={dateClickPosition} onSubmit={handleFormSubmit}>
       {/* 닫기 버튼 */}
       <CloseIconBox onClick={handleFormCancel}>
         <CloseIcon />
@@ -667,10 +643,7 @@ export default function EventForm({
                 <FiPlusCircle />
               </AddIconBox>
             ) : (
-              <TimePicker
-                selectedTime={selectedStartTime}
-                setSelectedTime={setSelectedStartTime}
-              />
+              <TimePicker selectedTime={selectedStartTime} setSelectedTime={setSelectedStartTime} />
             )}
 
             <LabelIconBox />
@@ -686,10 +659,7 @@ export default function EventForm({
               </AddIconBox>
             ) : (
               <div>
-                <TimePicker
-                  selectedTime={selectedEndTime}
-                  setSelectedTime={setSelectedEndTime}
-                />
+                <TimePicker selectedTime={selectedEndTime} setSelectedTime={setSelectedEndTime} />
               </div>
             )}
           </TimeInputBox>
@@ -719,18 +689,8 @@ export default function EventForm({
         ></textarea>
       </ContentInputBox>
       <ButtonBox>
-        <Button
-          type={"reset"}
-          active={false}
-          title={"취소"}
-          handleBtnClick={handleFormCancel}
-        />
-        <Button
-          type={"submit"}
-          active={true}
-          title={"저장"}
-          disabled={!isDateValid}
-        />
+        <Button type={"reset"} active={false} title={"취소"} handleBtnClick={handleFormCancel} />
+        <Button type={"submit"} active={true} title={"저장"} disabled={!isDateValid} />
       </ButtonBox>
     </FormLayout>
   );

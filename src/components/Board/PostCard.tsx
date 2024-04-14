@@ -1,8 +1,11 @@
 import styled, { css } from "styled-components";
-import { ReactComponent as File } from "../../assets/board/file.svg";
+import { ReactComponent as File } from "../../assets/board/file-orange.svg";
 import { ReactComponent as Minus } from "../../assets/board/minus.svg";
 import { ReactComponent as Star } from "../../assets/board/star.svg";
 import { Transition } from "react-transition-group";
+import { useState } from "react";
+import Modal from "../../common/Modal";
+import PostShow from "./PostShow";
 
 const Layout = styled.div`
   position: relative;
@@ -117,8 +120,7 @@ const StarIcon = styled(Star)<{ $state: string }>`
 `;
 
 interface PostCardType {
-  postId: string;
-  title: string;
+  post: any;
   writer: string;
   date: string;
   fileCnt: string;
@@ -128,8 +130,7 @@ interface PostCardType {
 }
 
 export default function PostCard({
-  postId,
-  title,
+  post,
   writer,
   date,
   fileCnt,
@@ -137,26 +138,31 @@ export default function PostCard({
   isAllPosts,
   handleIconClick,
 }: PostCardType) {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   return (
-    <Layout>
+    <Layout onClick={() => setIsFormOpen(true)}>
       <Transition in={isManageClick} timeout={300} unmountOnExit mountOnEnter>
         {(state) =>
           isAllPosts ? (
-            <StarIcon $state={state} onClick={() => handleIconClick(postId)} />
+            <StarIcon $state={state} onClick={() => handleIconClick(post.id)} />
           ) : (
-            <MinusIcon $state={state} onClick={() => handleIconClick(postId)} />
+            <MinusIcon $state={state} onClick={() => handleIconClick(post.id)} />
           )
         }
       </Transition>
       <Info>
         <Header>
           <EmojiIcon src="/assets/default-emoji.png" />
-          <Title>{title}</Title>
+          <Title>{post.title}</Title>
         </Header>
         <Writer>{writer}</Writer>
         <Date>{date}</Date>
       </Info>
       {+fileCnt > 0 && <FileIcon />}
+      <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
+        <PostShow post={post} setIsFormOpen={setIsFormOpen} />
+      </Modal>
     </Layout>
   );
 }
