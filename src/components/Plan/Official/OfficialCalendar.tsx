@@ -219,16 +219,19 @@ export default function OfficialCalendar() {
     formRef: Form 팝업 외 클릭 감지시 필요
     todayRef: Today 버튼 제어시 필요
     calendarRef: fullcalendar API 사용시 필요
-    month: title 날짜
+    year: title 연도
+    month: title 월
     isFormOpen: Form 팝업 표시 여부
     eventFormList: 모든 이벤트 목록
     eventForm: 추가하거나 수정할 이벤트 Form
     dateClickPosition: 날짜 선택시 마우스 위치
+    isEditorForm: 새로 추가한 창인지, 수정하는 창인지 (삭제 기능 추가됨)
     */
   const { isMobile } = useContext(ResponsiveContext);
   const formRef = useRef<any>(null);
   const todayRef = useRef<any>(null);
   const calendarRef = useRef<any>(null);
+  const [year, setYear] = useState<string>("");
   const [month, setMonth] = useState<string>("");
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
@@ -246,6 +249,7 @@ export default function OfficialCalendar() {
       y: 0,
     }
   );
+  const [isEditorForm, setIsEditorForm] = useState<boolean>(false);
 
   /* 날짜 선택시 */
   const handleDateClick = (info: any) => {
@@ -302,58 +306,95 @@ export default function OfficialCalendar() {
   const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     setIsFormOpen(false);
-    // 종료 시간이 없다면 24:00 추가
-    if (!eventForm.end.includes("T")) {
-      const modifiedForm = {
-        ...eventForm,
-        end: `${eventForm.end}T24:00:00`,
-      };
-      setEventFormList((prevState) => [...prevState, modifiedForm]);
-    } else {
-      setEventFormList((prevState) => [...prevState, eventForm]);
-    }
+
+    /* 최종 저장 Form 수정 */
+    const FinalForm = {
+      ...eventForm,
+      // 종료 시간이 없다면 24:00 추가
+      end: eventForm.end.includes("T")
+        ? eventForm.end
+        : `${eventForm.end}T24:00:00`,
+    };
+    setEventFormList((prevState) => [...prevState, FinalForm]);
 
     /* 서버에 데이터 전송 */
-    // fetch
+    // fetch("", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer ${accessToken}`,
+    //         },
+    //         body: JSON.stringify(eventForm),
+    //     }).then((res) => {
+    //         if (res.ok) {
+    //             console.log("ok");
+    //         } else {
+    //             throw new Error("이벤트 저장 실패");
+    //         }
+    //     });
+    // };
 
     /* 초기화 */
     setEventForm({
-      title: "",
-      color: "#FFBFA7",
       start: "",
       end: "",
+      title: "",
       writer: "",
       content: "",
+      color: "#FFBFA7",
     });
-  };
-
-  const handleEditEvent = () => {
-    setIsFormOpen(true);
-    console.log("--render");
   };
 
   /* 이벤트 클릭시 */
   const handleEventClick = (info: any) => {
-    // setDateClickPosition({
-    //   x: info.jsEvent.x,
-    //   y: info.jsEvent.y,
+    info.jsEvent.cancelBubble = true;
+    info.jsEvent.preventDefault();
+    setDateClickPosition({
+      x: info.jsEvent.x,
+      y: info.jsEvent.y,
+    });
+
+    setIsFormOpen(true);
+    setIsEditorForm(true);
+
+    // id에 해당하는 이벤트 등록해주기
+    // setEventForm()
+
+    // const getEvent = info.event;
+    // setEventForm({
+    //   title: getEvent?._def.title,
+    //   start: getEvent?._instance.range.start,
+    //   end: getEvent?._instance.range.end,
+    //   color: getEvent?._def.ui.backgroundColor,
+    //   ...getEvent?._def.extendedProps,
     // });
-    const getEvent = info.event;
-    handleEditEvent();
-    setEventForm({
-      title: getEvent?._def.title,
-      start: getEvent?._instance.range.start,
-      end: getEvent?._instance.range.end,
-      color: getEvent?._def.ui.backgroundColor,
-      ...getEvent?._def.extendedProps,
-    });
-    console.log({
-      title: getEvent?._def.title,
-      start: getEvent?._instance.range.start,
-      end: getEvent?._instance.range.end,
-      color: getEvent?._def.ui.backgroundColor,
-      ...getEvent?._def.extendedProps,
-    });
+    // console.log({
+    //   title: getEvent?._def.title,
+    //   start: getEvent?._instance.range.start,
+    //   end: getEvent?._instance.range.end,
+    //   color: getEvent?._def.ui.backgroundColor,
+    //   ...getEvent?._def.extendedProps,
+    // });
+  };
+
+  /* Event 삭제 */
+  // const handleRemoveEvent = (id) => {
+  const handleRemoveEvent = () => {
+    /* 이벤트 리스트 상태값에서 삭제 */
+    // setEventFormList(prevList => {
+    //   return prevList.filter((form) => form.id !== id)
+    // })
+    /* 서버에서 삭제 */
+    // fetch(`http://localhost:8080/api/delete?id=${id}`, {
+    //         method: "DELETE"
+    //     }).then((res) => {
+    //         if (res.ok) {
+    //             console.log("ok");
+    //         } else {
+    //             throw new Error("이벤트 삭제 실패");
+    //         }
+    //     });
+    // };
   };
 
   /* Event Form 팝업창 외 클릭 감지 */
@@ -387,6 +428,13 @@ export default function OfficialCalendar() {
       ).disabled = false;
     }
   });
+
+  /* 페이지 진입시 일정 데이터 받아오기 */
+  useEffect(() => {
+    // fetch(`http://localhost:8080/api/get?currentMonth=${202311}`)
+    // .then(res => res.json())
+    // .then(data => setEventFormList(data))
+  }, [month, year]);
 
   return (
     <Layout>
@@ -454,13 +502,13 @@ export default function OfficialCalendar() {
           events={eventFormList}
           selectable={!isFormOpen}
           select={(info) => handleDateClick(info)}
-          eventClick={(info) => handleEventClick(info)}
           eventMouseEnter={(info) => {
             info.el.style.backgroundColor = "var(--color-brand-main)";
           }}
           eventMouseLeave={(info) => {
             info.el.style.backgroundColor = "";
           }}
+          eventClick={(info) => handleEventClick(info)}
           dayMaxEvents={true}
           views={{
             dayGridMonth: {
@@ -472,6 +520,7 @@ export default function OfficialCalendar() {
           datesSet={(info) => {
             const currentMonth = new Date(info.start);
             setMonth((currentMonth.getMonth() + 1).toString());
+            setYear(currentMonth.getFullYear().toString());
           }}
           aspectRatio={isMobile ? 0.8 : 1.2}
           displayEventTime={false}
@@ -488,6 +537,8 @@ export default function OfficialCalendar() {
             dateClickPosition={dateClickPosition}
             handleFormCancel={handleFormCancel}
             handleFormSubmit={handleFormSubmit}
+            isEditorForm={isEditorForm}
+            handleRemoveEvent={handleRemoveEvent}
           />
         </div>
       )}

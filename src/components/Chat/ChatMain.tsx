@@ -8,6 +8,7 @@ import { PiChatCircleDots } from "react-icons/pi";
 
 const Layout = styled.div`
   position: relative;
+  padding: 1.5rem;
 `;
 
 const TitleBox = styled.header`

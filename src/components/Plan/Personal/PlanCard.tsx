@@ -130,7 +130,10 @@ const SaveMenu = styled.div`
 
 /* 일정 객체 형식 */
 interface DayPlanType {
-  [key: string]: string;
+  id?: number;
+  startTime?: string;
+  endTime?: string;
+  title?: string;
 }
 
 interface PlanCardProps {
@@ -139,10 +142,15 @@ interface PlanCardProps {
   planContent: 일정 내용 객체
   */
   clickToAdd: boolean;
+  isEditable: boolean;
   planContent: DayPlanType;
 }
 
-export default function PlanCard({ clickToAdd, planContent }: PlanCardProps) {
+export default function PlanCard({
+  clickToAdd,
+  isEditable,
+  planContent,
+}: PlanCardProps) {
   /* 
   isFixed: 고정 여부
   dayPlan: 일정 내용
@@ -170,15 +178,64 @@ export default function PlanCard({ clickToAdd, planContent }: PlanCardProps) {
     } else {
       /* 저장 버튼일 때*/
       setIsFixed(true);
-      // 수정 및 추가 데이터 보내기
-      // fetch("")
+
+      const savePlanForm = {
+        startTime: dayPlan.startTime || "",
+        endTime: dayPlan.endTime || "",
+        title: dayPlan.title || "",
+      };
+      if (clickToAdd) {
+        /* 추가 기능일 때 */
+        // fetch("", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         Authorization: `Bearer ${accessToken}`,
+        //     },
+        //     body: JSON.stringify(savePlanForm),
+        // }).then((res) => {
+        //     if (res.ok) {
+        //         console.log("ok");
+        //     } else {
+        //         throw new Error("일정 추가 실패");
+        //     }
+        // });
+      } else {
+        /* 수정 기능일 때 */
+        // fetch("", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         Authorization: `Bearer ${accessToken}`,
+        //     },
+        //     body: JSON.stringify(savePlanForm),
+        // }).then((res) => {
+        //     if (res.ok) {
+        //         console.log("ok");
+        //     } else {
+        //         throw new Error("일정 수정 실패");
+        //     }
+        // });
+      }
     }
   };
 
   /* 일정 삭제 */
   const handlRemovePlan = () => {
     // 삭제요청
-    // fetch
+    // fetch(`/${planContent.id}`, {
+    //     method: "DELETE",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         Authorization: `Bearer ${accessToken}`,
+    //     }
+    // }).then((res) => {
+    //     if (res.ok) {
+    //         console.log("ok");
+    //     } else {
+    //         throw new Error("일정 수정 실패");
+    //     }
+    // });
   };
 
   return (
@@ -216,23 +273,25 @@ export default function PlanCard({ clickToAdd, planContent }: PlanCardProps) {
       </PlanInfoBox>
 
       {/* 부가 메뉴 */}
-      <MenuButton $isFixed={isFixed} onClick={handlePlanMenu}>
-        {isFixed ? (
-          /* Vertical Icon 메뉴*/
-          <Moremenu>
-            <FiMoreVertical />
-            {isMenuOpen && (
-              <DropdownMenu>
-                <li onClick={() => setIsFixed(false)}>수정</li>
-                <li onClick={handlRemovePlan}>삭제</li>
-              </DropdownMenu>
-            )}
-          </Moremenu>
-        ) : (
-          /* 저장 메뉴 */
-          <SaveMenu>저장</SaveMenu>
-        )}
-      </MenuButton>
+      {isEditable && (
+        <MenuButton $isFixed={isFixed} onClick={handlePlanMenu}>
+          {isFixed ? (
+            /* Vertical Icon 메뉴*/
+            <Moremenu>
+              <FiMoreVertical />
+              {isMenuOpen && (
+                <DropdownMenu>
+                  <li onClick={() => setIsFixed(false)}>수정</li>
+                  <li onClick={handlRemovePlan}>삭제</li>
+                </DropdownMenu>
+              )}
+            </Moremenu>
+          ) : (
+            /* 저장 메뉴 */
+            <SaveMenu>저장</SaveMenu>
+          )}
+        </MenuButton>
+      )}
     </Layout>
   );
 }

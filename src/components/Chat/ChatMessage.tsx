@@ -2,13 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
-import MemberCard from "../../common/MemberCard";
 import { FiPlusCircle } from "react-icons/fi";
 import { PiChatCircleDots } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
+import { FiPaperclip } from "react-icons/fi";
 
 const Layout = styled.div`
   position: relative;
+  padding: 1.5rem;
 `;
 
 const TitleBox = styled.header`
@@ -51,82 +52,96 @@ const ArrowBackIcon = styled(IoIosArrowBack)`
 
 const DialogueBox = styled.main`
   margin-top: 1rem;
-  height: 700px;
+  /* height: 700px; */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  border: 1px solid black;
 `;
 
 const PartnerMessage = styled.div`
-  margin-right: auto;
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
 
-  span:nth-child(1) {
+  > div:nth-child(1) {
     padding: 0.8rem 1rem;
     background-color: var(--color-gray-1);
     border-radius: 0 1rem 1rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
-  span:nth-child(2) {
+
+  > div:nth-child(2) {
     color: var(--color-brand-lightgray);
     font-size: 0.8rem;
   }
 `;
 
-const PartnerFile = styled(PartnerMessage)``;
-
-const MyMessage = styled.div`
-  margin-left: auto;
-  display: flex;
+const MyMessage = styled(PartnerMessage)`
   flex-direction: row-reverse;
-  align-items: flex-end;
-  gap: 0.5rem;
 
-  span:nth-child(1) {
+  > div:nth-child(1) {
     background-color: var(--color-brand-yellow);
-    padding: 0.8rem 1rem;
     border-radius: 1rem 1rem 0 1rem;
   }
-  span:nth-child(2) {
-    color: var(--color-brand-lightgray);
-    font-size: 0.8rem;
-  }
 `;
 
-const ButtonBox = styled.footer`
-  width: 100%;
-  padding-top: 1.5rem;
-  margin-top: 1.5rem;
-  position: absolute;
-  bottom: 0;
+const PartnerFileIcon = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1.5rem;
+  border: 1px solid var(--color-brand-lightgray);
+  svg path {
+    stroke: var(--color-brand-lightgray);
+  }
+`;
+
+const MyFileIcon = styled(PartnerFileIcon)`
+  border: 1px solid var(--color-white);
+  svg path {
+    stroke: var(--color-white);
+  }
+`;
+
+const SendFileIcon = styled(PartnerFileIcon)`
+  border: 1px solid var(--color-brand-main);
+  background-color: var(--color-brand-main);
+  svg path {
+    stroke: var(--color-white);
+  }
+`;
+
+const SendMessageBox = styled.footer`
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  position: absolute;
+  /* position: fixed; */
+  bottom: 0;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
   gap: 1rem;
   background-color: var(--color-white);
+  z-index: 1000;
+  box-shadow: 0px 0px 10px 0px var(--color-brand-lightgray);
+`;
 
-  button {
-    flex-grow: 1;
-    padding: 0.8rem 3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--color-white);
-    background-color: var(--color-brand-main);
+const SendInputBox = styled.div`
+  flex: 1;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid var(--color-brand-main);
+  input {
+    width: 100%;
     border: none;
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-brand-main);
-    cursor: pointer;
-  }
-
-  button:nth-child(2) {
-    background-color: var(--color-white);
-    color: var(--color-brand-main);
   }
 `;
 
@@ -168,29 +183,45 @@ export default function ChatMain() {
         </ChatPartner>
 
         <PartnerMessage>
-          <span>안녕하세요?</span>
-          <span>오전 8:40</span>
+          <div>안녕하세요?</div>
+          <div>오전 8:40</div>
         </PartnerMessage>
 
-        <PartnerFile>
+        <PartnerMessage>
           <div>
+            <PartnerFileIcon>
+              <FiPaperclip />
+            </PartnerFileIcon>
             <span>파일명.pdf</span>
-            <span>오전 9:03</span>
           </div>
-          <div>다운로드</div>
-        </PartnerFile>
+          <div>오전 8:40</div>
+        </PartnerMessage>
 
         <MyMessage>
-          <span>안녕하세요?</span>
-          <span>오전 8:40</span>
+          <div>안녕하세요?</div>
+          <div>오전 8:40</div>
+        </MyMessage>
+
+        <MyMessage>
+          <div>
+            <MyFileIcon>
+              <FiPaperclip />
+            </MyFileIcon>
+            <span>파일명.pdf</span>
+          </div>
+          <div>오전 8:40</div>
         </MyMessage>
       </DialogueBox>
 
-      <ButtonBox>
-        <button>
-          <div>새 채팅</div>
-        </button>
-      </ButtonBox>
+      <SendMessageBox>
+        <SendFileIcon>
+          <FiPaperclip />
+        </SendFileIcon>
+
+        <SendInputBox>
+          <input type="text" placeholder="내용을 입력해주세요" />
+        </SendInputBox>
+      </SendMessageBox>
     </Layout>
   );
 }

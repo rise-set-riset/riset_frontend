@@ -9,6 +9,7 @@ import { FiMoreVertical } from "react-icons/fi";
 
 const Layout = styled.div`
   position: relative;
+  padding: 1.5rem;
 `;
 
 const TitleBox = styled.header`
