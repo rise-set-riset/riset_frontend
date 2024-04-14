@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Transition } from "react-transition-group";
 import styled, { css } from "styled-components";
@@ -66,6 +66,7 @@ export default function Modal({ children, isModalOpen, handleIsModalOpen }: Chil
 
   // Overlay 클릭 시 모달 닫힘 X
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     if (e.target === e.currentTarget) handleIsModalOpen(false);
   };
 
