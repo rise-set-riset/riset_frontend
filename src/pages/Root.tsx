@@ -70,11 +70,21 @@ type SideOpenState = "mobile" | "pcOpen" | "pcClose";
 export default function Root() {
   const { isMobile } = useContext(ResponsiveContext);
   const location = useLocation();
-  const isAuth = !["/", "/signup", "/authority", "/findid", "/findpassword"].includes(
-    location.pathname
+  const isAuth = ![
+    "/",
+    "/signup",
+    "/authority",
+    "/findid",
+    "/findpassword",
+  ].includes(location.pathname);
+  const isSideMenuOpen = useSelector(
+    (state: RootState) => state.sideMenu.isSideMenuOpen
   );
-  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
-  const sideOpenState: SideOpenState = isMobile ? "mobile" : isSideMenuOpen ? "pcOpen" : "pcClose";
+  const sideOpenState: SideOpenState = isMobile
+    ? "mobile"
+    : isSideMenuOpen
+    ? "pcOpen"
+    : "pcClose";
 
   return (
     <>

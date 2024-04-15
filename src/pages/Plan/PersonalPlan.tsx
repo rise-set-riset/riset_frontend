@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import PlanList from "../../components/Plan/Personal/PlanList";
 import DateSlider from "../../components/Plan/Personal/DateSlider";
@@ -18,9 +18,111 @@ const MainContentLayout = styled.div`
   padding: 1.5rem;
 `;
 
+interface ResponseDataType {
+  employeeId: number;
+  name: string;
+  department?: string;
+  position?: string;
+  image: string;
+  commuteStartTime: string;
+  commuteEndTime: string;
+  commutePlace: string;
+  booleanResponse: {
+    halfLeave: boolean;
+    annualLeave: boolean;
+    schedules: boolean;
+  };
+  halfLeaveDetail: PlanDetailType[];
+  schedulesDetail: PlanDetailType[];
+  annualLeaveDetail: PlanDetailType[];
+}
+
+interface PlanDataType {
+  employeeId: number;
+  name: string;
+  department?: string;
+  position?: string;
+  image: string;
+  editablePlan: PlanDetailType[];
+  unEditablePlan: PlanDetailType[];
+}
+
+interface PlanDetailType {
+  id?: number;
+  startTime: string;
+  endTime?: string;
+  title: string;
+}
+
 export default function PersonalPlan() {
   /* 선택한 날짜 상태값 */
+  const jwt = localStorage.getItem("jwt");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [responseData, setResponseData] = useState<ResponseDataType[] | []>([]);
+  const [allPlanData, setAllPlanData] = useState<any>([]);
+  const [myPlan, setMyPlan] = useState<any>([]);
+
+  useEffect(() => {
+    const setFitDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      currentDate.getDate() + 1
+    );
+    const requestDate = setFitDate.toISOString().slice(0, 10);
+    console.log(requestDate);
+    fetch(
+      // `https://dev.risetconstruction.net/api/employees?employeeDate=${requestDate}`,
+      `https://dev.risetconstruction.net/api/employees?employeeDate=2024-04-08`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    ).then((res) => {
+      if (res.ok) {
+        console.log(res.ok);
+        res.json();
+      } else {
+        console.log("통신실패");
+      }
+    });
+    // .then((data) => setResponseData(data));
+
+    // fetch("/test.json")
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     setResponseData(data);
+    //   });
+  }, [currentDate]);
+
+  /* 데이터 형식 변환 */
+  useEffect(() => {
+    const modifiedData = responseData.map((data) => {
+      const unEditablePlan = [
+        ...data.annualLeaveDetail,
+        ...data.halfLeaveDetail,
+        data.commuteStartTime && {
+          startTime: data.commuteStartTime,
+          endTime: data.commuteEndTime,
+          title: data.commutePlace,
+        },
+      ];
+
+      return {
+        employeeId: data.employeeId,
+        name: data.name,
+        department: data.department,
+        position: data.position,
+        image: data.image,
+        editablePlan: data.schedulesDetail,
+        unEditablePlan: unEditablePlan,
+      };
+    });
+
+    // setMyPlan(modifiedData.filter((plan) => plan.employeeId === userId))
+    setAllPlanData(modifiedData);
+  }, [responseData]);
 
   return (
     <Layout>
@@ -29,7 +131,12 @@ export default function PersonalPlan() {
         <MainContentLayout>
           <DateSlider setCurrentDate={setCurrentDate} />
           <PlanSearch currentDate={currentDate} />
-          <PlanList currentDate={currentDate} />
+          {allPlanData.length > 0 && (
+            <PlanList
+              allPlanData={allPlanData}
+              setAllPlanData={setAllPlanData}
+            />
+          )}
         </MainContentLayout>
       </main>
     </Layout>
