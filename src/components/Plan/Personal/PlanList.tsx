@@ -3,7 +3,6 @@ import styled from "styled-components";
 import MemberCard from "../../../common/MemberCard";
 import PlanCard from "./PlanCard";
 import { GoPlusCircle } from "react-icons/go";
-import { v4 as uuidv4 } from "uuid";
 
 /* 전체 레이아웃 */
 const Layout = styled.div`
@@ -62,30 +61,15 @@ const Divider = styled.div<{ $lineHeight: number }>`
   background-color: var(--color-brand-lightgray);
 `;
 
-interface PlanDataType {
-  employeeId: number;
-  name: string;
-  department?: string;
-  position?: string;
-  image: string;
-  editablePlan: PlanDetailType[] | [];
-  unEditablePlan: PlanDetailType[] | [];
-  rank?: string;
-}
-
-interface PlanDetailType {
-  [key: string]: string | number;
+interface MembersDataType {
+  [key: string]: string;
 }
 
 interface PlanListProps {
-  allPlanData: PlanDataType[];
-  setAllPlanData: React.Dispatch<React.SetStateAction<PlanDataType[]>>;
+  currentDate: Date;
 }
 
-export default function PlanList({
-  allPlanData,
-  setAllPlanData,
-}: PlanListProps) {
+export default function PlanList({ currentDate }: PlanListProps) {
   /* 
   memberListRef, planListRef, lineHeight: 중간 구분선 길이 조정 위해 필요
   allPlanData: 근무 일정 페이지의 모든 데이터
@@ -94,12 +78,8 @@ export default function PlanList({
   const memberListRef = useRef<HTMLDivElement>(null);
   const planListRef = useRef<HTMLDivElement>(null);
   const [lineHeight, setLineHeight] = useState<number>(0);
+  const [allPlanData, setAllPlanData] = useState<MembersDataType[]>([]);
   const [planComponents, setPlanComponents] = useState<JSX.Element[]>([]);
-  const [selectedPlanList, setSelectedPlanList] = useState<any>([]);
-
-  useEffect(() => {
-    setSelectedPlanList(allPlanData[0]);
-  }, []);
 
   /* 중간 구분선 길이 조정 */
   useEffect(() => {
@@ -108,13 +88,20 @@ export default function PlanList({
     setLineHeight(Math.max(memberHeight, planHeight));
   }, []);
 
+  /* 현재 날짜의 모든 데이터 받아오기 */
+  useEffect(() => {
+    // currentData 같이 보내기
+    // fetch("url", )
+    //   .then((res) => res.json())
+    //   .then((data) => setAllPlanData(data));
+  }, []);
+
   /* Plus 버튼 클릭시 새로운 Plan 컴포넌트 추가*/
   const handleAddComponent = () => {
     setPlanComponents((prevComponents) => [
       ...prevComponents,
       <PlanCard
         clickToAdd={true}
-        isEditable={true}
         planContent={{
           title: "",
           startTime: "",
@@ -124,76 +111,60 @@ export default function PlanList({
     ]);
   };
 
-  const handleCardClick = (employeeId: number) => {
-    const selectMemberData = allPlanData.filter(
-      (data) => data.employeeId === employeeId
-    )[0];
-    setSelectedPlanList(selectMemberData);
+  const memberInfo = {
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s",
+    alt: "프로필이미지",
+    name: "홍길동",
+    rank: "사원",
+    department: "개발팀",
+    position: "프론트",
+  };
+
+  const planContent = {
+    title: "회사근무",
+    startTime: "09:00",
+    endTime: "18:00",
   };
 
   return (
     <Layout>
       <MemberCardList ref={memberListRef}>
-        {allPlanData &&
-          allPlanData.map((memberData) => (
-            <MemberCardStyle
-              key={memberData.employeeId}
-              onClick={() => handleCardClick(memberData.employeeId)}
-            >
-              <MemberCard
-                memberInfo={{
-                  // employeeId: memberData.employeeId,
-                  name: memberData.name,
-                  department: memberData.department || "",
-                  position: memberData.position || "",
-                  image: memberData.image,
-                  rank: memberData.rank || "",
-                }}
-              />
-            </MemberCardStyle>
-          ))}
+        <MemberCardStyle>
+          <MemberCard memberInfo={memberInfo} />
+        </MemberCardStyle>
+        <MemberCardStyle>
+          <MemberCard memberInfo={memberInfo} />
+        </MemberCardStyle>
+        <MemberCardStyle>
+          <MemberCard memberInfo={memberInfo} />
+        </MemberCardStyle>
+        <MemberCardStyle>
+          <MemberCard memberInfo={memberInfo} />
+        </MemberCardStyle>
+        <MemberCardStyle>
+          <MemberCard memberInfo={memberInfo} />
+        </MemberCardStyle>
+        <MemberCardStyle>
+          <MemberCard memberInfo={memberInfo} />
+        </MemberCardStyle>
       </MemberCardList>
 
       <Divider $lineHeight={lineHeight}></Divider>
 
-      {/* 나중에 isEditable에 본인 일정인지 확인 로직 필요 */}
       <PlanCardList ref={planListRef}>
-        {Object.keys(selectedPlanList).length !== 0 &&
-          selectedPlanList.editablePlan?.map((planData: any) => (
-            <PlanCard
-              key={uuidv4()}
-              clickToAdd={false}
-              isEditable={true}
-              planContent={{
-                id: planData.id,
-                title: planData.title || "",
-                startTime: planData.startTime || "",
-                endTime: planData.endTime || "",
-              }}
-            />
-          ))}
+        <PlanCard clickToAdd={false} planContent={planContent} />
+        <PlanCard clickToAdd={false} planContent={planContent} />
+        <PlanCard clickToAdd={false} planContent={planContent} />
+        <PlanCard clickToAdd={false} planContent={planContent} />
+        <PlanCard clickToAdd={false} planContent={planContent} />
+        <PlanCard clickToAdd={false} planContent={planContent} />
 
-        {Object.keys(selectedPlanList).length !== 0 &&
-          selectedPlanList.unEditablePlan?.map((planData: any) => (
-            <PlanCard
-              key={uuidv4()}
-              clickToAdd={false}
-              isEditable={false}
-              planContent={{
-                id: planData.id,
-                title: planData.title || "",
-                startTime: planData.startTime || "",
-                endTime: planData.endTime || "",
-              }}
-            />
-          ))}
-
+        {planComponents}
         <PlusPlanButton>
           <GoPlusCircle onClick={handleAddComponent} />
         </PlusPlanButton>
       </PlanCardList>
-
-      {planComponents}
     </Layout>
   );
 }
