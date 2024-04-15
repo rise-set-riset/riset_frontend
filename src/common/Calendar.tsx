@@ -121,7 +121,13 @@ const Layout = styled.div<{ $month: string }>`
 `;
 
 interface EventType {
-  [key: string]: string;
+  id?: string | number;
+  name?: string;
+  color: string;
+  start: string;
+  startTime?: string;
+  endTime?: string;
+  way?: string;
 }
 
 interface Events {
@@ -141,17 +147,26 @@ export default function Calendar({ isEvents, defaultEvents, handleIsFormOpen }: 
   useEffect(() => {
     // isEvents props가 true로 넘어올 경우에만 화면에 출근여부 색 이벤트 지정
     if (isEvents) {
-      // 백엔드에 달 관련 정보 추후에 동적으로 넘겨주기
-      // API 필요
-      fetch("/data/events.json")
+      const jwt = localStorage.getItem("jwt");
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+
+      fetch(
+        `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      )
         .then((res) => res.json())
         .then((data: EventType[]) => {
-          // 전체 데이터 세팅
-          setData(data);
           // events에 사용할 데이터 세팅 (color는 근무 형식에 따른 색상으로 변경)
           const eventList = data.map(({ color, start }) => ({
             color:
-              color === "full" || color === "today"
+              color === "full"
                 ? "var(--color-brand-main)"
                 : color === "half"
                 ? "var(--color-brand-yellow)"
@@ -159,6 +174,9 @@ export default function Calendar({ isEvents, defaultEvents, handleIsFormOpen }: 
             start,
           }));
 
+          // 전체 데이터
+          setData(data);
+          // 이벤트에 필요한 데이터
           setEvents(eventList);
         });
     } else {
@@ -252,7 +270,7 @@ export default function Calendar({ isEvents, defaultEvents, handleIsFormOpen }: 
             handleIsFormOpen(date);
           }
         }}
-        events={isEvents ? events : currentEvents}
+        events={isEvents ? (events as any) : (currentEvents as any)}
         eventDisplay={"background"}
       />
     </Layout>

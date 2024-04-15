@@ -9,24 +9,23 @@ export default function usePosts(url: string) {
   const lastItemRef = useRef<HTMLDivElement | null>(null);
   const { isTablet, isMobile } = useContext(ResponsiveContext);
   const jwt = localStorage.getItem("jwt");
-  const urlFull = `${url}?size=10&page=${skip}${searchWord ? `&searchTitle=${searchWord}` : ""}`;
+  const fullUrl = `${url}?size=5&page=${skip}${searchWord ? `&searchTitle=${searchWord}` : ""}`;
 
   /* 게시글 조회 */
   useEffect(() => {
     const fetchMorePosts = async () => {
-      const data = await fetch(urlFull, {
+      const data = await fetch(fullUrl, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       }).then((res) => res.json());
 
-      console.log(data);
       // 추가 게시글이 있는지 확인
       if (data.length === 0) {
         setHasMore(false);
       } else {
-        setPosts((prevPosts) => [...prevPosts, ...data.posts]);
+        setPosts((prevPosts) => [...prevPosts, ...data]);
         setSkip((prevSkip) => prevSkip + 1);
       }
     };
@@ -42,7 +41,7 @@ export default function usePosts(url: string) {
     return () => {
       if (observer) observer.disconnect();
     };
-  }, [skip, hasMore, isTablet, isMobile]);
+  }, [skip, hasMore, isTablet, isMobile, searchWord]);
 
   return { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord };
 }

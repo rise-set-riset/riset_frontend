@@ -121,45 +121,45 @@ const StarIcon = styled(Star)<{ $state: string }>`
 
 interface PostCardType {
   post: any;
-  writer: string;
-  date: string;
-  fileCnt: string;
   isManageClick: boolean;
   isAllPosts: boolean;
-  handleIconClick: (postId: string) => void;
+  handleIconClick: (e: React.MouseEvent<SVGElement>, postId: number) => void;
 }
 
 export default function PostCard({
   post,
-  writer,
-  date,
-  fileCnt,
   isManageClick,
   isAllPosts,
   handleIconClick,
 }: PostCardType) {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const { user, post: postItem } = post;
+
+  /* 날짜 형식 변환 */
+  const convertDateTime = (date: string) => {
+    return date.split("T")[0];
+  };
 
   return (
     <Layout onClick={() => setIsFormOpen(true)}>
       <Transition in={isManageClick} timeout={300} unmountOnExit mountOnEnter>
         {(state) =>
           isAllPosts ? (
-            <StarIcon $state={state} onClick={() => handleIconClick(post.id)} />
+            <StarIcon $state={state} onClick={(e) => handleIconClick(e, post)} />
           ) : (
-            <MinusIcon $state={state} onClick={() => handleIconClick(post.id)} />
+            <MinusIcon $state={state} onClick={(e) => handleIconClick(e, post.id)} />
           )
         }
       </Transition>
       <Info>
         <Header>
           <EmojiIcon src="/assets/default-emoji.png" />
-          <Title>{post.title}</Title>
+          <Title>{postItem.title}</Title>
         </Header>
-        <Writer>{writer}</Writer>
-        <Date>{date}</Date>
+        <Writer>{user.name}</Writer>
+        <Date>{convertDateTime(postItem.date)}</Date>
       </Info>
-      {+fileCnt > 0 && <FileIcon />}
+      {postItem.files.length > 0 && <FileIcon />}
       <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
         <PostShow post={post} setIsFormOpen={setIsFormOpen} />
       </Modal>
