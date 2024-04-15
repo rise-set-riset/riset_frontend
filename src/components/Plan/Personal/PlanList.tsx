@@ -65,11 +65,12 @@ const Divider = styled.div<{ $lineHeight: number }>`
 interface PlanDataType {
   employeeId: number;
   name: string;
-  department: string;
-  position: string;
+  department?: string;
+  position?: string;
   image: string;
   editablePlan: PlanDetailType[] | [];
   unEditablePlan: PlanDetailType[] | [];
+  rank?: string;
 }
 
 interface PlanDetailType {
@@ -143,9 +144,10 @@ export default function PlanList({
                 memberInfo={{
                   // employeeId: memberData.employeeId,
                   name: memberData.name,
-                  department: memberData.department,
-                  position: memberData.position,
+                  department: memberData.department || "",
+                  position: memberData.position || "",
                   image: memberData.image,
+                  rank: memberData.rank || "",
                 }}
               />
             </MemberCardStyle>

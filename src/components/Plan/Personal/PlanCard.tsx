@@ -156,6 +156,7 @@ export default function PlanCard({
   dayPlan: 일정 내용
   isMenuOpen: 수정, 삭제 메뉴 표시 여부
   */
+  const jwt = localStorage.getItem("jwt");
   const [isFixed, setIsFixed] = useState<boolean>(!clickToAdd);
   const [dayPlan, setDayPlan] = useState<DayPlanType>(planContent);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -190,7 +191,7 @@ export default function PlanCard({
         //     method: "POST",
         //     headers: {
         //         "Content-Type": "application/json",
-        //         Authorization: `Bearer ${accessToken}`,
+        //         Authorization: `Bearer ${jwt}`,
         //     },
         //     body: JSON.stringify(savePlanForm),
         // }).then((res) => {
@@ -206,7 +207,7 @@ export default function PlanCard({
         //     method: "POST",
         //     headers: {
         //         "Content-Type": "application/json",
-        //         Authorization: `Bearer ${accessToken}`,
+        //         Authorization: `Bearer ${jwt}`,
         //     },
         //     body: JSON.stringify(savePlanForm),
         // }).then((res) => {
@@ -227,7 +228,7 @@ export default function PlanCard({
     //     method: "DELETE",
     //     headers: {
     //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${accessToken}`,
+    //         Authorization: `Bearer ${jwt}`,
     //     }
     // }).then((res) => {
     //     if (res.ok) {

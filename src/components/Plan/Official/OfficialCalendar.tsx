@@ -227,6 +227,7 @@ export default function OfficialCalendar() {
     dateClickPosition: 날짜 선택시 마우스 위치
     isEditorForm: 새로 추가한 창인지, 수정하는 창인지 (삭제 기능 추가됨)
     */
+  const jwt = localStorage.getItem("jwt");
   const { isMobile } = useContext(ResponsiveContext);
   const formRef = useRef<any>(null);
   const todayRef = useRef<any>(null);
@@ -234,7 +235,7 @@ export default function OfficialCalendar() {
   const [year, setYear] = useState<string>("");
   const [month, setMonth] = useState<string>("");
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
+  const [eventFormList, setEventFormList] = useState<EventFormType[] | []>([]);
   const [eventForm, setEventForm] = useState<EventFormType>({
     title: "",
     color: "#FFBFA7",
@@ -262,6 +263,7 @@ export default function OfficialCalendar() {
     const date = new Date(info.endStr);
     date.setDate(date.getDate() - 1);
     const eventEnd: string = date.toISOString().split("T")[0];
+    console.log(info);
     setEventForm((prevState) => ({
       ...prevState,
       start: info.startStr,
@@ -311,28 +313,30 @@ export default function OfficialCalendar() {
     const FinalForm = {
       ...eventForm,
       // 종료 시간이 없다면 24:00 추가
-      end: eventForm.end.includes("T")
-        ? eventForm.end
-        : `${eventForm.end}T24:00:00`,
+      end:
+        eventForm.start !== eventForm.end && !eventForm.end.includes("T")
+          ? eventForm.end
+          : `${eventForm.end}T24:00`,
     };
+    console.log("final", FinalForm);
     setEventFormList((prevState) => [...prevState, FinalForm]);
 
     /* 서버에 데이터 전송 */
-    // fetch("", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: `Bearer ${accessToken}`,
-    //         },
-    //         body: JSON.stringify(eventForm),
-    //     }).then((res) => {
-    //         if (res.ok) {
-    //             console.log("ok");
-    //         } else {
-    //             throw new Error("이벤트 저장 실패");
-    //         }
-    //     });
-    // };
+    fetch("https://dev.risetconstruction.net/api/companySchedule", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify(FinalForm),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("data", data);
+        setEventFormList((prevList) => {
+          return [...prevList, data];
+        });
+      });
 
     /* 초기화 */
     setEventForm({
@@ -357,44 +361,34 @@ export default function OfficialCalendar() {
     setIsFormOpen(true);
     setIsEditorForm(true);
 
-    // id에 해당하는 이벤트 등록해주기
-    // setEventForm()
-
-    // const getEvent = info.event;
-    // setEventForm({
-    //   title: getEvent?._def.title,
-    //   start: getEvent?._instance.range.start,
-    //   end: getEvent?._instance.range.end,
-    //   color: getEvent?._def.ui.backgroundColor,
-    //   ...getEvent?._def.extendedProps,
-    // });
-    // console.log({
-    //   title: getEvent?._def.title,
-    //   start: getEvent?._instance.range.start,
-    //   end: getEvent?._instance.range.end,
-    //   color: getEvent?._def.ui.backgroundColor,
-    //   ...getEvent?._def.extendedProps,
-    // });
+    /* id에 해당하는 이벤트 찾기 */
+    const findId = info.event._def.extendedProps.scheduleNo;
+    const selectedEvent = eventFormList.filter(
+      (form) => form.scheduleNo === findId
+    )[0];
+    // console.log(selectedEvent);
+    setEventForm(selectedEvent);
   };
 
   /* Event 삭제 */
-  // const handleRemoveEvent = (id) => {
-  const handleRemoveEvent = () => {
+  const handleRemoveEvent = (findId: number | string) => {
     /* 이벤트 리스트 상태값에서 삭제 */
-    // setEventFormList(prevList => {
-    //   return prevList.filter((form) => form.id !== id)
-    // })
+    setEventFormList((prevList) => {
+      return prevList.filter((form) => form.id !== findId);
+    });
     /* 서버에서 삭제 */
-    // fetch(`http://localhost:8080/api/delete?id=${id}`, {
-    //         method: "DELETE"
-    //     }).then((res) => {
-    //         if (res.ok) {
-    //             console.log("ok");
-    //         } else {
-    //             throw new Error("이벤트 삭제 실패");
-    //         }
-    //     });
-    // };
+    fetch(`https://dev.risetconstruction.net/api/delete=${findId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        console.log("ok");
+      } else {
+        throw new Error("이벤트 삭제 실패");
+      }
+    });
   };
 
   /* Event Form 팝업창 외 클릭 감지 */
@@ -431,9 +425,19 @@ export default function OfficialCalendar() {
 
   /* 페이지 진입시 일정 데이터 받아오기 */
   useEffect(() => {
-    // fetch(`http://localhost:8080/api/get?currentMonth=${202311}`)
-    // .then(res => res.json())
-    // .then(data => setEventFormList(data))
+    const current = `${year}${month.padStart(2, "0")}`;
+    console.log(current, typeof current);
+    fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("data", data);
+        setEventFormList(data);
+      });
   }, [month, year]);
 
   return (
@@ -456,7 +460,6 @@ export default function OfficialCalendar() {
             eventMouseLeave: mouseLeave 이벤트
             dayMaxEvents: 팝업으로 펼쳐보기
             views: 현재 월만 표시
-            dateSet: 월 이동시 실행되는 함수
             aspectRatio: 가로/세로 비율
             editable: 드래그 가능 여부
             displayEventTime: 이벤트 시간 표시
@@ -492,6 +495,8 @@ export default function OfficialCalendar() {
             year: "Year",
           }}
           titleFormat={(date) => {
+            setYear(date.date.array[0].toString());
+            setMonth((date.date.array[1] + 1).toString());
             return `${date.date.year}`;
           }}
           eventTimeFormat={{
@@ -516,11 +521,6 @@ export default function OfficialCalendar() {
               duration: { months: 1 },
               fixedWeekCount: false,
             },
-          }}
-          datesSet={(info) => {
-            const currentMonth = new Date(info.start);
-            setMonth((currentMonth.getMonth() + 1).toString());
-            setYear(currentMonth.getFullYear().toString());
           }}
           aspectRatio={isMobile ? 0.8 : 1.2}
           displayEventTime={false}

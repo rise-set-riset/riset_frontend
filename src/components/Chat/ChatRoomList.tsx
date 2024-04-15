@@ -8,15 +8,17 @@ import { IoIosArrowBack } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
 
 const Layout = styled.div`
-  position: relative;
   padding: 1.5rem;
+  height: 100%;
+  @media screen and (max-width: 500px) {
+    padding: 1rem;
+  }
 `;
 
 const TitleBox = styled.header`
   display: flex;
   justify-content: space-between;
-  align-content: center;
-  margin-bottom: 1rem;
+  align-items: center;
 
   div {
     display: flex;
@@ -26,8 +28,24 @@ const TitleBox = styled.header`
   }
 `;
 
+const SearchBox = styled.div`
+  input {
+    font-size: 1.2rem;
+  }
+  @media screen and (max-width: 500px) {
+    div {
+      height: 2.2rem;
+
+      input {
+        font-size: 1rem;
+      }
+    }
+  }
+`;
+
 const CloseIcon = styled(CgClose)`
   font-size: 1.2rem;
+  cursor: pointer;
 `;
 
 const ArrowBackIcon = styled(IoIosArrowBack)`
@@ -36,8 +54,8 @@ const ArrowBackIcon = styled(IoIosArrowBack)`
 `;
 
 const MemberCardList = styled.main`
-  margin-top: 1rem;
-  height: 620px;
+  margin-top: 0.5rem;
+  height: calc(100% - 150px);
   overflow-y: auto;
 `;
 
@@ -47,18 +65,31 @@ const MemberCardBox = styled.div`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--color-brand-lightgray);
+  cursor: pointer;
+  @media screen and (max-width: 500px) {
+    padding: 1.5rem 0.5rem;
+  }
+
+  @media screen and (max-width: 430px) {
+    padding: 1rem 0.5rem;
+
+    img {
+      width: 45px;
+      height: 45px;
+    }
+  }
 `;
 
 const PlusChatIcon = styled(FiPlusCircle)`
   font-size: 1.2rem;
+  cursor: pointer;
 `;
 
 const ButtonStyle = styled.button`
   width: 126px;
   height: 44px;
   padding: 0.5rem;
-  margin-left: auto;
-  margin-bottom: 1.5rem;
+  margin: 1rem 0 1rem auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -99,7 +130,14 @@ const VerticalIcon = styled(FiMoreVertical)`
   font-size: 1.5rem;
 `;
 
-export default function ChatRoomList() {
+interface ChatRoomListProps {
+  handlePageChange: (name: string) => void;
+  handleChatClose: () => void;
+}
+export default function ChatRoomList({
+  handlePageChange,
+  handleChatClose,
+}: ChatRoomListProps) {
   const TestInfo = {
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s",
@@ -113,20 +151,22 @@ export default function ChatRoomList() {
     <Layout>
       <TitleBox>
         <div>
-          <ArrowBackIcon />
+          <ArrowBackIcon onClick={() => handlePageChange("main")} />
           <h2>채팅</h2>
         </div>
-        <CloseIcon />
+        <CloseIcon onClick={handleChatClose} />
       </TitleBox>
 
       <div>
-        <ButtonStyle>
+        <ButtonStyle onClick={() => handlePageChange("message")}>
           <PlusChatIcon />
           <div>새 채팅</div>
         </ButtonStyle>
       </div>
 
-      <SearchBar placeholder="이름 검색" />
+      <SearchBox>
+        <SearchBar placeholder="이름 검색" />
+      </SearchBox>
 
       <MemberCardList>
         <MemberCardBox>

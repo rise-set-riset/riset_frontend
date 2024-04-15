@@ -349,7 +349,7 @@ interface EventFormProps {
   handleFormCancel: () => void;
   handleFormSubmit: React.FormEventHandler<HTMLFormElement>;
   isEditorForm: boolean;
-  handleRemoveEvent: () => void;
+  handleRemoveEvent: (findId: number | string) => void;
 }
 
 export default function EventForm({
@@ -538,8 +538,7 @@ export default function EventForm({
     >
       {/* 삭제 버튼 */}
       {isEditorForm && (
-        // <TrashIconBox onClick={() => handleRemoveEvent(id)}>
-        <TrashIconBox onClick={() => handleRemoveEvent()}>
+        <TrashIconBox onClick={() => handleRemoveEvent(eventForm.scheduleNo)}>
           <FaRegTrashAlt />
         </TrashIconBox>
       )}

@@ -21,8 +21,8 @@ const MainContentLayout = styled.div`
 interface ResponseDataType {
   employeeId: number;
   name: string;
-  department: string;
-  position: string;
+  department?: string;
+  position?: string;
   image: string;
   commuteStartTime: string;
   commuteEndTime: string;
@@ -40,8 +40,8 @@ interface ResponseDataType {
 interface PlanDataType {
   employeeId: number;
   name: string;
-  department: string;
-  position: string;
+  department?: string;
+  position?: string;
   image: string;
   editablePlan: PlanDetailType[];
   unEditablePlan: PlanDetailType[];
@@ -56,35 +56,44 @@ interface PlanDetailType {
 
 export default function PersonalPlan() {
   /* 선택한 날짜 상태값 */
+  const jwt = localStorage.getItem("jwt");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [responseData, setResponseData] = useState<ResponseDataType[] | []>([]);
   const [allPlanData, setAllPlanData] = useState<any>([]);
 
   useEffect(() => {
-    // const requestDate = currentDate.toISOString().slice(0, 10);
-    // fetch(`${responseData}`, {
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: `Bearer ${accessToken}`,
-    //         },
-    //     })
-    //     .then((res) => res.json())
-    //     .then((data) => setResponseData(data))
-    // const responseMemberList = responseData.map((data) => {
-    //   return {
-    //     employeeId: data.employeeId,
-    //     name: data.name,
-    //     department: data.department,
-    //     position: data.position,
-    //     image: data.image,
-    //   };
-    // });
-    fetch("/test.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setResponseData(data);
-      });
-  }, []);
+    const setFitDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      currentDate.getDate() + 1
+    );
+    const requestDate = setFitDate.toISOString().slice(0, 10);
+    console.log(requestDate);
+    fetch(
+      // `https://dev.risetconstruction.net/api/employees?employeeDate=${requestDate}`,
+      `https://dev.risetconstruction.net/api/employees?employeeDate=2024-04-08`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    ).then((res) => {
+      if (res.ok) {
+        console.log(res.ok);
+        res.json();
+      } else {
+        console.log("통신실패");
+      }
+    });
+    // .then((data) => setResponseData(data));
+
+    // fetch("/test.json")
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     setResponseData(data);
+    //   });
+  }, [currentDate]);
 
   /* 데이터 형식 변환 */
   useEffect(() => {

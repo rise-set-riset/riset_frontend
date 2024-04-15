@@ -29,11 +29,11 @@ const MemberName = styled.div`
   display: flex;
   align-items: center;
   gap: 4.5px;
-  font-size: 22px;
+  font-size: 1.3rem;
   font-weight: bold;
 
   span {
-    font-size: 14px;
+    font-size: 0.8rem;
     color: var(--color-brand-main);
   }
 `;
@@ -45,7 +45,13 @@ const MoreInfo = styled.div`
 
 interface MemberCardProps {
   memberInfo: {
-    [key: string]: string;
+    // [key: string]: string;
+    image: string;
+    alt?: string;
+    name: string;
+    rank: string;
+    department?: string;
+    position?: string;
   };
 }
 
