@@ -18,7 +18,9 @@ export const ResponsiveContext = createContext<ScreenType>({
 export function ResponsiveProvider({ children }: Children) {
   // 현재 화면 사이즈가 599px 보다 큰지 확인
   const IS_MOBILE = matchMedia("screen and (max-width: 599px)").matches;
-  const IS_TABLET = matchMedia("screen and (min-width: 600px) and (max-width: 1023px)").matches;
+  const IS_TABLET = matchMedia(
+    "screen and (min-width: 600px) and (max-width: 1023px)"
+  ).matches;
 
   const [isScreen, setIsScreen] = useState<ScreenType>({
     isMobile: IS_MOBILE,
