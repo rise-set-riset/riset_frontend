@@ -11,20 +11,14 @@ const Layout = styled.div`
   align-self: flex-start;
   align-items: center;
   gap: 1rem;
-  padding-right: 1.5rem;
-
-  @media screen and (max-width: 599px) {
-    width: 100%;
-    padding-right: 0;
-  }
 `;
 
 /* 검색 기준 필터 */
 const SearchFilter = styled.button`
   position: relative;
-  min-width: 6.5rem;
+  width: 8rem;
   height: 2.5rem;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,17 +29,13 @@ const SearchFilter = styled.button`
   border: 1px solid var(--color-brand-lightgray);
   background-color: var(--color-white);
   cursor: pointer;
-
-  div:nth-child(1) {
-    flex-shrink: 0;
-  }
 `;
 
 const ArrowIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 `;
 
 /* 검색 기준 필터 드롭다운 메뉴 */

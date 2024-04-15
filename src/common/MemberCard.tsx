@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 
 const Layout = styled.div`
@@ -29,11 +30,11 @@ const MemberName = styled.div`
   display: flex;
   align-items: center;
   gap: 4.5px;
-  font-size: 1.3rem;
+  font-size: 22px;
   font-weight: bold;
 
   span {
-    font-size: 0.8rem;
+    font-size: 14px;
     color: var(--color-brand-main);
   }
 `;
@@ -45,13 +46,7 @@ const MoreInfo = styled.div`
 
 interface MemberCardProps {
   memberInfo: {
-    // [key: string]: string;
-    image: string;
-    alt?: string;
-    name: string;
-    rank: string;
-    department?: string;
-    position?: string;
+    [key: string]: string;
   };
 }
 
