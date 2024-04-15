@@ -59,7 +59,7 @@ export default function ChatScreen() {
   return (
     <Layout>
       <ChatButton type="button" onClick={() => setIsChatOpen(!isChatOpen)}>
-        <img src="/chatButton.png" alt="채팅버튼" />
+        <img src="/chat-icon.svg" alt="채팅버튼" />
       </ChatButton>
       {isChatOpen && (
         <ChatPageLayout>

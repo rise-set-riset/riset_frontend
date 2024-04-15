@@ -7,6 +7,7 @@ import SideMenu from "../components/Header/SideMenu";
 import { createGlobalStyle } from "styled-components";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/store";
+import ChatScreen from "../components/Chat/ChatScreen";
 
 const GlobalSvgStyle = createGlobalStyle`
   svg {
@@ -94,6 +95,7 @@ export default function Root() {
       <Outlet />
       {isAuth && <SideMenu />}
       {isMobile && isAuth && <BottomMenu />}
+      <ChatScreen />
     </>
   );
 }
