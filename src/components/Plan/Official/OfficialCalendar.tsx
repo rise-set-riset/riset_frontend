@@ -121,6 +121,11 @@ const CalendarCustomStyle = styled.div<{ $month: string }>`
     border: none;
     border-radius: 12px;
     background-color: #ffbfa7;
+
+    &:hover {
+      background-color: var(--color-brand-main) !important;
+      color: var(--color-white) !important;
+    }
   }
 
   /* Title 표시 */
@@ -263,7 +268,6 @@ export default function OfficialCalendar() {
     const date = new Date(info.endStr);
     date.setDate(date.getDate() - 1);
     const eventEnd: string = date.toISOString().split("T")[0];
-    console.log(info);
     setEventForm((prevState) => ({
       ...prevState,
       start: info.startStr,
@@ -314,7 +318,7 @@ export default function OfficialCalendar() {
       ...eventForm,
       // 종료 시간이 없다면 24:00 추가
       end:
-        eventForm.start !== eventForm.end && !eventForm.end.includes("T")
+        eventForm.start === eventForm.end || eventForm.end.includes("T")
           ? eventForm.end
           : `${eventForm.end}T24:00`,
     };
@@ -358,16 +362,15 @@ export default function OfficialCalendar() {
       y: info.jsEvent.y,
     });
 
-    setIsFormOpen(true);
-    setIsEditorForm(true);
-
     /* id에 해당하는 이벤트 찾기 */
     const findId = info.event._def.extendedProps.scheduleNo;
     const selectedEvent = eventFormList.filter(
       (form) => form.scheduleNo === findId
     )[0];
-    // console.log(selectedEvent);
+    console.log("list", eventFormList);
     setEventForm(selectedEvent);
+    setIsFormOpen(true);
+    setIsEditorForm(true);
   };
 
   /* Event 삭제 */
@@ -378,6 +381,7 @@ export default function OfficialCalendar() {
     });
     /* 서버에서 삭제 */
     fetch(`https://dev.risetconstruction.net/api/delete=${findId}`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
@@ -426,7 +430,6 @@ export default function OfficialCalendar() {
   /* 페이지 진입시 일정 데이터 받아오기 */
   useEffect(() => {
     const current = `${year}${month.padStart(2, "0")}`;
-    console.log(current, typeof current);
     fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
       headers: {
         "Content-Type": "application/json",
@@ -456,8 +459,6 @@ export default function OfficialCalendar() {
             selectable: 날짜 선택 가능 여부
             select: 날짜 드래그 함수
             eventClick: 이벤트 클릭시 실행되는 함수
-            eventMouseEnter: mouseEnter 이벤트
-            eventMouseLeave: mouseLeave 이벤트
             dayMaxEvents: 팝업으로 펼쳐보기
             views: 현재 월만 표시
             aspectRatio: 가로/세로 비율
@@ -507,12 +508,6 @@ export default function OfficialCalendar() {
           events={eventFormList}
           selectable={!isFormOpen}
           select={(info) => handleDateClick(info)}
-          eventMouseEnter={(info) => {
-            info.el.style.backgroundColor = "var(--color-brand-main)";
-          }}
-          eventMouseLeave={(info) => {
-            info.el.style.backgroundColor = "";
-          }}
           eventClick={(info) => handleEventClick(info)}
           dayMaxEvents={true}
           views={{

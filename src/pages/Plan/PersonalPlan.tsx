@@ -60,6 +60,7 @@ export default function PersonalPlan() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [responseData, setResponseData] = useState<ResponseDataType[] | []>([]);
   const [allPlanData, setAllPlanData] = useState<any>([]);
+  const [myPlan, setMyPlan] = useState<any>([]);
 
   useEffect(() => {
     const setFitDate = new Date(
@@ -118,6 +119,8 @@ export default function PersonalPlan() {
         unEditablePlan: unEditablePlan,
       };
     });
+
+    // setMyPlan(modifiedData.filter((plan) => plan.employeeId === userId))
     setAllPlanData(modifiedData);
   }, [responseData]);
 

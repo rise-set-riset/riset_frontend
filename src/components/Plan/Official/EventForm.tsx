@@ -35,21 +35,21 @@ const fadeIn = keyframes`
 /* 전체 틀 */
 const FormLayout = styled.form<{
   $dateClickPosition: ClickPositionType;
+  $isLeftAligned: boolean;
+  $isTopAligned: boolean;
 }>`
-  @media screen and (max-width: 599px) {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: ${fadeIn} 0.3s ease;
-  }
-
   width: 375px;
   padding: 16px 24px 24px;
-  z-index: 10;
+  z-index: 100;
   position: fixed;
-  left: ${(props) => `${props.$dateClickPosition.x + 10}px`};
-  top: ${(props) => `${props.$dateClickPosition.y - 150}px`};
+  left: ${(props) =>
+    props.$isLeftAligned
+      ? `${props.$dateClickPosition.x + 10}px`
+      : `${props.$dateClickPosition.x - 400}px`};
+  top: ${(props) =>
+    props.$isTopAligned
+      ? `${props.$dateClickPosition.y - 150}px`
+      : `${props.$dateClickPosition.y - 450}px`};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,12 +69,27 @@ const FormLayout = styled.form<{
     font-size: 1rem;
     color: var(--color-brand-lightgray);
   }
+
+  @media screen and (max-width: 599px) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: ${fadeIn} 0.3s ease;
+  }
+`;
+
+const HeaderMenu = styled.div`
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 /* 삭제 아이콘 */
 const TrashIconBox = styled.div`
   align-items: flex-end;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 `;
 
 /* 닫기 아이콘 */
@@ -82,10 +97,6 @@ const CloseIconBox = styled.div`
   align-self: flex-end;
   font-size: 1.5rem;
 `;
-
-// const CloseIcon = styled(IoClose)`
-//   font-size: 1.5rem;
-// `;
 
 /* 제목 입력 */
 const TitleInputBox = styled.div`
@@ -384,20 +395,21 @@ export default function EventForm({
     "#DECFFF",
   ];
   const [isColorOpen, setIsColorOpen] = useState<boolean>(false);
-  const [selectedColor, setSelectedColor] = useState<string>(eventColorList[0]);
+  const [selectedColor, setSelectedColor] = useState<string>(
+    eventForm.color ? eventForm.color : eventColorList[0]
+  );
   const [hasTime, setHasTime] = useState<boolean>(false);
   const [hasStartTime, setHasStartTime] = useState<boolean>(false);
   const [hasEndTime, setHasEndTime] = useState<boolean>(false);
-  const [selectedStartDate, setSelectedStartDate] = useState<string>(
-    eventForm.start
-  );
-  const [selectedEndDate, setSelectedEndDate] = useState<string>(eventForm.end);
+  const [selectedStartDate, setSelectedStartDate] = useState<string>("");
+  const [selectedEndDate, setSelectedEndDate] = useState<string>("");
   const [selectedStartTime, setSelectedStartTime] = useState<string>("00:00");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("00:00");
   const [isStartPickerOpen, setIsStartPickerOpen] = useState<boolean>(false);
   const [isEndPickerOpen, setIsEndPickerOpen] = useState<boolean>(false);
   const [isDateValid, setIsDateValid] = useState<boolean>(true);
-
+  const [isLeftAligned, setIsLeftAligned] = useState<boolean>(true);
+  const [isTopAligned, setIsTopAligned] = useState<boolean>(true);
   /* Event Form 변경 */
   const handleFormChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -492,6 +504,14 @@ export default function EventForm({
     });
   };
 
+  /* 날짜 형식 조정 */
+  const setDateForm = (now: Date) => {
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const day = now.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   /* 시작 날짜와 종료 날짜 유효성 검사 */
   useEffect(() => {
     if (new Date(selectedStartDate) > new Date(selectedEndDate)) {
@@ -523,29 +543,62 @@ export default function EventForm({
     });
   }, [selectedEndTime]);
 
-  /* 날짜 형식 조정 */
-  const setDateForm = (now: Date) => {
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, "0");
-    const day = now.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+  /* 초기 날짜, 시간 설정 */
+  useEffect(() => {
+    // 시작 시간이 있으면
+    if (eventForm.start.includes("T")) {
+      setSelectedStartDate(eventForm.start.split("T")[0]);
+      setSelectedStartTime(eventForm.start.split("T")[1]);
+      setHasTime(true);
+      setHasStartTime(true);
+    } else {
+      setSelectedStartDate(eventForm.start);
+    }
+    // 끝나는 시간이 있으면
+    if (eventForm.end.includes("T")) {
+      setSelectedEndDate(eventForm.end.split("T")[0]);
+      // T24:00 형식이 아니면
+      if (eventForm.end.split("T")[1] !== "24:00") {
+        setSelectedEndTime(eventForm.end.split("T")[1]);
+        setHasEndTime(true);
+        setHasEndTime(true);
+      }
+    } else {
+      setSelectedEndDate(eventForm.end);
+    }
+  }, []);
+
+  /* Form 팝업창 위치 조정 */
+  useEffect(() => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    if (screenWidth - dateClickPosition.x - 390 < 0) {
+      setIsLeftAligned(false);
+    }
+    if (screenHeight - dateClickPosition.y - 370 < 0) {
+      setIsTopAligned(false);
+    }
+  }, []);
 
   return (
     <FormLayout
       $dateClickPosition={dateClickPosition}
+      $isLeftAligned={isLeftAligned}
+      $isTopAligned={isTopAligned}
       onSubmit={handleFormSubmit}
     >
-      {/* 삭제 버튼 */}
-      {isEditorForm && (
-        <TrashIconBox onClick={() => handleRemoveEvent(eventForm.scheduleNo)}>
-          <FaRegTrashAlt />
-        </TrashIconBox>
-      )}
-      {/* 닫기 버튼 */}
-      <CloseIconBox onClick={handleFormCancel}>
-        <IoClose />
-      </CloseIconBox>
+      <HeaderMenu>
+        {/* 삭제 버튼 */}
+        {isEditorForm && (
+          <TrashIconBox onClick={() => handleRemoveEvent(eventForm.scheduleNo)}>
+            <FaRegTrashAlt />
+          </TrashIconBox>
+        )}
+        {/* 닫기 버튼 */}
+        <CloseIconBox onClick={handleFormCancel}>
+          <IoClose />
+        </CloseIconBox>
+      </HeaderMenu>
 
       {/* 제목 입력 */}
       <TitleInputBox>
