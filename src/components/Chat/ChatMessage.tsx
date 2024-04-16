@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
@@ -28,6 +28,36 @@ const TitleBox = styled.header`
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+  }
+`;
+
+const VerticalIcon = styled(FiMoreVertical)`
+  font-size: 1.5rem;
+  position: relative;
+`;
+
+/* 채팅방 삭제 및 이름 수정 드롭다운 메뉴 */
+const DropdownMenu = styled.ul`
+  z-index: 5000;
+  position: absolute;
+  right: 0;
+  width: 4rem;
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  background-color: var(--color-white);
+  box-shadow: 0px 0px 10px 0px var(--color-brand-lightgray);
+
+  li {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+
+    &:hover {
+      color: var(--color-brand-main);
+    }
   }
 `;
 
@@ -92,10 +122,6 @@ const ArrowIconStyle = styled.div`
     width: 2.2rem;
     height: 2.2rem;
   }
-`;
-
-const VerticalIcon = styled(FiMoreVertical)`
-  font-size: 1.5rem;
 `;
 
 const CloseIcon = styled(CgClose)`
@@ -246,24 +272,13 @@ interface Content {
 interface ChatMainProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
-  isChatOpen: boolean;
   currentRoomId: number;
 }
 export default function ChatMain({
   handlePageChange,
   handleChatClose,
-  isChatOpen,
   currentRoomId,
 }: ChatMainProps) {
-  const TestInfo = {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s",
-    name: "홍길동",
-    rank: "사원",
-    department: "개발팀",
-    position: "프론트",
-  };
-
   console.log("currentRoomId", currentRoomId);
   /* 통신 */
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -272,7 +287,7 @@ export default function ChatMain({
   const jwt = localStorage.getItem("jwt");
   const [messages, setMessages] = useState<Content[]>([]);
   const client = useRef<Client | null>(null);
-
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const userId = 11;
 
   /* 채팅 메세지 가져오기 */
@@ -382,6 +397,12 @@ export default function ChatMain({
         </div>
         <div>
           <VerticalIcon onClick={handleRemoveChatRoom} />
+          {isMoreMenuOpen && (
+            <DropdownMenu>
+              <li>채팅방 이름 수정</li>
+              <li onClick={handleRemoveChatRoom}>채팅방 나가기</li>
+            </DropdownMenu>
+          )}
           <CloseIcon onClick={handleChatClose} />
         </div>
       </TitleBox>

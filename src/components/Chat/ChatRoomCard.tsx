@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 
@@ -60,20 +59,35 @@ const MoreInfo = styled.div`
   font-size: 14px;
 `;
 
-interface ChatRoomCardProps {
-  chatMemberData: any;
+interface MembersDataType {
+  [key: string]: string | number;
 }
-export default function ChatRoomCard({ chatMemberData }: ChatRoomCardProps) {
+
+interface ChatRoomCardProps {
+  chatMemberData: MembersDataType[];
+  chatRoomName: string;
+  lastChat: any;
+}
+
+export default function ChatRoomCard({
+  chatMemberData,
+  chatRoomName,
+  lastChat,
+}: ChatRoomCardProps) {
+  const settingChatRoomName = chatMemberData
+    .map((member) => member.memberName)
+    .join(",");
+
   return (
     <Layout>
       <ImageBox>
         {chatMemberData.slice(0, 4).map((data: any) => (
           <MemberImg
-            key={data.employeeId}
+            key={data.memberNo}
             $memberCount={chatMemberData.slice(0, 4).length}
           >
-            {data.profileImg ? (
-              <img src={data.profileImg} alt="data.name" />
+            {data.profileImg.profileImgPath ? (
+              <img src={data.profileImg.profileImgPath} alt="data.name" />
             ) : (
               <Profile />
             )}
@@ -82,11 +96,11 @@ export default function ChatRoomCard({ chatMemberData }: ChatRoomCardProps) {
       </ImageBox>
       <ChatInfoBox>
         <ChatName>
-          <div>{chatMemberData[1].employeeId}</div>
-          {/* {chatMemberData.length > 2 && <span>{chatMemberData.length}명</span>} */}
+          <div>{chatRoomName || settingChatRoomName}</div>
+          {/* {chatMemberData.length > 1 && <span>{chatMemberData.length}명</span>} */}
           <span>{chatMemberData.length}명</span>
         </ChatName>
-        <MoreInfo>마지막 메세지입니다.</MoreInfo>
+        <MoreInfo>{lastChat?.msg || lastChat?.fileNames}</MoreInfo>
       </ChatInfoBox>
     </Layout>
   );

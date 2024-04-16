@@ -37,7 +37,7 @@ const ModalWrapper = styled.div<{ $state: string }>`
             opacity: 0;
           }
         `;
-      case "exiting":
+      case "exited":
         return css`
           background-color: var(--color-black-modal-exit);
           &:first-child {
@@ -54,7 +54,11 @@ interface Children {
   handleIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Modal({ children, isModalOpen, handleIsModalOpen }: Children) {
+export default function Modal({
+  children,
+  isModalOpen,
+  handleIsModalOpen,
+}: Children) {
   // 모달이 열렸을 때, 배경화면 이동 금지
   useEffect(() => {
     if (isModalOpen) {
@@ -71,7 +75,13 @@ export default function Modal({ children, isModalOpen, handleIsModalOpen }: Chil
   };
 
   return (
-    <Transition in={isModalOpen} timeout={500} mountOnEnter unmountOnExit classNames="modal">
+    <Transition
+      in={isModalOpen}
+      timeout={500}
+      mountOnEnter
+      unmountOnExit
+      classNames="modal"
+    >
       {(state) =>
         createPortal(
           <ModalWrapper onClick={handleClick} $state={state}>

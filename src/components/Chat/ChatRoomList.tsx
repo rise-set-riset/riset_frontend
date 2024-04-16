@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
-import MemberCard from "../../common/MemberCard";
 import { FiPlusCircle } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
@@ -116,11 +115,39 @@ const ChatSide = styled.div`
 
 const VerticalIcon = styled(FiMoreVertical)`
   font-size: 1.5rem;
+  position: relative;
+`;
+
+/* 채팅방 삭제 및 이름 수정 드롭다운 메뉴 */
+const DropdownMenu = styled.ul`
+  z-index: 5000;
+  position: absolute;
+  right: 0;
+  width: 4rem;
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  background-color: var(--color-white);
+  box-shadow: 0px 0px 10px 0px var(--color-brand-lightgray);
+
+  li {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+
+    &:hover {
+      color: var(--color-brand-main);
+    }
+  }
 `;
 
 interface ChatRoomDataType {
   chatRoomId: number;
+  chatRoomName: string;
   createAt: string;
+  lastChat: any;
   members: MembersType[];
 }
 
@@ -140,16 +167,10 @@ export default function ChatRoomList({
   setCurrentRoomId,
   setSelectToCreate,
 }: ChatRoomListProps) {
-  const TestInfo = {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s",
-    name: "홍길동",
-    rank: "사원",
-    department: "개발팀",
-    position: "프론트",
-  };
-
+  const userId = 2;
+  const jwt = localStorage.getItem("jwt");
   const [chatRoomData, setChatRoomData] = useState<ChatRoomDataType[]>([]);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
 
   /* 채팅방 클릭시 */
   const handleRoomClick = (roomId: number) => {
@@ -163,7 +184,23 @@ export default function ChatRoomList({
     handlePageChange("main");
   };
 
-  const jwt = localStorage.getItem("jwt");
+  /* 채팅방 삭제 */
+  const handleRemoveChatRoom = (selectedRoomId: number) => {
+    fetch(`https://dev.risetconstruction.net/chatRoom/${selectedRoomId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        setChatRoomData((prevList) =>
+          prevList.filter((roomData) => roomData.chatRoomId !== selectedRoomId)
+        );
+      }
+    });
+  };
+
+  /* 채팅방 리스트 불러오기 */
   useEffect(() => {
     fetch(`https://dev.risetconstruction.net/chatRoom`, {
       headers: {
@@ -173,9 +210,6 @@ export default function ChatRoomList({
       .then((res) => res.json())
       .then((data) => setChatRoomData(data));
   }, []);
-  console.log(chatRoomData);
-
-  /////// userId filter 후에 데이터 넣어줘야 함
 
   return (
     <Layout>
@@ -204,9 +238,23 @@ export default function ChatRoomList({
             key={roomData.chatRoomId}
             onClick={() => handleRoomClick(roomData.chatRoomId)}
           >
-            <ChatRoomCard chatMemberData={roomData.members} />
+            <ChatRoomCard
+              chatMemberData={roomData.members.filter(
+                (member) => member.memberNo !== userId
+              )}
+              chatRoomName={roomData.chatRoomName}
+              lastChat={roomData.lastChat}
+            />
             <ChatSide>
               <VerticalIcon />
+              {isMoreMenuOpen && (
+                <DropdownMenu>
+                  <li>채팅방 이름 수정</li>
+                  <li onClick={() => handleRemoveChatRoom(roomData.chatRoomId)}>
+                    채팅방 나가기
+                  </li>
+                </DropdownMenu>
+              )}
             </ChatSide>
           </MemberCardBox>
         ))}

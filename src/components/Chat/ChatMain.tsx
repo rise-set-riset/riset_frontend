@@ -4,7 +4,6 @@ import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
 import MemberCard from "../../common/MemberCard";
 import { FiPlusCircle } from "react-icons/fi";
-import { PiChatCircleDots } from "react-icons/pi";
 import CustomCheckbox from "../../common/CustomCheckbox";
 import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg";
 
@@ -172,15 +171,9 @@ export default function ChatMain({
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
   const [memberState, setMemberState] = useState<SelectedMemberType>({});
 
-  useEffect(() => {
-    const initialState: SelectedMemberType = Object.fromEntries(
-      Array.from({ length: 20 }, (_, index) => [`member-${index}`, false])
-    );
-    setMemberState(initialState);
-  }, []);
-
   /* 체크박스 상태 */
   const handleSelectToCreate = (memberId: string) => {
+    setSelectToCreate(true);
     setMemberState((prev) => {
       return { ...prev, [memberId]: true };
     });
@@ -218,6 +211,13 @@ export default function ChatMain({
         handlePageChange("message");
       });
   };
+
+  useEffect(() => {
+    const initialState: SelectedMemberType = Object.fromEntries(
+      Array.from({ length: 20 }, (_, index) => [`member-${index}`, false])
+    );
+    setMemberState(initialState);
+  }, []);
 
   return (
     <Layout>
