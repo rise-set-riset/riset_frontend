@@ -463,8 +463,7 @@ export default function SignUp() {
                 </p>
               </label>
             </AgreeCheckbox>
-            {/* 추후에 disabled={isDisabled} 추가하시면 됩니다 */}
-            <SignUpBtn type="submit">가입하기</SignUpBtn>
+            <SignUpBtn type="submit" disabled={isDisabled}>가입하기</SignUpBtn>
           </form>
           <SignUpQuestion>
             <p>
