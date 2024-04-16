@@ -3,10 +3,10 @@ import styled from "styled-components";
 import TextInput from "../../common/TextInput";
 import CustomCheckbox from "../../common/CustomCheckbox";
 import HorizontalLineWithText from "../../common/HorizontalLineWithText";
-import loginLogo from "../../assets/login-logo.png";
-import naverLogo from "../../assets/naver-logo.png";
-import kakaoLogo from "../../assets/kakao-logo.png";
-import googleLogo from "../../assets/google-logo.png";
+import loginLogo from "../../assets/user/login-logo.png"
+import naverLogo from "../../assets/user/naver-logo.png";
+import kakaoLogo from "../../assets/user/kakao-logo.png";
+import googleLogo from "../../assets/user/google-logo.png";
 import { useNavigate } from "react-router-dom";
 
 const backgroundImageUrl =
