@@ -259,7 +259,6 @@ export default function OfficialCalendar() {
 
   /* 날짜 선택시 */
   const handleDateClick = (info: any) => {
-    setIsFormOpen(true);
     setDateClickPosition({
       x: info.jsEvent.x,
       y: info.jsEvent.y,
@@ -273,6 +272,8 @@ export default function OfficialCalendar() {
       start: info.startStr,
       end: eventEnd,
     }));
+
+    setIsFormOpen(true);
 
     /* 이벤트 추가 */
     if (calendarRef.current) {
@@ -311,10 +312,7 @@ export default function OfficialCalendar() {
   /* 이벤트 저장 */
   const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    setIsFormOpen(false);
-
-    /* 최종 저장 Form 수정 */
-    const FinalForm = {
+    const finalForm = {
       ...eventForm,
       // 종료 시간이 없다면 24:00 추가
       end:
@@ -322,8 +320,9 @@ export default function OfficialCalendar() {
           ? eventForm.end
           : `${eventForm.end}T24:00`,
     };
-    console.log("final", FinalForm);
-    setEventFormList((prevState) => [...prevState, FinalForm]);
+
+    /* 최종 저장 Form */
+    setEventFormList((prevState) => [...prevState, finalForm]);
 
     /* 서버에 데이터 전송 */
     fetch("https://dev.risetconstruction.net/api/companySchedule", {
@@ -332,11 +331,10 @@ export default function OfficialCalendar() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
-      body: JSON.stringify(FinalForm),
+      body: JSON.stringify(finalForm),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
         setEventFormList((prevList) => {
           return [...prevList, data];
         });
@@ -351,6 +349,8 @@ export default function OfficialCalendar() {
       content: "",
       color: "#FFBFA7",
     });
+
+    setIsFormOpen(false);
   };
 
   /* 이벤트 클릭시 */
@@ -367,7 +367,6 @@ export default function OfficialCalendar() {
     const selectedEvent = eventFormList.filter(
       (form) => form.scheduleNo === findId
     )[0];
-    console.log("list", eventFormList);
     setEventForm(selectedEvent);
     setIsFormOpen(true);
     setIsEditorForm(true);
@@ -379,11 +378,11 @@ export default function OfficialCalendar() {
     setEventFormList((prevList) => {
       return prevList.filter((form) => form.id !== findId);
     });
+
     /* 서버에서 삭제 */
-    fetch(`https://dev.risetconstruction.net/api/delete=${findId}`, {
+    fetch(`https://dev.risetconstruction.net/api/delete?id=${findId}`, {
       method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
     }).then((res) => {
@@ -392,6 +391,11 @@ export default function OfficialCalendar() {
       } else {
         throw new Error("이벤트 삭제 실패");
       }
+    });
+
+    setIsFormOpen(false);
+    setEventFormList((prevList) => {
+      return prevList.filter((plan) => plan.scheduleNo !== findId);
     });
   };
 
@@ -520,7 +524,7 @@ export default function OfficialCalendar() {
           aspectRatio={isMobile ? 0.8 : 1.2}
           displayEventTime={false}
           editable={false}
-          eventDrop={(info) => console.log(info)}
+          // eventDrop={(info) => console.log(info)}
         />
       </CalendarCustomStyle>
 
