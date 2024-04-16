@@ -41,7 +41,7 @@ export default function usePosts(url: string) {
     return () => {
       if (observer) observer.disconnect();
     };
-  }, [skip, hasMore, isTablet, isMobile, searchWord]);
+  }, [skip, hasMore, isTablet, isMobile]);
 
   return { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord };
 }
