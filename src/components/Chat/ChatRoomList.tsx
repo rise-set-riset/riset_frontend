@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
+import ChatRoomCard from "./ChatRoomCard";
+import { CgClose } from "react-icons/cg";
 import { FiPlusCircle } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
-import ChatRoomCard from "./ChatRoomCard";
 
 const Layout = styled.div`
   padding: 1.5rem;
@@ -105,12 +105,16 @@ const ButtonStyle = styled.button`
 `;
 
 const ChatSide = styled.div`
+  height: 100%;
   position: relative;
   font-size: 1.2rem;
   display: flex;
   justify-content: center;
   align-content: center;
   gap: 1.2rem;
+  &:hover {
+    background-color: var(--color-brand-yellow);
+  }
 `;
 
 const VerticalIcon = styled(FiMoreVertical)`
@@ -171,6 +175,8 @@ export default function ChatRoomList({
   const jwt = localStorage.getItem("jwt");
   const [chatRoomData, setChatRoomData] = useState<ChatRoomDataType[]>([]);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
+  const [searchWord, setSearchWord] = useState<string>("");
+  const [searchResult, setSearchResult] = useState<ChatRoomDataType[]>([]);
 
   /* 채팅방 클릭시 */
   const handleRoomClick = (roomId: number) => {
@@ -182,6 +188,23 @@ export default function ChatRoomList({
   const handleCreateRoom = () => {
     setSelectToCreate(true);
     handlePageChange("main");
+  };
+
+  /* 이름 검색 */
+  const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchWord(e.target.value);
+    const currentSearchWord = e.target.value.trim();
+    if (currentSearchWord === "") {
+      setSearchResult(chatRoomData);
+    } else {
+      setSearchResult(
+        chatRoomData.filter((room) =>
+          room.chatRoomName
+            ?.toLowerCase()
+            .includes(currentSearchWord.toLowerCase())
+        )
+      );
+    }
   };
 
   /* 채팅방 삭제 */
@@ -211,6 +234,10 @@ export default function ChatRoomList({
       .then((data) => setChatRoomData(data));
   }, []);
 
+  useEffect(() => {
+    setSearchResult(chatRoomData);
+  }, [chatRoomData]);
+
   return (
     <Layout>
       <TitleBox>
@@ -229,11 +256,15 @@ export default function ChatRoomList({
       </div>
 
       <SearchBox>
-        <SearchBar placeholder="이름 검색" />
+        <SearchBar
+          placeholder="이름 검색"
+          value={searchWord}
+          onChange={handleSearchName}
+        />
       </SearchBox>
 
       <MemberCardList>
-        {chatRoomData.map((roomData) => (
+        {searchResult.map((roomData) => (
           <MemberCardBox
             key={roomData.chatRoomId}
             onClick={() => handleRoomClick(roomData.chatRoomId)}

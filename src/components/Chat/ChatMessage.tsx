@@ -289,6 +289,7 @@ export default function ChatMain({
   const client = useRef<Client | null>(null);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const userId = 11;
+  const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(false);
 
   /* 채팅 메세지 가져오기 */
   useEffect(() => {
@@ -407,15 +408,17 @@ export default function ChatMain({
         </div>
       </TitleBox>
 
-      <SearchNavBox>
-        <SearchBar placeholder="내용 검색" />
-        <ArrowIconStyle>
-          <IoIosArrowDown />
-        </ArrowIconStyle>
-        <ArrowIconStyle>
-          <IoIosArrowUp />
-        </ArrowIconStyle>
-      </SearchNavBox>
+      {isSearchBarOpen && (
+        <SearchNavBox>
+          <SearchBar placeholder="내용 검색" />
+          <ArrowIconStyle>
+            <IoIosArrowDown />
+          </ArrowIconStyle>
+          <ArrowIconStyle>
+            <IoIosArrowUp />
+          </ArrowIconStyle>
+        </SearchNavBox>
+      )}
 
       <DialogueBox ref={messagesEndRef}>
         <ChatPartner>

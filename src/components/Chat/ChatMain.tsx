@@ -141,9 +141,17 @@ const CheckboxLayout = styled.button`
 `;
 
 interface SelectedMemberType {
-  // [key: number]: boolean;
   [key: number | string]: boolean;
 }
+
+interface AllMemberDataType {
+  employeeId: number;
+  name: string;
+  profileId: any;
+  profileName: string;
+  profilePath: string;
+}
+
 interface ChatMainProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
@@ -168,11 +176,28 @@ export default function ChatMain({
   };
 
   const jwt = localStorage.getItem("jwt");
-  const [selectedMember, setSelectedMember] = useState<string[]>([]);
+  const [searchWord, setSearchWord] = useState<string>("");
+  const [responseData, setResponseData] = useState<AllMemberDataType[]>([]);
+  const [searchResult, setSearchResult] = useState<AllMemberDataType[]>([]);
   const [memberState, setMemberState] = useState<SelectedMemberType>({});
 
+  /* 이름 검색 */
+  const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchWord(e.target.value);
+    const currentSearchWord = e.target.value.trim();
+    if (currentSearchWord === "") {
+      setSearchResult(responseData);
+    } else {
+      setSearchResult(
+        responseData.filter((member) =>
+          member.name?.toLowerCase().includes(currentSearchWord.toLowerCase())
+        )
+      );
+    }
+  };
+
   /* 체크박스 상태 */
-  const handleSelectToCreate = (memberId: string) => {
+  const handleSelectToCreate = (memberId: string | number) => {
     setSelectToCreate(true);
     setMemberState((prev) => {
       return { ...prev, [memberId]: true };
@@ -181,19 +206,12 @@ export default function ChatMain({
 
   /* 채팅방 생성 */
   const handleCreateChatRoom = () => {
-    /* 선택한 사람들의 ID */
-    // const finalSelectedMember = Object.keys(memberState).filter(
-    //   (id) => memberState[id]
-    // );
-    // console.log(finalSelectedMember);
-    // setSelectedMember(finalSelectedMember);
-
-    const finalSelectedMember = [2, 11];
-    console.log(
-      JSON.stringify({
-        members: finalSelectedMember,
-      })
+    /* 선택한 사람들의 ID 모은 배열 */
+    const finalSelectedMember = Object.keys(memberState).filter(
+      (id) => memberState[id]
     );
+
+    /* 서버 통신 - 채팅방 생성 */
     fetch("https://dev.risetconstruction.net/chatRoom", {
       method: "POST",
       headers: {
@@ -206,18 +224,29 @@ export default function ChatMain({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setCurrentRoomId(data.RoomId);
         handlePageChange("message");
       });
   };
 
+  /* 모든 직원 목록 데이터 받아오기 */
   useEffect(() => {
-    const initialState: SelectedMemberType = Object.fromEntries(
-      Array.from({ length: 20 }, (_, index) => [`member-${index}`, false])
-    );
-    setMemberState(initialState);
+    fetch("https://dev.risetconstruction.net/auth/userInfo")
+      .then((res) => res.json())
+      .then((data) => setResponseData(data));
   }, []);
+
+  /* 직원 선택 상태값 담을 객체 생성 및 초기화 */
+  useEffect(() => {
+    setSearchResult(responseData);
+    if (!selectToCreate) {
+      setMemberState(
+        Object.fromEntries(
+          responseData.map((member) => [member.employeeId, false])
+        )
+      );
+    }
+  }, [responseData, selectToCreate]);
 
   return (
     <Layout>
@@ -227,26 +256,40 @@ export default function ChatMain({
       </TitleBox>
 
       <SearchBox>
-        <SearchBar placeholder="이름 검색" />
+        <SearchBar
+          placeholder="이름 검색"
+          value={searchWord}
+          onChange={handleSearchName}
+        />
       </SearchBox>
 
       <MemberCardList>
-        {[...Array(20)].map((_, index) => (
+        {searchResult.map((member) => (
           <MemberCardBox
-            key={index}
-            onClick={() => handleSelectToCreate(`member-${index}`)}
+            key={member.employeeId}
+            onClick={() => handleSelectToCreate(member.employeeId)}
           >
-            {/* 체크박스 */}
             {selectToCreate && (
               <CheckboxLayout>
                 <CustomCheckbox
-                  isChecked={memberState[`member-${index}`]}
-                  onChange={() => handleSelectToCreate(`member-${index}`)}
+                  isChecked={memberState[member.employeeId]}
+                  onChange={() => handleSelectToCreate(member.employeeId)}
                 />
               </CheckboxLayout>
             )}
-            {/* 멤버 */}
-            <MemberCard memberInfo={TestInfo} />
+            <MemberCard
+              memberInfo={{
+                image: "",
+                alt: `${member.name}-이미지`,
+                name:
+                  String(member.name) === "null"
+                    ? "홍길동"
+                    : member.name.toString(),
+                rank: "직급",
+                department: "부서",
+                position: "직무",
+              }}
+            />
             <ChatBubbleIcon />
           </MemberCardBox>
         ))}
