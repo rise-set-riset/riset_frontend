@@ -89,7 +89,9 @@ export default function Root() {
 
   /* 채팅 화면 */
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
-
+  const handleChatOpen = () => {
+    setIsChatOpen(!isChatOpen);
+  };
   return (
     <>
       <GlobalOutletStyle $sideOpenState={sideOpenState} />
@@ -97,7 +99,7 @@ export default function Root() {
       {isAuth && <Header />}
       <Outlet />
       {isAuth && <SideMenu />}
-      {isMobile && isAuth && <BottomMenu />}
+      {isMobile && isAuth && <BottomMenu handleChatOpen={handleChatOpen} />}
       {isAuth && (
         <ChatScreen isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
       )}
