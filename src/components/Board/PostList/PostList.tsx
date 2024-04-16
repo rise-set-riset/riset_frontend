@@ -34,7 +34,10 @@ const Contents = styled.section`
   margin-top: 50px;
 `;
 
-const ContentFavorite = styled.div<{ $isOpen: boolean; $isChangeMenu: boolean }>`
+const ContentFavorite = styled.div<{
+  $isOpen: boolean;
+  $isChangeMenu: boolean;
+}>`
   display: ${(props) => (props.$isOpen ? "block" : "none")};
   width: 100%;
   li {
@@ -126,7 +129,8 @@ const Loading = styled.div`
 
 export default function PostList() {
   const [searchTitle, setSearchTitle] = useState<string>("");
-  const [isFavoriteManageClick, setIsFavoriteManageClick] = useState<boolean>(false);
+  const [isFavoriteManageClick, setIsFavoriteManageClick] =
+    useState<boolean>(false);
   const [isManageClick, setIsManageClick] = useState<boolean>(false);
   const [isMenuClick, setIsMenuClick] = useState<boolean>(false);
   const [isChangeMenu, setIsChangeMenu] = useState<boolean>(false);
@@ -144,8 +148,10 @@ export default function PostList() {
     setSearchWord: setFavoriteSearchWord,
   } = usePosts("https://dev.risetconstruction.net/board/favorite");
   // 즐겨찾기, 게시물 열리는 조건
-  const isFavoriteOpen = ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
-  const isAllOpen = ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
+  const isFavoriteOpen =
+    ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
+  const isAllOpen =
+    ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
   // jwt
   const jwt = localStorage.getItem("jwt");
 
@@ -158,14 +164,20 @@ export default function PostList() {
   };
 
   /* 즐겨찾기 삭제 */
-  const handleRemoveFavorite = async (e: React.MouseEvent<SVGElement>, postId: number) => {
+  const handleRemoveFavorite = async (
+    e: React.MouseEvent<SVGElement>,
+    postId: number
+  ) => {
     e.stopPropagation();
-    await fetch(`https://dev.risetconstruction.net/board/favorite/delete/${postId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
+    await fetch(
+      `https://dev.risetconstruction.net/board/favorite/delete/${postId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => setFavoritePosts(data));
   };
@@ -204,14 +216,17 @@ export default function PostList() {
       const beforePostIdx = favoritePosts[idx - 1].indexNumber;
       const movedPostId = favoritePosts[idx].post.id;
 
-      fetch(`https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(beforePostIdx),
-      });
+      fetch(
+        `https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(beforePostIdx),
+        }
+      );
     }
   };
 
@@ -233,9 +248,13 @@ export default function PostList() {
             <HeaderWrapper>
               {isTablet || isMobile ? (
                 <>
-                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>
+                    즐겨찾기
+                  </HeaderTitle>
                   <HeaderLine />
-                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>
+                    게시물
+                  </HeaderTitle>
                 </>
               ) : (
                 <HeaderTitle>즐겨찾기</HeaderTitle>
@@ -282,15 +301,22 @@ export default function PostList() {
             <HeaderWrapper>
               {isTablet || isMobile ? (
                 <>
-                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>
+                    즐겨찾기
+                  </HeaderTitle>
                   <HeaderLine />
-                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>
+                    게시물
+                  </HeaderTitle>
                 </>
               ) : (
                 <HeaderTitle>게시물</HeaderTitle>
               )}
             </HeaderWrapper>
-            <ManageBtn type="button" onClick={() => setIsManageClick(!isManageClick)}>
+            <ManageBtn
+              type="button"
+              onClick={() => setIsManageClick(!isManageClick)}
+            >
               관리
             </ManageBtn>
           </ContentHeader>

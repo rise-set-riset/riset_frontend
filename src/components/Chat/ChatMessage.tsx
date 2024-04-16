@@ -200,6 +200,10 @@ const SendMessageBox = styled.form`
   background-color: var(--color-white);
   z-index: 1000;
   box-shadow: 0px 0px 10px 0px var(--color-brand-lightgray);
+
+  @media screen and (max-width: 500px) {
+    border-radius: 0px;
+  }
   @media screen and (max-width: 430px) {
     padding: 1rem;
   }
@@ -260,14 +264,16 @@ export default function ChatMain({
     position: "프론트",
   };
 
+  console.log("currentRoomId", currentRoomId);
   /* 통신 */
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [responseMessage, setResponseMessage] = useState<any>([]);
-  const [startSubscribe, setStartSubscribe] = useState<boolean>(false);
   const [sendText, setSendText] = useState<string>("");
   const jwt = localStorage.getItem("jwt");
   const [messages, setMessages] = useState<Content[]>([]);
   const client = useRef<Client | null>(null);
+
+  const userId = 11;
 
   /* 채팅 메세지 가져오기 */
   useEffect(() => {
@@ -277,7 +283,9 @@ export default function ChatMain({
       },
     })
       .then((res) => res.json())
-      .then((data) => setResponseMessage(data));
+      .then((data) => {
+        setResponseMessage(data);
+      });
   }, []);
 
   useEffect(() => {
@@ -295,8 +303,7 @@ export default function ChatMain({
       heartbeatOutgoing: 4000,
     });
 
-    setStartSubscribe(true);
-    // 채팅방 구독시작
+    /* 채팅방 구독 */
     client.current.activate();
     client.current.onConnect = function () {
       client.current?.subscribe(
@@ -308,6 +315,10 @@ export default function ChatMain({
           }
         }
       );
+    };
+
+    return () => {
+      client.current?.deactivate();
     };
   }, [responseMessage]);
 
@@ -321,22 +332,6 @@ export default function ChatMain({
   /* 메세지 전송시 */
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    /* 구독이 안되어있으면 */
-    // if (!startSubscribe) {
-    // setStartSubscribe(true);
-    // 채팅방 구독시작
-    // client.current.activate();
-    // client.current.onConnect = function () {
-    //   client.current.subscribe(`/sub/channels/${currentRoomId}`, (frame) => {
-    //     if (frame.body) {
-    //       let parsedMessage = JSON.parse(frame.body);
-    //       setMessages((prevMessages) => [...prevMessages, parsedMessage]);
-    //     }
-    //   });
-    // };
-    // } else {
-    console.log("sendT", sendText);
-    /* 구독중이면 */
     if (sendText.trim() !== "") {
       client.current?.publish({
         destination: `/send/chat/message/${currentRoomId}`,
@@ -357,18 +352,20 @@ export default function ChatMain({
       ]);
       setSendText("");
     }
-    // }
   };
-  // console.log(messages);
 
-  // 구독 & 소켓 연결 언제 중단할지??
-  useEffect(() => {
-    if (isChatOpen) {
-      /* 연결 끊기 */
-      client.current?.deactivate();
-      setStartSubscribe(false);
-    }
-  }, [isChatOpen]);
+  const handleRemoveChatRoom = () => {
+    fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        handlePageChange("list");
+      }
+    });
+  };
 
   return (
     <Layout>
@@ -384,7 +381,7 @@ export default function ChatMain({
           </ChatPartner>
         </div>
         <div>
-          <VerticalIcon />
+          <VerticalIcon onClick={handleRemoveChatRoom} />
           <CloseIcon onClick={handleChatClose} />
         </div>
       </TitleBox>

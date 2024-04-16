@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
@@ -6,6 +6,7 @@ import ChatMain from "./ChatMain";
 import ChatRoomList from "./ChatRoomList";
 import ChatMessage from "./ChatMessage";
 import { Client } from "@stomp/stompjs";
+import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 
 const Layout = styled.div`
   z-index: 1000;
@@ -30,11 +31,12 @@ const ChatPageLayout = styled.div`
 
   @media screen and (max-width: 500px) {
     width: 100%;
-    height: calc(100% - 80px);
+    height: calc(100% - 60px);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 3000;
+    border-radius: 0px;
   }
 `;
 
@@ -53,8 +55,16 @@ const ChatButton = styled.button`
   }
 `;
 
-export default function ChatScreen() {
-  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+interface ChatScreenProps {
+  isChatOpen: boolean;
+  setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function ChatScreen({
+  isChatOpen,
+  setIsChatOpen,
+}: ChatScreenProps) {
+  const { isMobile } = useContext(ResponsiveContext);
   const [currentChatPage, setCurrentChatPage] = useState<string>("main");
   const chatRef = useRef<HTMLDivElement | null>(null);
   const [currentRoomId, setCurrentRoomId] = useState<number>(0);
@@ -75,9 +85,11 @@ export default function ChatScreen() {
 
   return (
     <Layout>
-      <ChatButton type="button" onClick={() => setIsChatOpen(!isChatOpen)}>
-        <img src="/chat-icon.svg" alt="채팅버튼" />
-      </ChatButton>
+      {!isMobile && (
+        <ChatButton type="button" onClick={() => setIsChatOpen(!isChatOpen)}>
+          <img src="/chat-icon.svg" alt="채팅버튼" />
+        </ChatButton>
+      )}
 
       <Transition in={isChatOpen} timeout={500} mountOnEnter unmountOnExit>
         {(state) =>

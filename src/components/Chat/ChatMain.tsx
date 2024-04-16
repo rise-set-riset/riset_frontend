@@ -100,6 +100,10 @@ const ButtonBox = styled.footer`
   border-radius: 0 0 16px 16px;
   box-shadow: 5px 5px 5px -5px var(--color-brand-lightgray);
 
+  @media screen and (max-width: 500px) {
+    border-radius: 0px;
+  }
+
   @media screen and (max-width: 430px) {
     padding: 1rem;
   }

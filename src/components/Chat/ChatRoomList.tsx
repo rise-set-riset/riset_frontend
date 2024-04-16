@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
@@ -6,6 +6,7 @@ import MemberCard from "../../common/MemberCard";
 import { FiPlusCircle } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
+import ChatRoomCard from "./ChatRoomCard";
 
 const Layout = styled.div`
   padding: 1.5rem;
@@ -60,7 +61,7 @@ const MemberCardList = styled.main`
 `;
 
 const MemberCardBox = styled.div`
-  padding: 2rem 1.5rem;
+  padding: 2rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -104,19 +105,6 @@ const ButtonStyle = styled.button`
   cursor: pointer;
 `;
 
-// const NumberCircle = styled.div`
-//   background-color: var(--color-brand-main);
-//   color: var(--color-white);
-//   width: 1.5rem;
-//   height: 1.5rem;
-//   border-radius: 50%;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   font-size: 14px;
-//   font-weight: bold;
-// `;
-
 const ChatSide = styled.div`
   position: relative;
   font-size: 1.2rem;
@@ -129,6 +117,16 @@ const ChatSide = styled.div`
 const VerticalIcon = styled(FiMoreVertical)`
   font-size: 1.5rem;
 `;
+
+interface ChatRoomDataType {
+  chatRoomId: number;
+  createAt: string;
+  members: MembersType[];
+}
+
+interface MembersType {
+  [key: string]: string | number;
+}
 
 interface ChatRoomListProps {
   handlePageChange: (name: string) => void;
@@ -151,6 +149,8 @@ export default function ChatRoomList({
     position: "프론트",
   };
 
+  const [chatRoomData, setChatRoomData] = useState<ChatRoomDataType[]>([]);
+
   /* 채팅방 클릭시 */
   const handleRoomClick = (roomId: number) => {
     setCurrentRoomId(roomId);
@@ -171,8 +171,11 @@ export default function ChatRoomList({
       },
     })
       .then((res) => res.json())
-      .then((data) => console.log("data", data));
+      .then((data) => setChatRoomData(data));
   }, []);
+  console.log(chatRoomData);
+
+  /////// userId filter 후에 데이터 넣어줘야 함
 
   return (
     <Layout>
@@ -196,11 +199,13 @@ export default function ChatRoomList({
       </SearchBox>
 
       <MemberCardList>
-        {Array.from({ length: 20 }, (_, index) => (
-          <MemberCardBox onClick={() => handleRoomClick(1)}>
-            <MemberCard memberInfo={TestInfo} />
+        {chatRoomData.map((roomData) => (
+          <MemberCardBox
+            key={roomData.chatRoomId}
+            onClick={() => handleRoomClick(roomData.chatRoomId)}
+          >
+            <ChatRoomCard chatMemberData={roomData.members} />
             <ChatSide>
-              {/* <NumberCircle>5</NumberCircle> */}
               <VerticalIcon />
             </ChatSide>
           </MemberCardBox>
