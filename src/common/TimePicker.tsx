@@ -44,8 +44,7 @@ const TimeItem = styled.li<{ $fixed: boolean }>`
   padding: 0.5rem;
   font-weight: 500;
   cursor: pointer;
-  color: ${(props) =>
-    props.$fixed ? "var(--color-white)" : "var(--color-balck)"};
+  color: ${(props) => (props.$fixed ? "var(--color-white)" : "var(--color-balck)")};
   background-color: ${(props) =>
     props.$fixed ? "var(--color-brand-yellow)" : "var(--color-wthie)"};
 
@@ -63,13 +62,9 @@ const TimeTitle = styled.li`
 `;
 
 /* 시간, 날짜 리스트 */
-const hourList = Array.from({ length: 24 }, (_, index) =>
-  index.toString().padStart(2, "0")
-);
+const hourList = Array.from({ length: 24 }, (_, index) => index.toString().padStart(2, "0"));
 
-const minList = Array.from({ length: 12 }, (_, index) =>
-  String(index * 5).padStart(2, "0")
-);
+const minList = Array.from({ length: 12 }, (_, index) => String(index * 5).padStart(2, "0"));
 
 interface TimePickerProps {
   /* 
@@ -80,10 +75,7 @@ interface TimePickerProps {
   setSelectedTime: (time: string) => void;
 }
 
-export default function TimePicker({
-  selectedTime = "00:00",
-  setSelectedTime,
-}: TimePickerProps) {
+export default function TimePicker({ selectedTime = "00:00", setSelectedTime }: TimePickerProps) {
   /*
     isPickerOpen: 시간 선택 팝업창 표시 여부
     isFixedHour: 시간 선택 여부

@@ -155,10 +155,17 @@ export default function CommuteRecord() {
   };
 
   /* 버튼(+) 클릭해서 Form 열기 */
-  const handleAddFormBtn = () => {
-    fetch("/data/user.json")
+  const handleAddFormBtn = async () => {
+    const jwt = localStorage.getItem("jwt");
+
+    await fetch("https://dev.risetconstruction.net/commute/record", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
       .then((res) => res.json())
-      .then((data) => setForm(data));
+      .then((data) => console.log(data));
     setIsFormOpen(true);
   };
 
@@ -173,7 +180,8 @@ export default function CommuteRecord() {
       },
     })
       .then((res) => res.json())
-      .then((data) => setWorkStatus(data.status));
+      .then((data) => setWorkStatus(data.status))
+      .catch((err) => console.error(err));
   }, []);
 
   return (

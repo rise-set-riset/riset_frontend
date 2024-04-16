@@ -11,10 +11,10 @@ export default function usePosts(url: string) {
   const jwt = localStorage.getItem("jwt");
   const fullUrl = `${url}?size=5&page=${skip}${searchWord ? `&searchTitle=${searchWord}` : ""}`;
 
-  /* 게시글 조회 */
   useEffect(() => {
+    /* 게시글 조회 */
     const fetchMorePosts = async () => {
-      const data = await fetch(fullUrl, {
+      const datas = await fetch(fullUrl, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -22,10 +22,10 @@ export default function usePosts(url: string) {
       }).then((res) => res.json());
 
       // 추가 게시글이 있는지 확인
-      if (data.length === 0) {
+      if (datas.length === 0) {
         setHasMore(false);
       } else {
-        setPosts((prevPosts) => [...prevPosts, ...data]);
+        setPosts((prevPosts) => [...prevPosts, ...datas]);
         setSkip((prevSkip) => prevSkip + 1);
       }
     };
