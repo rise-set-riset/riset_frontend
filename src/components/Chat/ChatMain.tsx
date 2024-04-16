@@ -166,15 +166,6 @@ export default function ChatMain({
   selectToCreate,
   setSelectToCreate,
 }: ChatMainProps) {
-  const TestInfo = {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s",
-    name: "홍길동",
-    rank: "사원",
-    department: "개발팀",
-    position: "프론트",
-  };
-
   const jwt = localStorage.getItem("jwt");
   const [searchWord, setSearchWord] = useState<string>("");
   const [responseData, setResponseData] = useState<AllMemberDataType[]>([]);

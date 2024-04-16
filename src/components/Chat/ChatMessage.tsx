@@ -40,8 +40,9 @@ const VerticalIcon = styled(FiMoreVertical)`
 const DropdownMenu = styled.ul`
   z-index: 5000;
   position: absolute;
-  right: 0;
-  width: 4rem;
+  top: 3.5rem;
+  right: 1px;
+  width: 7.5rem;
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
@@ -54,6 +55,7 @@ const DropdownMenu = styled.ul`
     padding: 0.5rem 1rem;
     font-size: 1rem;
     font-weight: bold;
+    cursor: pointer;
 
     &:hover {
       color: var(--color-brand-main);
@@ -263,6 +265,7 @@ const SendButtonIcon = styled.button`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  border: 1px solid var(--color-brand-main);
 `;
 
 interface Content {
@@ -279,17 +282,22 @@ export default function ChatMain({
   handleChatClose,
   currentRoomId,
 }: ChatMainProps) {
-  console.log("currentRoomId", currentRoomId);
   /* 통신 */
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [responseMessage, setResponseMessage] = useState<any>([]);
-  const [sendText, setSendText] = useState<string>("");
-  const jwt = localStorage.getItem("jwt");
-  const [messages, setMessages] = useState<Content[]>([]);
-  const client = useRef<Client | null>(null);
-  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const userId = 11;
-  const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(false);
+  const jwt = localStorage.getItem("jwt");
+  const client = useRef<Client | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [sendText, setSendText] = useState<string>("");
+  const [searchWord, setSearchWord] = useState<string>("");
+  const [messages, setMessages] = useState<Content[]>([]);
+  const [responseMessage, setResponseMessage] = useState<any>([]);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
+  const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(true);
+
+  /* 내용 검색 */
+  const handleSearchMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchWord(e.target.value);
+  };
 
   /* 채팅 메세지 가져오기 */
   useEffect(() => {
@@ -397,11 +405,11 @@ export default function ChatMain({
           </ChatPartner>
         </div>
         <div>
-          <VerticalIcon onClick={handleRemoveChatRoom} />
+          <VerticalIcon onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)} />
           {isMoreMenuOpen && (
             <DropdownMenu>
-              <li>채팅방 이름 수정</li>
-              <li onClick={handleRemoveChatRoom}>채팅방 나가기</li>
+              <li>이름 수정</li>
+              <li onClick={handleRemoveChatRoom}>나가기</li>
             </DropdownMenu>
           )}
           <CloseIcon onClick={handleChatClose} />
@@ -410,7 +418,11 @@ export default function ChatMain({
 
       {isSearchBarOpen && (
         <SearchNavBox>
-          <SearchBar placeholder="내용 검색" />
+          <SearchBar
+            placeholder="내용 검색"
+            value={searchWord}
+            onChange={handleSearchMessage}
+          />
           <ArrowIconStyle>
             <IoIosArrowDown />
           </ArrowIconStyle>

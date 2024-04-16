@@ -53,18 +53,24 @@ const ArrowBackIcon = styled(IoIosArrowBack)`
   cursor: pointer;
 `;
 
-const MemberCardList = styled.main`
+const ChatRoomCardList = styled.main`
   margin-top: 0.5rem;
   height: calc(100% - 150px);
   overflow-y: auto;
 `;
 
-const MemberCardBox = styled.div`
-  padding: 2rem 1rem;
+const ChatRoomCardBox = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--color-brand-lightgray);
+`;
+
+const ChatRoomContent = styled.div`
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
   @media screen and (max-width: 500px) {
     padding: 1.5rem 0.5rem;
@@ -105,29 +111,30 @@ const ButtonStyle = styled.button`
 `;
 
 const ChatSide = styled.div`
-  height: 100%;
   position: relative;
   font-size: 1.2rem;
   display: flex;
   justify-content: center;
   align-content: center;
   gap: 1.2rem;
-  &:hover {
-    background-color: var(--color-brand-yellow);
-  }
+  padding-right: 1rem;
 `;
 
 const VerticalIcon = styled(FiMoreVertical)`
   font-size: 1.5rem;
   position: relative;
+  &:hover {
+    color: var(--color-brand-main);
+  }
 `;
 
 /* 채팅방 삭제 및 이름 수정 드롭다운 메뉴 */
 const DropdownMenu = styled.ul`
   z-index: 5000;
   position: absolute;
-  right: 0;
-  width: 4rem;
+  top: 2rem;
+  right: 4px;
+  width: 7rem;
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
@@ -140,6 +147,7 @@ const DropdownMenu = styled.ul`
     padding: 0.5rem 1rem;
     font-size: 1rem;
     font-weight: bold;
+    cursor: pointer;
 
     &:hover {
       color: var(--color-brand-main);
@@ -163,13 +171,13 @@ interface ChatRoomListProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
   setCurrentRoomId: React.Dispatch<React.SetStateAction<number>>;
-  setSelectToCreate: React.Dispatch<React.SetStateAction<boolean>>;
+  setClickCreateRoom: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export default function ChatRoomList({
   handlePageChange,
   handleChatClose,
   setCurrentRoomId,
-  setSelectToCreate,
+  setClickCreateRoom,
 }: ChatRoomListProps) {
   const userId = 2;
   const jwt = localStorage.getItem("jwt");
@@ -186,7 +194,7 @@ export default function ChatRoomList({
 
   /* 새 채팅 클릭시 */
   const handleCreateRoom = () => {
-    setSelectToCreate(true);
+    setClickCreateRoom(true);
     handlePageChange("main");
   };
 
@@ -263,33 +271,35 @@ export default function ChatRoomList({
         />
       </SearchBox>
 
-      <MemberCardList>
+      <ChatRoomCardList>
         {searchResult.map((roomData) => (
-          <MemberCardBox
-            key={roomData.chatRoomId}
-            onClick={() => handleRoomClick(roomData.chatRoomId)}
-          >
-            <ChatRoomCard
-              chatMemberData={roomData.members.filter(
-                (member) => member.memberNo !== userId
-              )}
-              chatRoomName={roomData.chatRoomName}
-              lastChat={roomData.lastChat}
-            />
-            <ChatSide>
+          <ChatRoomCardBox>
+            <ChatRoomContent
+              key={roomData.chatRoomId}
+              onClick={() => handleRoomClick(roomData.chatRoomId)}
+            >
+              <ChatRoomCard
+                chatMemberData={roomData.members.filter(
+                  (member) => member.memberNo !== userId
+                )}
+                chatRoomName={roomData.chatRoomName}
+                lastChat={roomData.lastChat}
+              />
+            </ChatRoomContent>
+            <ChatSide onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}>
               <VerticalIcon />
               {isMoreMenuOpen && (
                 <DropdownMenu>
-                  <li>채팅방 이름 수정</li>
+                  <li>이름 수정</li>
                   <li onClick={() => handleRemoveChatRoom(roomData.chatRoomId)}>
-                    채팅방 나가기
+                    나가기
                   </li>
                 </DropdownMenu>
               )}
             </ChatSide>
-          </MemberCardBox>
+          </ChatRoomCardBox>
         ))}
-      </MemberCardList>
+      </ChatRoomCardList>
     </Layout>
   );
 }

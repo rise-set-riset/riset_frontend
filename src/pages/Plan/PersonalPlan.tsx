@@ -61,6 +61,24 @@ export default function PersonalPlan() {
   const [responseData, setResponseData] = useState<ResponseDataType[] | []>([]);
   const [allPlanData, setAllPlanData] = useState<any>([]);
   const [myPlan, setMyPlan] = useState<any>([]);
+  const [searchWord, setSearchWord] = useState<string>("");
+  const [searchResult, setSearchResult] = useState<ResponseDataType[]>([]);
+  const [filterCategory, setFilterCategory] = useState<string>("이름");
+
+  /* 이름 검색 */
+  const handleSearchWord: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setSearchWord(e.target.value);
+    const currentSearchWord = e.target.value.trim();
+    if (currentSearchWord === "") {
+      setSearchResult(responseData);
+    } else {
+      setSearchResult(
+        responseData.filter((room) =>
+          room?.name?.toLowerCase().includes(currentSearchWord.toLowerCase())
+        )
+      );
+    }
+  };
 
   useEffect(() => {
     const setFitDate = new Date(
@@ -130,7 +148,12 @@ export default function PersonalPlan() {
         <h2 className="title">근무일정</h2>
         <MainContentLayout>
           <DateSlider setCurrentDate={setCurrentDate} />
-          <PlanSearch currentDate={currentDate} />
+          <PlanSearch
+            searchWord={searchWord}
+            // handleSearchWord={handleSearchWord}
+            filterCategory={filterCategory}
+            setFilterCategory={setFilterCategory}
+          />
           {allPlanData.length > 0 && (
             <PlanList
               allPlanData={allPlanData}

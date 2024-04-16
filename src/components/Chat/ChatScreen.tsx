@@ -96,9 +96,17 @@ export default function ChatScreen({
   const chatRef = useRef<HTMLDivElement | null>(null);
   const [currentRoomId, setCurrentRoomId] = useState<number>(0);
   const [selectToCreate, setSelectToCreate] = useState<boolean>(false);
+  const [clickCreateRoom, setClickCreateRoom] = useState<boolean>(false);
 
+  // 마저 확인 필요
   const handlePageChange = (name: string) => {
     setCurrentChatPage(name);
+    if (clickCreateRoom) {
+      setSelectToCreate(true);
+      setClickCreateRoom(false);
+    } else {
+      setSelectToCreate(false);
+    }
   };
 
   const handleChatClose = () => {
@@ -133,7 +141,7 @@ export default function ChatScreen({
                       setCurrentRoomId={setCurrentRoomId}
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
-                      setSelectToCreate={setSelectToCreate}
+                      setClickCreateRoom={setClickCreateRoom}
                     />
                   )}
                   {currentChatPage === "message" && (

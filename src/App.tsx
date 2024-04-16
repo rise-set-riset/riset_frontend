@@ -24,6 +24,7 @@ import { ResponsiveProvider } from "./contexts/ResponsiveContext";
 import DarkmodeProvider from "./contexts/DarkmodeContext";
 import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
+import ProfileSetting from "./pages/Setting/ProfileSetting";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,7 @@ const router = createBrowserRouter([
 
       // Setting
       { path: "/setting", element: <Setting /> },
+      { path: "/setting/profile", element: <ProfileSetting /> },
     ],
   },
 ]);
