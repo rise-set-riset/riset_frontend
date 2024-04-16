@@ -4,13 +4,17 @@ import { IoClose } from "react-icons/io5";
 import React from "react";
 import MemberCard from "../../common/MemberCard";
 import FileCard from "./FileCard";
+import { BsChatDots } from "react-icons/bs";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
 
 const Layout = styled.form`
-  width: 900px;
-  min-height: 900px;
+  width: 90%;
+  max-width: 900px;
   border-radius: 1rem;
   overflow: hidden;
-  background-color: white;
+  background-color: var(--color-white);
 `;
 
 const PostWrapper = styled.div`
@@ -20,6 +24,7 @@ const PostWrapper = styled.div`
 
 const CommentWrapper = styled.div`
   width: 100%;
+  padding: 1.5rem;
 `;
 
 const Header = styled.div`
@@ -62,9 +67,45 @@ const Member = styled.div`
 `;
 
 const Content = styled.div`
-  height: 500px;
   padding: 2rem 1rem;
-  border: 1px solid black;
+`;
+
+const TotalChat = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-brand-main);
+
+  span {
+    font-weight: bold;
+  }
+`;
+
+const ChatIcon = styled(BsChatDots)`
+  font-size: 1.5rem;
+`;
+
+const MyComment = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid var(--color-brand-lightgray);
+
+  img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+`;
+
+const CommentInput = styled.input`
+  flex: 1;
+  border: 1px solid var(--color-brand-lightgray);
+  border-radius: 8px;
+  padding: 0.7rem;
 `;
 
 interface Post {
@@ -74,11 +115,6 @@ interface Post {
 
 export default function PostShow({ post, setIsFormOpen }: Post) {
   const { user, post: postItem } = post;
-
-  /* 날짜 형식 변환 */
-  const convertDateTime = (date: string) => {
-    return date.split("T")[0];
-  };
 
   return (
     <Layout>
@@ -93,7 +129,7 @@ export default function PostShow({ post, setIsFormOpen }: Post) {
             <CloseIcon onClick={() => setIsFormOpen(false)} />
           </div>
         </Header>
-        <Date>{convertDateTime(postItem.date)}</Date>
+        <Date>{postItem.date.split("T")[0]}</Date>
         <Member>
           <MemberCard
             memberInfo={{
@@ -106,12 +142,32 @@ export default function PostShow({ post, setIsFormOpen }: Post) {
             }}
           />
         </Member>
-        <Content>{postItem.content}</Content>
-        <FileCard />
+        <Content dangerouslySetInnerHTML={{ __html: postItem.content }} />
+        <Swiper
+          spaceBetween={20}
+          slidesPerView={1}
+          navigation
+          pagination={{ clickable: true }}
+          breakpoints={{ 600: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
+        >
+          {postItem?.files &&
+            postItem.files.map((file: any, idx: number) => (
+              <SwiperSlide key={idx}>
+                <FileCard fileName={file.fileName} fileUrl={file.fileUrl} />
+              </SwiperSlide>
+            ))}
+        </Swiper>
       </PostWrapper>
       <CommentWrapper>
-        <div>댓글 {postItem.comment.length}개</div>
+        <TotalChat>
+          <ChatIcon />
+          <span> 댓글 {postItem.comment.length}개</span>
+        </TotalChat>
       </CommentWrapper>
+      <MyComment>
+        <img src="/assets/default-emoji.png" alt="" />
+        <CommentInput placeholder="내용을 입력해주세요" />
+      </MyComment>
     </Layout>
   );
 }

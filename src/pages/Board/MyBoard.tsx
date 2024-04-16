@@ -5,6 +5,7 @@ const Layout = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  overflow-y: hidden;
 `;
 
 export default function MyBoard() {

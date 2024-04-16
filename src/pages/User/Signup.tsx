@@ -301,8 +301,6 @@ export default function SignUp() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log(form);
-
     try {
       const response = await fetch("https://dev.risetconstruction.net/auth/signup", {
         method: "POST",

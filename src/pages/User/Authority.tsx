@@ -164,12 +164,14 @@ export default function Authority() {
 
   // 위도 경도 구하기
   useEffect(() => {
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.addressSearch(companyAddress, (result, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        setPosition({ latitude: +result[0].y, longitude: +result[0].x });
-      }
-    });
+    if (companyAddress) {
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.addressSearch(companyAddress, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          setPosition({ latitude: +result[0].y, longitude: +result[0].x });
+        }
+      });
+    }
   }, [companyAddress]);
 
   useEffect(() => {
