@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-// import React, { ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import ChatMain from "./ChatMain";
 import ChatRoomList from "./ChatRoomList";
 import ChatMessage from "./ChatMessage";
+import { Client } from "@stomp/stompjs";
 
 const Layout = styled.div`
   z-index: 1000;
@@ -52,6 +52,7 @@ export default function ChatScreen() {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [currentChatPage, setCurrentChatPage] = useState<string>("main");
   const chatRef = useRef<HTMLDivElement | null>(null);
+  const [currentRoomId, setCurrentRoomId] = useState<number>(0);
   const handlePageChange = (name: string) => {
     setCurrentChatPage(name);
   };
@@ -86,12 +87,15 @@ export default function ChatScreen() {
                   )}
                   {currentChatPage === "list" && (
                     <ChatRoomList
+                      setCurrentRoomId={setCurrentRoomId}
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
                     />
                   )}
                   {currentChatPage === "message" && (
                     <ChatMessage
+                      currentRoomId={currentRoomId}
+                      isChatOpen={isChatOpen}
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
                     />

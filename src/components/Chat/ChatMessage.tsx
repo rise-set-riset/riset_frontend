@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
@@ -7,6 +7,8 @@ import { FiPaperclip } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoMdArrowRoundUp } from "react-icons/io";
+
+import { CompatClient, Client } from "@stomp/stompjs";
 
 const Layout = styled.div`
   height: 100%;
@@ -177,7 +179,7 @@ const SendFileIcon = styled(PartnerFileIcon)`
   }
 `;
 
-const SendMessageBox = styled.footer`
+const SendMessageBox = styled.form`
   width: 100%;
   height: 100px;
   padding: 1.5rem;
@@ -215,7 +217,7 @@ const SendInputBox = styled.div`
   }
 `;
 
-const SendButtonIcon = styled.div`
+const SendButtonIcon = styled.button`
   color: var(--color-white);
   background-color: var(--color-brand-main);
   font-size: 1.5rem;
@@ -228,14 +230,21 @@ const SendButtonIcon = styled.div`
   cursor: pointer;
 `;
 
+interface Content {
+  content: string;
+  sender?: string;
+}
 interface ChatMainProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
+  isChatOpen: boolean;
+  currentRoomId: number;
 }
-
 export default function ChatMain({
   handlePageChange,
   handleChatClose,
+  isChatOpen,
+  currentRoomId,
 }: ChatMainProps) {
   const TestInfo = {
     image:
@@ -245,6 +254,95 @@ export default function ChatMain({
     department: "개발팀",
     position: "프론트",
   };
+
+  /* 통신 */
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [responseMessage, setResponseMessage] = useState<any>([]);
+  const [startSubscribe, setStartSubscribe] = useState<boolean>(false);
+  const [sendText, setSendText] = useState<string>("");
+  const jwt = localStorage.getItem("jwt");
+  const [messages, setMessages] = useState<Content[]>([]);
+  const client = useRef<Client | null>(null);
+
+  /* 채팅 메세지 가져오기 */
+  useEffect(() => {
+    fetch("")
+      .then((res) => {
+        if (res.ok) {
+          console.log("ok");
+          res.json();
+        }
+      })
+      .then((data) => setResponseMessage(data));
+
+    /* 소켓 함수 */
+    client.current = new Client({
+      brokerURL: "ws://localhost:8080/chat",
+      connectHeaders: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      debug: (str: string) => {
+        console.log(str);
+      },
+      reconnectDelay: 5000, //자동 재 연결
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
+  }, []);
+
+  /* 스크롤 최하단 */
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [responseMessage]);
+
+  /* 메세지 전송시 */
+  const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    /* 구독이 안되어있으면 */
+    if (!startSubscribe) {
+      setStartSubscribe(true);
+      // 채팅방 구독시작
+      // client.current.activate();
+      // client.current.onConnect = function () {
+      //   client.current.subscribe(`/sub/channels/${currentRoomId}`, (frame) => {
+      //     if (frame.body) {
+      //       let parsedMessage = JSON.parse(frame.body);
+      //       setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+      //     }
+      //   });
+      // };
+    } else {
+      /* 구독중이면 */
+      if (sendText.trim() !== "") {
+        // client.current.publish({
+        //   destination: `/pub/chat/${currentRoomId}`,
+        //   body: JSON.stringify({
+        //     // 내용
+        //   }),
+        // });
+
+        setMessages((prevMSList) => [
+          ...prevMSList,
+          {
+            content: sendText.trim(),
+          },
+        ]);
+        setSendText("");
+      }
+    }
+  };
+  console.log(messages);
+
+  // 구독 & 소켓 연결 언제 중단할지??
+  useEffect(() => {
+    if (isChatOpen) {
+      /* 연결 끊기 */
+      client.current?.deactivate();
+      setStartSubscribe(false);
+    }
+  }, [isChatOpen]);
 
   return (
     <Layout>
@@ -272,7 +370,7 @@ export default function ChatMain({
         </ArrowIconStyle>
       </SearchNavBox>
 
-      <DialogueBox>
+      <DialogueBox ref={messagesEndRef}>
         <ChatPartner>
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
@@ -312,13 +410,18 @@ export default function ChatMain({
         </MyMessage>
       </DialogueBox>
 
-      <SendMessageBox>
+      <SendMessageBox onSubmit={handleSendMessage}>
         <SendFileIcon>
           <FiPaperclip />
         </SendFileIcon>
 
         <SendInputBox>
-          <input type="text" placeholder="내용을 입력해주세요" />
+          <input
+            type="text"
+            placeholder="내용을 입력해주세요"
+            value={sendText}
+            onChange={(e) => setSendText(e.target.value)}
+          />
           <SendButtonIcon>
             <IoMdArrowRoundUp />
           </SendButtonIcon>

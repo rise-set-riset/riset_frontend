@@ -133,10 +133,12 @@ const VerticalIcon = styled(FiMoreVertical)`
 interface ChatRoomListProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
+  setCurrentRoomId: React.Dispatch<React.SetStateAction<number>>;
 }
 export default function ChatRoomList({
   handlePageChange,
   handleChatClose,
+  setCurrentRoomId,
 }: ChatRoomListProps) {
   const TestInfo = {
     image:
@@ -145,6 +147,12 @@ export default function ChatRoomList({
     rank: "사원",
     department: "개발팀",
     position: "프론트",
+  };
+
+  /* 채팅방 클릭시 */
+  const handleRoomClick = (roomId: number) => {
+    setCurrentRoomId(roomId);
+    handlePageChange("message");
   };
 
   return (
@@ -169,53 +177,15 @@ export default function ChatRoomList({
       </SearchBox>
 
       <MemberCardList>
-        <MemberCardBox>
-          <MemberCard memberInfo={TestInfo} />
-          <ChatSide>
-            <NumberCircle>2</NumberCircle>
-            <VerticalIcon />
-          </ChatSide>
-        </MemberCardBox>
-
-        <MemberCardBox>
-          <MemberCard memberInfo={TestInfo} />
-          <ChatSide>
-            <NumberCircle>2</NumberCircle>
-            <VerticalIcon />
-          </ChatSide>
-        </MemberCardBox>
-
-        <MemberCardBox>
-          <MemberCard memberInfo={TestInfo} />
-          <ChatSide>
-            <NumberCircle>2</NumberCircle>
-            <VerticalIcon />
-          </ChatSide>
-        </MemberCardBox>
-
-        <MemberCardBox>
-          <MemberCard memberInfo={TestInfo} />
-          <ChatSide>
-            <NumberCircle>2</NumberCircle>
-            <VerticalIcon />
-          </ChatSide>
-        </MemberCardBox>
-
-        <MemberCardBox>
-          <MemberCard memberInfo={TestInfo} />
-          <ChatSide>
-            <NumberCircle>2</NumberCircle>
-            <VerticalIcon />
-          </ChatSide>
-        </MemberCardBox>
-
-        <MemberCardBox>
-          <MemberCard memberInfo={TestInfo} />
-          <ChatSide>
-            <NumberCircle>2</NumberCircle>
-            <VerticalIcon />
-          </ChatSide>
-        </MemberCardBox>
+        {Array.from({ length: 20 }, (_, index) => (
+          <MemberCardBox onClick={() => handleRoomClick(1)}>
+            <MemberCard memberInfo={TestInfo} />
+            <ChatSide>
+              <NumberCircle>5</NumberCircle>
+              <VerticalIcon />
+            </ChatSide>
+          </MemberCardBox>
+        ))}
       </MemberCardList>
     </Layout>
   );
