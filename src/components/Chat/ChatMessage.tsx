@@ -7,8 +7,8 @@ import { FiPaperclip } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoMdArrowRoundUp } from "react-icons/io";
-
-import { CompatClient, Client } from "@stomp/stompjs";
+import { FiMoreVertical } from "react-icons/fi";
+import { Client } from "@stomp/stompjs";
 
 const Layout = styled.div`
   height: 100%;
@@ -93,6 +93,21 @@ const ArrowIconStyle = styled.div`
     height: 2.2rem;
   }
 `;
+
+const VerticalIcon = styled(FiMoreVertical)`
+  font-size: 1.5rem;
+`;
+
+const CloseIcon = styled(CgClose)`
+  font-size: 1.2rem;
+  cursor: pointer;
+`;
+
+const ArrowBackIcon = styled(IoIosArrowBack)`
+  font-size: 1.5rem;
+  cursor: pointer;
+`;
+
 const ChatPartner = styled.div`
   display: flex;
   align-items: center;
@@ -106,16 +121,6 @@ const ChatPartner = styled.div`
     border-radius: 50%;
     object-fit: cover;
   }
-`;
-
-const CloseIcon = styled(CgClose)`
-  font-size: 1.2rem;
-  cursor: pointer;
-`;
-
-const ArrowBackIcon = styled(IoIosArrowBack)`
-  font-size: 1.5rem;
-  cursor: pointer;
 `;
 
 const PartnerMessage = styled.div`
@@ -266,18 +271,19 @@ export default function ChatMain({
 
   /* 채팅 메세지 가져오기 */
   useEffect(() => {
-    fetch("")
-      .then((res) => {
-        if (res.ok) {
-          console.log("ok");
-          res.json();
-        }
-      })
+    fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chat`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
       .then((data) => setResponseMessage(data));
+  }, []);
 
+  useEffect(() => {
     /* 소켓 함수 */
     client.current = new Client({
-      brokerURL: "ws://localhost:8080/chat",
+      brokerURL: "wss://dev.risetconstruction.net/ws-stomp",
       connectHeaders: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -288,7 +294,22 @@ export default function ChatMain({
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
-  }, []);
+
+    setStartSubscribe(true);
+    // 채팅방 구독시작
+    client.current.activate();
+    client.current.onConnect = function () {
+      client.current?.subscribe(
+        `/sub/chat/message/${currentRoomId}`,
+        (frame) => {
+          if (frame.body) {
+            let parsedMessage = JSON.parse(frame.body);
+            setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+          }
+        }
+      );
+    };
+  }, [responseMessage]);
 
   /* 스크롤 최하단 */
   useEffect(() => {
@@ -301,39 +322,44 @@ export default function ChatMain({
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     /* 구독이 안되어있으면 */
-    if (!startSubscribe) {
-      setStartSubscribe(true);
-      // 채팅방 구독시작
-      // client.current.activate();
-      // client.current.onConnect = function () {
-      //   client.current.subscribe(`/sub/channels/${currentRoomId}`, (frame) => {
-      //     if (frame.body) {
-      //       let parsedMessage = JSON.parse(frame.body);
-      //       setMessages((prevMessages) => [...prevMessages, parsedMessage]);
-      //     }
-      //   });
-      // };
-    } else {
-      /* 구독중이면 */
-      if (sendText.trim() !== "") {
-        // client.current.publish({
-        //   destination: `/pub/chat/${currentRoomId}`,
-        //   body: JSON.stringify({
-        //     // 내용
-        //   }),
-        // });
+    // if (!startSubscribe) {
+    // setStartSubscribe(true);
+    // 채팅방 구독시작
+    // client.current.activate();
+    // client.current.onConnect = function () {
+    //   client.current.subscribe(`/sub/channels/${currentRoomId}`, (frame) => {
+    //     if (frame.body) {
+    //       let parsedMessage = JSON.parse(frame.body);
+    //       setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+    //     }
+    //   });
+    // };
+    // } else {
+    console.log("sendT", sendText);
+    /* 구독중이면 */
+    if (sendText.trim() !== "") {
+      client.current?.publish({
+        destination: `/send/chat/message/${currentRoomId}`,
+        body: JSON.stringify({
+          roomId: "10",
+          msg: sendText,
+          members: [2, 11],
+          sender: 2,
+          base64File: [],
+        }),
+      });
 
-        setMessages((prevMSList) => [
-          ...prevMSList,
-          {
-            content: sendText.trim(),
-          },
-        ]);
-        setSendText("");
-      }
+      setMessages((prevMSList) => [
+        ...prevMSList,
+        {
+          content: sendText.trim(),
+        },
+      ]);
+      setSendText("");
     }
+    // }
   };
-  console.log(messages);
+  // console.log(messages);
 
   // 구독 & 소켓 연결 언제 중단할지??
   useEffect(() => {
@@ -357,7 +383,10 @@ export default function ChatMain({
             <h2>박씨</h2>
           </ChatPartner>
         </div>
-        <CloseIcon onClick={handleChatClose} />
+        <div>
+          <VerticalIcon />
+          <CloseIcon onClick={handleChatClose} />
+        </div>
       </TitleBox>
 
       <SearchNavBox>

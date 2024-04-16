@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
 import MemberCard from "../../common/MemberCard";
 import { FiPlusCircle } from "react-icons/fi";
 import { PiChatCircleDots } from "react-icons/pi";
+import CustomCheckbox from "../../common/CustomCheckbox";
+import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg";
 
 const Layout = styled.div`
   padding: 1.5rem;
@@ -75,9 +77,12 @@ const PlusChatIcon = styled(FiPlusCircle)`
   cursor: pointer;
 `;
 
-const ChatBubbleIcon = styled(PiChatCircleDots)`
+const ChatBubbleIcon = styled(Chat)`
   font-size: 1.5rem;
   cursor: pointer;
+  path {
+    stroke: var(--color-brand-main);
+  }
 `;
 
 const ButtonBox = styled.footer`
@@ -126,13 +131,29 @@ const ButtonBox = styled.footer`
   }
 `;
 
+const CheckboxLayout = styled.button`
+  border: none;
+  background-color: var(--color-white);
+  margin-right: 1rem;
+`;
+
+interface SelectedMemberType {
+  // [key: number]: boolean;
+  [key: number | string]: boolean;
+}
 interface ChatMainProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
+  setCurrentRoomId: React.Dispatch<React.SetStateAction<number>>;
+  selectToCreate: boolean;
+  setSelectToCreate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export default function ChatMain({
   handlePageChange,
   handleChatClose,
+  setCurrentRoomId,
+  selectToCreate,
+  setSelectToCreate,
 }: ChatMainProps) {
   const TestInfo = {
     image:
@@ -143,8 +164,55 @@ export default function ChatMain({
     position: "프론트",
   };
 
-  const handleAddChatRoot = () => {
-    handlePageChange("message");
+  const jwt = localStorage.getItem("jwt");
+  const [selectedMember, setSelectedMember] = useState<string[]>([]);
+  const [memberState, setMemberState] = useState<SelectedMemberType>({});
+
+  useEffect(() => {
+    const initialState: SelectedMemberType = Object.fromEntries(
+      Array.from({ length: 20 }, (_, index) => [`member-${index}`, false])
+    );
+    setMemberState(initialState);
+  }, []);
+
+  /* 체크박스 상태 */
+  const handleSelectToCreate = (memberId: string) => {
+    setMemberState((prev) => {
+      return { ...prev, [memberId]: true };
+    });
+  };
+
+  /* 채팅방 생성 */
+  const handleCreateChatRoom = () => {
+    /* 선택한 사람들의 ID */
+    // const finalSelectedMember = Object.keys(memberState).filter(
+    //   (id) => memberState[id]
+    // );
+    // console.log(finalSelectedMember);
+    // setSelectedMember(finalSelectedMember);
+
+    const finalSelectedMember = [2, 11];
+    console.log(
+      JSON.stringify({
+        members: finalSelectedMember,
+      })
+    );
+    fetch("https://dev.risetconstruction.net/chatRoom", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        members: finalSelectedMember,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setCurrentRoomId(data.RoomId);
+        handlePageChange("message");
+      });
   };
 
   return (
@@ -160,23 +228,48 @@ export default function ChatMain({
 
       <MemberCardList>
         {[...Array(20)].map((_, index) => (
-          <MemberCardBox>
+          <MemberCardBox
+            key={index}
+            onClick={() => handleSelectToCreate(`member-${index}`)}
+          >
+            {/* 체크박스 */}
+            {selectToCreate && (
+              <CheckboxLayout>
+                <CustomCheckbox
+                  isChecked={memberState[`member-${index}`]}
+                  onChange={() => handleSelectToCreate(`member-${index}`)}
+                />
+              </CheckboxLayout>
+            )}
+            {/* 멤버 */}
             <MemberCard memberInfo={TestInfo} />
             <ChatBubbleIcon />
           </MemberCardBox>
         ))}
       </MemberCardList>
 
-      <ButtonBox>
-        <button onClick={handleAddChatRoot}>
-          <PlusChatIcon />
-          <div>새 채팅</div>
-        </button>
-        <button onClick={() => handlePageChange("list")}>
-          <ChatBubbleIcon />
-          <div>채팅목록</div>
-        </button>
-      </ButtonBox>
+      {!selectToCreate ? (
+        <ButtonBox>
+          <button onClick={() => setSelectToCreate(true)}>
+            <PlusChatIcon />
+            <div>새 채팅</div>
+          </button>
+          <button onClick={() => handlePageChange("list")}>
+            <ChatBubbleIcon />
+
+            <div>채팅목록</div>
+          </button>
+        </ButtonBox>
+      ) : (
+        <ButtonBox>
+          <button onClick={handleCreateChatRoom}>
+            <div>초대</div>
+          </button>
+          <button onClick={() => setSelectToCreate(false)}>
+            <div>취소</div>
+          </button>
+        </ButtonBox>
+      )}
     </Layout>
   );
 }

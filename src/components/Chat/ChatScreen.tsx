@@ -30,7 +30,7 @@ const ChatPageLayout = styled.div`
 
   @media screen and (max-width: 500px) {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 80px);
     position: fixed;
     top: 0;
     left: 0;
@@ -46,6 +46,11 @@ const ChatButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
+
+  @media screen and (max-width: 500px) {
+    position: fixed;
+    bottom: 80px;
+  }
 `;
 
 export default function ChatScreen() {
@@ -53,6 +58,7 @@ export default function ChatScreen() {
   const [currentChatPage, setCurrentChatPage] = useState<string>("main");
   const chatRef = useRef<HTMLDivElement | null>(null);
   const [currentRoomId, setCurrentRoomId] = useState<number>(0);
+  const [selectToCreate, setSelectToCreate] = useState<boolean>(false);
   const handlePageChange = (name: string) => {
     setCurrentChatPage(name);
   };
@@ -83,6 +89,9 @@ export default function ChatScreen() {
                     <ChatMain
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
+                      setCurrentRoomId={setCurrentRoomId}
+                      selectToCreate={selectToCreate}
+                      setSelectToCreate={setSelectToCreate}
                     />
                   )}
                   {currentChatPage === "list" && (
@@ -90,6 +99,7 @@ export default function ChatScreen() {
                       setCurrentRoomId={setCurrentRoomId}
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
+                      setSelectToCreate={setSelectToCreate}
                     />
                   )}
                   {currentChatPage === "message" && (

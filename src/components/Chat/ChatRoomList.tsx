@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
@@ -104,18 +104,18 @@ const ButtonStyle = styled.button`
   cursor: pointer;
 `;
 
-const NumberCircle = styled.div`
-  background-color: var(--color-brand-main);
-  color: var(--color-white);
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
-  font-weight: bold;
-`;
+// const NumberCircle = styled.div`
+//   background-color: var(--color-brand-main);
+//   color: var(--color-white);
+//   width: 1.5rem;
+//   height: 1.5rem;
+//   border-radius: 50%;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   font-size: 14px;
+//   font-weight: bold;
+// `;
 
 const ChatSide = styled.div`
   position: relative;
@@ -134,11 +134,13 @@ interface ChatRoomListProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
   setCurrentRoomId: React.Dispatch<React.SetStateAction<number>>;
+  setSelectToCreate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export default function ChatRoomList({
   handlePageChange,
   handleChatClose,
   setCurrentRoomId,
+  setSelectToCreate,
 }: ChatRoomListProps) {
   const TestInfo = {
     image:
@@ -155,18 +157,35 @@ export default function ChatRoomList({
     handlePageChange("message");
   };
 
+  /* 새 채팅 클릭시 */
+  const handleCreateRoom = () => {
+    setSelectToCreate(true);
+    handlePageChange("main");
+  };
+
+  const jwt = localStorage.getItem("jwt");
+  useEffect(() => {
+    fetch(`https://dev.risetconstruction.net/chatRoom`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => console.log("data", data));
+  }, []);
+
   return (
     <Layout>
       <TitleBox>
         <div>
           <ArrowBackIcon onClick={() => handlePageChange("main")} />
-          <h2>채팅</h2>
+          <h2>채팅목록</h2>
         </div>
         <CloseIcon onClick={handleChatClose} />
       </TitleBox>
 
       <div>
-        <ButtonStyle onClick={() => handlePageChange("message")}>
+        <ButtonStyle onClick={handleCreateRoom}>
           <PlusChatIcon />
           <div>새 채팅</div>
         </ButtonStyle>
@@ -181,7 +200,7 @@ export default function ChatRoomList({
           <MemberCardBox onClick={() => handleRoomClick(1)}>
             <MemberCard memberInfo={TestInfo} />
             <ChatSide>
-              <NumberCircle>5</NumberCircle>
+              {/* <NumberCircle>5</NumberCircle> */}
               <VerticalIcon />
             </ChatSide>
           </MemberCardBox>
