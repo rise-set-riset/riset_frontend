@@ -401,8 +401,10 @@ export default function EventForm({
   const [hasTime, setHasTime] = useState<boolean>(false);
   const [hasStartTime, setHasStartTime] = useState<boolean>(false);
   const [hasEndTime, setHasEndTime] = useState<boolean>(false);
-  const [selectedStartDate, setSelectedStartDate] = useState<string>("");
-  const [selectedEndDate, setSelectedEndDate] = useState<string>("");
+  const [selectedStartDate, setSelectedStartDate] = useState<string>(
+    eventForm.start
+  );
+  const [selectedEndDate, setSelectedEndDate] = useState<string>(eventForm.end);
   const [selectedStartTime, setSelectedStartTime] = useState<string>("00:00");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("00:00");
   const [isStartPickerOpen, setIsStartPickerOpen] = useState<boolean>(false);
@@ -680,6 +682,7 @@ export default function EventForm({
             <Calendar
               isEvents={false}
               handleIsFormOpen={handleStartCalendar}
+              initialDate={selectedStartDate}
               defaultEvents={[
                 {
                   start: setDateForm(new Date()),
@@ -704,6 +707,7 @@ export default function EventForm({
             <Calendar
               isEvents={false}
               handleIsFormOpen={handleEndCalendar}
+              initialDate={selectedEndDate}
               defaultEvents={[
                 {
                   start: setDateForm(new Date()),

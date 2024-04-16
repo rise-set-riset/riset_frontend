@@ -95,7 +95,7 @@ export default function Root() {
       <Outlet />
       {isAuth && <SideMenu />}
       {isMobile && isAuth && <BottomMenu />}
-      <ChatScreen />
+      {isAuth && <ChatScreen />}
     </>
   );
 }

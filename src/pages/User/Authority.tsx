@@ -55,13 +55,15 @@ const AuthorityButton = styled.button<{ $isDisabled: boolean }>`
   color: white;
   border: none;
   cursor: pointer;
-  background-color: ${({ $isDisabled }) => ($isDisabled ? "#ff7f50" : "#c4c4c4")};
+  background-color: ${({ $isDisabled }) =>
+    $isDisabled ? "#ff7f50" : "#c4c4c4"};
 `;
 
 const InfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
   width: 384px;
   margin: auto;
-  display: ${({ $btnClicked, $isAdmin }) => ($btnClicked && $isAdmin ? "block" : "none")};
+  display: ${({ $btnClicked, $isAdmin }) =>
+    $btnClicked && $isAdmin ? "block" : "none"};
 `;
 const CompanyNameWrapper = styled.div`
   input:first-child {
@@ -130,7 +132,10 @@ export default function Authority() {
   const [isValidCode, setIsValidCode] = useState<boolean>(false);
   const [CodeBtnIsDisabled, setCodeBtnIsDisabled] = useState<boolean>(true);
   const [isValidatingCode, setIsValidatingCode] = useState(false);
-  const [position, setPosition] = useState<{ latitude: number; longitude: number }>({
+  const [position, setPosition] = useState<{
+    latitude: number;
+    longitude: number;
+  }>({
     latitude: 0,
     longitude: 0,
   });
@@ -157,12 +162,16 @@ export default function Authority() {
   };
 
   // 입력된 인풋값을 companyAddress에 업데이트
-  const handleCompanyAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCompanyAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setCompanyAddress(e.target.value);
   };
 
   // 인풋의 값을 authorityCode에 업데이트, 코드가 비어있는지 여부에 따라 CodeBtnIsDisabled 상태 업데이트
-  const handleAuthorityCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAuthorityCodeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setAuthorityCode(e.target.value);
     setCodeBtnIsDisabled(e.target.value === "");
   };
@@ -223,18 +232,24 @@ export default function Authority() {
       });
   };
 
+  const jwt = localStorage.getItem("jwt");
+
   // 서버로부터 코드의 유효성을 검증하는 함수, 서버에 POST 요청을 보내어 코드의 유효성을 확인하고, 그 결과에 따라 isValidCode 상태를 업데이트
   const validateCode = () => {
     // 코드 유효성을 확인하는 중이라는 상태로 설정
     setIsValidatingCode(true);
 
-    fetch("/validate-code", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code: authorityCode }),
-    })
+    console.log(authorityCode);
+    fetch(
+      `https://dev.risetconstruction.net/preset/employee?code=${authorityCode}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("서버 응답이 실패했습니다.");
@@ -242,19 +257,7 @@ export default function Authority() {
         return response.json();
       })
       .then((data) => {
-        setIsValidCode(data.isValid);
-
-        // 코드가 유효한 경우에만 서버로 전송
-        if (data.isValid) {
-          sendCodeToServer(authorityCode);
-        }
-      })
-      .catch((error) => {
-        console.error("코드 검증 오류:", error);
-        alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-      })
-      .finally(() => {
-        setIsValidatingCode(false);
+        console.log("코드 전송 완료:", data);
       });
   };
 
@@ -289,7 +292,11 @@ export default function Authority() {
 
       <InfoWrapper $btnClicked={btnClicked} $isAdmin={isAdmin}>
         <HorizontalLineWithText
-          style={{ marginTop: "40px", marginBottom: "8px", justifyContent: "center" }}
+          style={{
+            marginTop: "40px",
+            marginBottom: "8px",
+            justifyContent: "center",
+          }}
         >
           정보 입력
         </HorizontalLineWithText>
@@ -320,14 +327,22 @@ export default function Authority() {
           )}
         </CompanyAddressWrapper>
 
-        <CompleteBtn type="submit" $disabled={isDisabled} onClick={sendCompanyInfoToServer}>
+        <CompleteBtn
+          type="submit"
+          $disabled={isDisabled}
+          onClick={sendCompanyInfoToServer}
+        >
           완료
         </CompleteBtn>
       </InfoWrapper>
 
       <InfoWrapper $btnClicked={btnClicked} $isAdmin={!isAdmin}>
         <HorizontalLineWithText
-          style={{ marginTop: "40px", marginBottom: "8px", justifyContent: "center" }}
+          style={{
+            marginTop: "40px",
+            marginBottom: "8px",
+            justifyContent: "center",
+          }}
         >
           정보 입력
         </HorizontalLineWithText>
@@ -344,7 +359,11 @@ export default function Authority() {
             inValidMessage="코드 번호를 확인해 주세요"
           />
         </AuthorityCodeWrapper>
-        <CompleteBtn type="submit" $disabled={CodeBtnIsDisabled} onClick={validateCode}>
+        <CompleteBtn
+          type="submit"
+          $disabled={CodeBtnIsDisabled}
+          onClick={validateCode}
+        >
           완료
         </CompleteBtn>
       </InfoWrapper>
