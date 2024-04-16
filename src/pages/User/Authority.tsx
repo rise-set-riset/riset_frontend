@@ -58,15 +58,40 @@ const AuthorityButton = styled.button<{ $isDisabled: boolean }>`
   background-color: ${({ $isDisabled }) => ($isDisabled ? "#ff7f50" : "#c4c4c4")};
 `;
 
-const InfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
+const AdminInfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
   width: 384px;
   margin: auto;
   display: ${({ $btnClicked, $isAdmin }) => ($btnClicked && $isAdmin ? "block" : "none")};
 `;
+
+const EmployeeInfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
+  width: 384px;
+  margin: auto;
+  display: ${({ $btnClicked, $isAdmin }) => ($btnClicked && $isAdmin ? "block" : "none")};
+`;
+
+
 const CompanyNameWrapper = styled.div`
   input:first-child {
     width: 380px;
   }
+`;
+
+const ModalWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  padding: 20px;
 `;
 
 const CompanyAddressWrapper = styled.div`
@@ -92,11 +117,6 @@ const CompanyAddressWrapper = styled.div`
     cursor: pointer;
     background-color: #ff7f50;
   }
-`;
-
-const PostcodeEmbedWrapper = styled.div`
-  position: absolute;
-  right: calc(100% + -700px);
 `;
 
 const AuthorityCodeWrapper = styled.div`
@@ -165,6 +185,20 @@ export default function Authority() {
   const handleAuthorityCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAuthorityCode(e.target.value);
     setCodeBtnIsDisabled(e.target.value === "");
+  };
+
+
+  // 모달 여는 함수
+  const handleOpenModal = () => {
+    setIsPopupOpen(true);
+  };
+
+ // 모달 바깥의 배경을 클릭한 경우에만 모달을 닫음
+  const handleModalWrapperClick = (event :any) => {
+    if (event.target === event.currentTarget) {
+      console.log(1,event.currentTarget)
+      setIsPopupOpen(false);
+    }
   };
 
   // 우편번호 검색을 완료했을 때 호출되는 함수, 검색 결과로 받은 주소를 가져와 companyAddress 상태 업데이트, 우편번호 검색 팝업을 닫음
@@ -287,7 +321,7 @@ export default function Authority() {
         </AuthorityButton>
       </AuthorityBtnWrapper>
 
-      <InfoWrapper $btnClicked={btnClicked} $isAdmin={isAdmin}>
+      <AdminInfoWrapper $btnClicked={!btnClicked || isAdmin} $isAdmin={true}>
         <HorizontalLineWithText
           style={{ marginTop: "40px", marginBottom: "8px", justifyContent: "center" }}
         >
@@ -312,20 +346,22 @@ export default function Authority() {
             onChange={handleCompanyAddressChange}
             placeholder="도로명, 지번, 건물명 검색"
           />
-          <button onClick={() => setIsPopupOpen(true)}>검색</button>
+          <button onClick={handleOpenModal}>검색</button>
           {isPopupOpen && (
-            <PostcodeEmbedWrapper>
-              <DaumPostcodeEmbed onComplete={handleComplete} />
-            </PostcodeEmbedWrapper>
-          )}
+        <ModalWrapper onClick={handleModalWrapperClick}>
+          <ModalContent>
+            <DaumPostcodeEmbed onComplete={handleComplete} />
+          </ModalContent>
+        </ModalWrapper>
+      )}
         </CompanyAddressWrapper>
 
         <CompleteBtn type="submit" $disabled={isDisabled} onClick={sendCompanyInfoToServer}>
           완료
         </CompleteBtn>
-      </InfoWrapper>
+      </AdminInfoWrapper>
 
-      <InfoWrapper $btnClicked={btnClicked} $isAdmin={!isAdmin}>
+      <EmployeeInfoWrapper $btnClicked={btnClicked && !isAdmin} $isAdmin={!isAdmin}>
         <HorizontalLineWithText
           style={{ marginTop: "40px", marginBottom: "8px", justifyContent: "center" }}
         >
@@ -347,7 +383,7 @@ export default function Authority() {
         <CompleteBtn type="submit" $disabled={CodeBtnIsDisabled} onClick={validateCode}>
           완료
         </CompleteBtn>
-      </InfoWrapper>
+      </EmployeeInfoWrapper>
     </AuthorityContainer>
   );
 }

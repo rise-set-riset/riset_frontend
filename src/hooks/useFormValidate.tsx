@@ -92,11 +92,11 @@ export const useFormValidate = (
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form.id),
+        body: JSON.stringify({ id: form.id }),
       });
-      const data = await response.json();
-
+     
       if (response.ok) {
+        const data = await response.json();
         if (data.isDuplicate) {
           setIsNotDuplicate(false);
           setDuplicateMessage("이미 사용 중인 아이디입니다");

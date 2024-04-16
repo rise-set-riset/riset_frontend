@@ -71,7 +71,7 @@ export default function FindPassword() {
     };
   
     try {
-      const response = await fetch('/send-email', {
+      const response = await fetch("https://dev.risetconstruction.net/auth/find-password", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
