@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+// import React, { ReactNode, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import ChatMain from "./ChatMain";
 import ChatRoomList from "./ChatRoomList";
@@ -10,6 +13,8 @@ const Layout = styled.div`
   right: 24px;
   bottom: 41px;
 `;
+
+const ModalStyle = styled.div<{ $state: string }>``;
 
 const ChatPageLayout = styled.div`
   z-index: 2000;
@@ -46,6 +51,7 @@ const ChatButton = styled.button`
 export default function ChatScreen() {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [currentChatPage, setCurrentChatPage] = useState<string>("main");
+  const chatRef = useRef<HTMLDivElement | null>(null);
   const handlePageChange = (name: string) => {
     setCurrentChatPage(name);
   };
@@ -54,58 +60,49 @@ export default function ChatScreen() {
     setIsChatOpen(false);
   };
 
-  console.log(currentChatPage);
+  // Overlay 클릭 시 모달 닫힘 X
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (e.target === e.currentTarget) setIsChatOpen(false);
+  };
 
   return (
     <Layout>
       <ChatButton type="button" onClick={() => setIsChatOpen(!isChatOpen)}>
         <img src="/chat-icon.svg" alt="채팅버튼" />
       </ChatButton>
-      {isChatOpen && (
-        <ChatPageLayout>
-          {currentChatPage === "main" && (
-            <ChatMain
-              handlePageChange={handlePageChange}
-              handleChatClose={handleChatClose}
-            />
-          )}
-          {currentChatPage === "list" && (
-            <ChatRoomList
-              handlePageChange={handlePageChange}
-              handleChatClose={handleChatClose}
-            />
-          )}
-          {currentChatPage === "message" && (
-            <ChatMessage
-              handlePageChange={handlePageChange}
-              handleChatClose={handleChatClose}
-            />
-          )}
-        </ChatPageLayout>
-      )}
+
+      <Transition in={isChatOpen} timeout={500} mountOnEnter unmountOnExit>
+        {(state) =>
+          createPortal(
+            <ModalStyle onClick={handleClick} $state={state}>
+              {isChatOpen && (
+                <ChatPageLayout ref={chatRef}>
+                  {currentChatPage === "main" && (
+                    <ChatMain
+                      handlePageChange={handlePageChange}
+                      handleChatClose={handleChatClose}
+                    />
+                  )}
+                  {currentChatPage === "list" && (
+                    <ChatRoomList
+                      handlePageChange={handlePageChange}
+                      handleChatClose={handleChatClose}
+                    />
+                  )}
+                  {currentChatPage === "message" && (
+                    <ChatMessage
+                      handlePageChange={handlePageChange}
+                      handleChatClose={handleChatClose}
+                    />
+                  )}
+                </ChatPageLayout>
+              )}
+            </ModalStyle>,
+            document.getElementById("modal-root") as HTMLDivElement
+          )
+        }
+      </Transition>
     </Layout>
   );
 }
-
-// /* Event Form 팝업창 외 클릭 감지 */
-// useEffect(() => {
-//   const handleClickOutside = (event: MouseEvent) => {
-//     if (formRef.current && !formRef.current.contains(event.target as Node)) {
-//       /* Form 팝업창 닫기 */
-//       setIsFormOpen(false);
-//       /* 이벤트 삭제 */
-//       if (calendarRef.current) {
-//         const calendarApi = calendarRef.current.getApi();
-//         const unfixedEventObj = calendarApi.getEventById("unfixed");
-//         if (unfixedEventObj) {
-//           unfixedEventObj.remove();
-//         }
-//       }
-//     }
-//   };
-//   document.body.addEventListener("click", handleClickOutside);
-
-//   return () => {
-//     document.body.removeEventListener("click", handleClickOutside);
-//   };
-// }, []);
