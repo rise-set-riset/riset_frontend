@@ -6,6 +6,7 @@ import MemberCard from "../../common/MemberCard";
 import FileCard from "./FileCard";
 import { BsChatDots } from "react-icons/bs";
 import { IoMdArrowRoundUp } from "react-icons/io";
+import { FcDocument } from "react-icons/fc";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -45,10 +46,9 @@ const Title = styled.h2`
   align-items: center;
 `;
 
-const EmojiIcon = styled.img`
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
+const EmojiIcon = styled(FcDocument)`
+  font-size: 1.2rem;
+  margin-right: 0.3rem;
 `;
 
 const CloseIcon = styled(IoClose)`
@@ -230,7 +230,7 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
       <PostWrapper>
         <Header>
           <Title>
-            <EmojiIcon src="/assets/default-emoji.png" alt="emoji" />
+            <EmojiIcon />
             {postItem.title}
           </Title>
           <div>

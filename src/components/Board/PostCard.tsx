@@ -6,6 +6,7 @@ import PostShow from "./PostShow";
 import { FiPaperclip } from "react-icons/fi";
 import { TiStarFullOutline } from "react-icons/ti";
 import { LuMinus } from "react-icons/lu";
+import { FcDocument } from "react-icons/fc";
 
 const Layout = styled.div`
   position: relative;
@@ -41,10 +42,9 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const EmojiIcon = styled.img`
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
+const EmojiIcon = styled(FcDocument)`
+  font-size: 1.2rem;
+  margin-right: 0.3rem;
 `;
 
 const Title = styled.h3`
@@ -178,7 +178,7 @@ export default function PostCard({
       </Transition>
       <Info>
         <Header>
-          <EmojiIcon src="/assets/default-emoji.png" />
+          <EmojiIcon />
           <Title>{postItem.title}</Title>
         </Header>
         <Writer>{user.name}</Writer>
