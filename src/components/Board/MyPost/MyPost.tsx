@@ -62,17 +62,9 @@ const Loading = styled.div`
 `;
 
 export default function MyPost() {
-  const [searchTitle, setSearchTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord } = usePosts(
-    "https://dev.risetconstruction.net/board/mine"
-  );
-
-  /* 검색창 검색 */
-  const handleSearchTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTitle(value);
-  };
+  const { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord, handleComment } =
+    usePosts("https://dev.risetconstruction.net/board/mine");
 
   /* 내 게시글 등록 시 화면 업데이트 */
   const handlePostAdd = (post: any) => {
@@ -84,10 +76,10 @@ export default function MyPost() {
       <Search>
         <SearchBar
           name="search"
-          value={searchTitle}
+          value={searchWord}
           placeholder="제목 검색"
           autoComplete="false"
-          onChange={handleSearchTitle}
+          onChange={(e) => setSearchWord(e.target.value)}
         />
       </Search>
       <Contents>
@@ -105,6 +97,7 @@ export default function MyPost() {
                   isManageClick={false}
                   isAllPosts={false}
                   handleIconClick={() => {}}
+                  handleComment={handleComment}
                 />
               ))}
             {hasMore && (

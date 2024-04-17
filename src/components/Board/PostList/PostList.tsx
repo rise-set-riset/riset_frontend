@@ -135,7 +135,7 @@ export default function PostList() {
   const { isTablet, isMobile } = useContext(ResponsiveContext);
 
   // Hook 사용
-  const { posts, hasMore, lastItemRef, setSearchWord } = usePosts(
+  const { posts, hasMore, lastItemRef, setSearchWord, handleComment } = usePosts(
     "https://dev.risetconstruction.net/board"
   );
   const {
@@ -144,6 +144,7 @@ export default function PostList() {
     lastItemRef: lastFavoriteItemRef,
     setPosts: setFavoritePosts,
     setSearchWord: setFavoriteSearchWord,
+    handleComment: handleFavoriteComment,
   } = usePosts("https://dev.risetconstruction.net/board/favorite");
 
   // 즐겨찾기, 게시물 열리는 조건
@@ -160,6 +161,8 @@ export default function PostList() {
     setSearchWord(value);
     setFavoriteSearchWord(value);
   };
+
+  console.log(posts);
 
   /* 즐겨찾기 삭제 */
   const handleRemoveFavorite = async (e: React.MouseEvent<SVGElement>, postId: number) => {
@@ -271,6 +274,7 @@ export default function PostList() {
                       isManageClick={isFavoriteManageClick}
                       handleIconClick={handleRemoveFavorite}
                       isAllPosts={false}
+                      handleComment={handleFavoriteComment}
                     />
                   </Reorder.Item>
                 ))}
@@ -311,6 +315,7 @@ export default function PostList() {
                   isManageClick={isManageClick}
                   handleIconClick={handleAddFavorite}
                   isAllPosts={true}
+                  handleComment={handleComment}
                 />
               ))}
             {hasMore && (
