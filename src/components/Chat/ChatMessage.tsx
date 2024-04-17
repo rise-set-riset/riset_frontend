@@ -10,6 +10,7 @@ import { IoMdArrowRoundUp } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
 import { Client } from "@stomp/stompjs";
 import { v4 as uuidv4 } from "uuid";
+import { IoSearch } from "react-icons/io5";
 
 const Layout = styled.div`
   height: 100%;
@@ -32,16 +33,28 @@ const TitleBox = styled.header`
   }
 `;
 
+const SearchIcon = styled(IoSearch)`
+  font-size: 1.2rem;
+  cursor: pointer;
+  &:hover {
+    color: var(--color-brand-main);
+  }
+`;
+
 const VerticalIcon = styled(FiMoreVertical)`
   font-size: 1.5rem;
   position: relative;
+  cursor: pointer;
+  &:hover {
+    color: var(--color-brand-main);
+  }
 `;
 
 /* 채팅방 삭제 및 이름 수정 드롭다운 메뉴 */
 const DropdownMenu = styled.ul`
   z-index: 5000;
   position: absolute;
-  top: 3.5rem;
+  top: 4rem;
   right: 1px;
   width: 7.5rem;
   padding: 0.5rem 0;
@@ -90,20 +103,6 @@ const SearchNavBox = styled.div`
   }
 `;
 
-const DialogueBox = styled.main`
-  margin-top: 1.2rem;
-  /* height: calc(100% - 200px); */
-  height: calc(100% - 280px);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 0 1.5rem;
-  @media screen and (max-width: 500px) {
-    padding: 0 1rem;
-  }
-`;
-
 const ArrowIconStyle = styled.div`
   font-size: 1.2rem;
   border-radius: 50%;
@@ -128,20 +127,39 @@ const ArrowIconStyle = styled.div`
   }
 `;
 
-const CloseIcon = styled(CgClose)`
-  font-size: 1.2rem;
-  cursor: pointer;
-`;
-
 const ArrowBackIcon = styled(IoIosArrowBack)`
   font-size: 1.5rem;
   cursor: pointer;
 `;
 
+const CloseIcon = styled(CgClose)`
+  font-size: 1.3rem;
+  cursor: pointer;
+  cursor: pointer;
+  &:hover {
+    color: var(--color-brand-main);
+  }
+`;
+
+const DialogueBox = styled.main<{ $isSearchBarOpen: boolean }>`
+  margin-top: 1.2rem;
+  height: ${(props) =>
+    props.$isSearchBarOpen ? "calc(100% - 295px)" : "calc(100% - 205px)"};
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 1.5rem;
+  @media screen and (max-width: 500px) {
+    padding: 0 1rem;
+  }
+`;
+
 const ChatPartner = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
   h2 {
     font-size: 1.2rem;
   }
@@ -296,8 +314,8 @@ export default function ChatMain({
   currentRoomId,
 }: ChatMainProps) {
   /* 통신 */
-  const userId = 2;
-  // const userId = 11;
+  const userId = 11;
+  // const userId = 2;
   const jwt = localStorage.getItem("jwt");
   const client = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -310,30 +328,26 @@ export default function ChatMain({
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(true);
   const [showProfileState, setShowProfileState] = useState<boolean[]>([]);
+  const [base64String, setBase64String] = useState<any>("");
+  const [currentMembersId, setCurrentMembersId] = useState<number[]>([]);
 
   console.log(responseMessage);
+
   /* 시간 변환 */
   const timeFormat = (date: string) => {
-    const sendDate = date.slice(11, 16);
+    let hours = new Date(date).getHours();
+    const minutes = new Date(date).getMinutes();
+    const divide = hours >= 12 ? "오후" : "오전";
+    hours = hours % 12;
+    hours = hours || 12; // 0시는 12시로 표시
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${divide} ${hours}:${formattedMinutes}`;
   };
 
   /* 내용 검색 */
   const handleSearchMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchWord(e.target.value);
   };
-
-  /* 채팅 메세지 가져오기 */
-  useEffect(() => {
-    fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chat`, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setResponseMessage(data);
-      });
-  }, []);
 
   console.log(responseMessage);
 
@@ -379,34 +393,46 @@ export default function ChatMain({
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log(
-      JSON.stringify({
-        roomId: currentRoomId,
-        msg: sendText,
-        members: [2, 13, 22],
-        sender: 2,
-        base64File: [base64String],
-      })
-    );
     if (sendText.trim() !== "") {
       client.current?.publish({
         destination: `/send/chat/message/${currentRoomId}`,
         body: JSON.stringify({
           roomId: currentRoomId,
           msg: sendText,
-          members: [2, 13, 22],
-          sender: 2,
-          base64File: [base64String],
+          members: currentMembersId,
+          sender: userId,
+          base64File: base64String === "" ? [] : [base64String],
         }),
       });
-
-      setMessages((prevMSList) => [
-        ...prevMSList,
-        {
-          content: sendText.trim(),
-        },
-      ]);
       setSendText("");
+    }
+  };
+
+  /* 검색 결과 받아오기 */
+  const handleSendSearch = () => {
+    fetch(
+      `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  };
+
+  // 파일 선택(input) 이벤트 핸들러
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; // 첫 번째 파일만 처리
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setBase64String(reader.result);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
     }
   };
 
@@ -429,68 +455,27 @@ export default function ChatMain({
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     }
+
+    /* 현재 채팅방에 있는 모든 멤버 ID */
+    setCurrentMembersId(
+      responseMessage[0]?.members.map((member: any) => {
+        return member.memberNo;
+      })
+    );
   }, [responseMessage]);
 
-  /* 1분이 지났는지 확인 */
+  /* 채팅 메세지 가져오기 */
   useEffect(() => {
-    const today = new Date().toISOString().slice(0, 16);
-    const dateState: boolean[] = [];
-
-    responseMessage.map((data, index) => {
-      if (index === 0) {
-        dateState.push(true);
-      }
-      {
-        console.log("check", responseMessage[index - 1]);
-        // const sendDate = responseMessage[index - 1].date.slice(0, 16);
-        // if (
-        //   data.sender.employeeNo ===
-        //     responseMessage[index - 1].sender.employeeNo &&
-        //   today === sendDate
-        // ) {
-        //   dateState.push(false);
-        // } else {
-        //   dateState.push(true);
-        // }
-      }
-    });
-    setShowProfileState(dateState);
-  }, [responseMessage]);
-
-  const handleSendSearch = () => {
-    fetch(
-      `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    )
+    fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chat`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        setResponseMessage(data);
       });
-  };
-
-  const [base64String, setBase64String] = useState<any>("");
-
-  // 파일 선택(input) 이벤트 핸들러
-  const handleFileInputChange = (e: any) => {
-    const file = e.target.files[0]; // 첫 번째 파일만 처리
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      // 파일을 Base64 문자열로 변환하여 state에 저장
-      setBase64String(reader.result);
-    };
-
-    if (file) {
-      // 파일을 읽어들임
-      reader.readAsDataURL(file);
-    }
-  };
-
-  console.log("base64", base64String);
+  }, []);
 
   return (
     <Layout>
@@ -506,6 +491,7 @@ export default function ChatMain({
           </ChatPartner>
         </div>
         <div>
+          <SearchIcon onClick={() => setIsSearchBarOpen(!isSearchBarOpen)} />
           <VerticalIcon onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)} />
           {isMoreMenuOpen && (
             <DropdownMenu>
@@ -534,36 +520,44 @@ export default function ChatMain({
         </SearchNavBox>
       )}
 
-      <DialogueBox ref={messagesEndRef}>
-        {responseMessage.map((data, index) => {
-          return (
-            <div key={uuidv4()}>
-              {data.sender.employeeNo === userId ? (
-                <MyMessage>
-                  <div>{data.msg}</div>
-                  <div>오전 8:40</div>
-                </MyMessage>
-              ) : (
-                <div>
-                  {showProfileState[index] && (
-                    <ChatPartner>
-                      <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
-                        alt="대화상대"
-                      />
-                      <h2>{data.sender.name}</h2>
-                      <h2></h2>
-                    </ChatPartner>
-                  )}
-                  <PartnerMessage>
+      <DialogueBox ref={messagesEndRef} $isSearchBarOpen={isSearchBarOpen}>
+        {responseMessage &&
+          responseMessage.map((data, index) => {
+            const prevMsg =
+              index === 0
+                ? responseMessage[0].date.slice(0, 16)
+                : responseMessage[index - 1].date.slice(0, 16);
+            return (
+              <div key={uuidv4()}>
+                {data.sender.employeeNo === userId ? (
+                  <MyMessage>
                     <div>{data.msg}</div>
-                    <div>오전 8:40</div>
-                  </PartnerMessage>
-                </div>
-              )}
-            </div>
-          );
-        })}
+                    {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
+                      <div>{timeFormat(data.date)}</div>
+                    )}
+                  </MyMessage>
+                ) : (
+                  <div>
+                    {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
+                      <ChatPartner>
+                        <img
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
+                          alt="대화상대"
+                        />
+                        <h2>{data.sender.name}</h2>
+                      </ChatPartner>
+                    )}
+                    <PartnerMessage>
+                      <div>{data.msg}</div>
+                      {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
+                        <div>{timeFormat(data.date)}</div>
+                      )}
+                    </PartnerMessage>
+                  </div>
+                )}
+              </div>
+            );
+          })}
       </DialogueBox>
 
       {/* <ChatPartner>
