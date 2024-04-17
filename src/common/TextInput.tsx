@@ -4,7 +4,7 @@ import { FaCircleExclamation } from "react-icons/fa6";
 import styled from "styled-components";
 
 interface TextInputProps {
-  label: string;
+  label?: string;
   type: string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;

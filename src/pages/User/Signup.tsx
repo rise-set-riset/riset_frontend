@@ -345,6 +345,7 @@ export default function SignUp() {
             />
 
             <IdChcekBtn
+              type = "button"
               disabled={!isValidId || isCheckingDuplicate}
               onClick={handleCheckDuplicateId}
             >
@@ -461,7 +462,7 @@ export default function SignUp() {
                 </p>
               </label>
             </AgreeCheckbox>
-            <SignUpBtn type="submit" disabled={isDisabled}>가입하기</SignUpBtn>
+            <SignUpBtn type="submit" >가입하기</SignUpBtn>
           </form>
           <SignUpQuestion>
             <p>

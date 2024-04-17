@@ -93,20 +93,18 @@ export const useFormValidate = (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: form.id }),
-      });
-     
-      if (response.ok) {
-        const data = await response.json();
-        if (data.isDuplicate) {
-          setIsNotDuplicate(false);
-          setDuplicateMessage("이미 사용 중인 아이디입니다");
-        } else {
-          setIsNotDuplicate(true);
-          setDuplicateMessage("사용 가능한 아이디 입니다");
-        }
-      } else {
-        console.error("Failed to check duplicate id:", response.statusText);
-      }
+      })
+      .then(res => res.json())
+      .then(data => { 
+          if (data) {
+            setIsNotDuplicate(false);
+            setDuplicateMessage("이미 사용 중인 아이디입니다");
+          } else {
+            setIsNotDuplicate(true);
+            setDuplicateMessage("사용 가능한 아이디입니다");
+          } 
+      })
+  
     } catch (error) {
       console.error("Error checking duplicate id:", error);
     }
