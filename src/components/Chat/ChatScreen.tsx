@@ -92,11 +92,14 @@ export default function ChatScreen({
   setIsChatOpen,
 }: ChatScreenProps) {
   const { isMobile } = useContext(ResponsiveContext);
-  const [currentChatPage, setCurrentChatPage] = useState<string>("main");
   const chatRef = useRef<HTMLDivElement | null>(null);
+  const [currentChatPage, setCurrentChatPage] = useState<string>("main");
   const [currentRoomId, setCurrentRoomId] = useState<number>(0);
   const [selectToCreate, setSelectToCreate] = useState<boolean>(false);
   const [clickCreateRoom, setClickCreateRoom] = useState<boolean>(false);
+  const [currentMembersId, setCurrentMembersId] = useState<string[] | number[]>(
+    []
+  );
 
   // 마저 확인 필요
   const handlePageChange = (name: string) => {
@@ -134,6 +137,7 @@ export default function ChatScreen({
                       setCurrentRoomId={setCurrentRoomId}
                       selectToCreate={selectToCreate}
                       setSelectToCreate={setSelectToCreate}
+                      setCurrentMembersId={setCurrentMembersId}
                     />
                   )}
                   {currentChatPage === "list" && (
@@ -149,6 +153,7 @@ export default function ChatScreen({
                       currentRoomId={currentRoomId}
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
+                      currentMembersId={currentMembersId}
                     />
                   )}
                 </ChatPageLayout>

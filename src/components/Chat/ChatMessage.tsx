@@ -288,11 +288,6 @@ const SendButtonIcon = styled.button`
   border: 1px solid var(--color-brand-main);
 `;
 
-interface Content {
-  content: string;
-  sender?: string;
-}
-
 interface ResponseDataType {
   chatRoomId: number;
   date: string; //"2024-04-17T08:23:25.875"
@@ -306,32 +301,31 @@ interface ChatMainProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
   currentRoomId: number;
+  currentMembersId: string[] | number[];
 }
 
 export default function ChatMain({
   handlePageChange,
   handleChatClose,
   currentRoomId,
+  currentMembersId,
 }: ChatMainProps) {
   /* 통신 */
-  const userId = 11;
-  // const userId = 2;
+  const userId = Number(localStorage.getItem("userId"));
   const jwt = localStorage.getItem("jwt");
   const client = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sendText, setSendText] = useState<string>("");
   const [searchWord, setSearchWord] = useState<string>("");
-  const [messages, setMessages] = useState<Content[]>([]);
   const [responseMessage, setResponseMessage] = useState<ResponseDataType[]>(
     []
   );
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(true);
-  const [showProfileState, setShowProfileState] = useState<boolean[]>([]);
   const [base64String, setBase64String] = useState<any>("");
-  const [currentMembersId, setCurrentMembersId] = useState<number[]>([]);
 
   console.log(responseMessage);
+  console.log("roomid", currentRoomId);
 
   /* 시간 변환 */
   const timeFormat = (date: string) => {
@@ -378,7 +372,6 @@ export default function ChatMain({
               ...prevMessages,
               parsedMessage,
             ]);
-            console.log("mes", messages);
           }
         }
       );
@@ -388,6 +381,8 @@ export default function ChatMain({
       client.current?.deactivate();
     };
   }, [responseMessage]);
+
+  console.log("currentMembersId", currentMembersId);
 
   /* 메세지 전송시 */
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
@@ -457,11 +452,11 @@ export default function ChatMain({
     }
 
     /* 현재 채팅방에 있는 모든 멤버 ID */
-    setCurrentMembersId(
-      responseMessage[0]?.members.map((member: any) => {
-        return member.memberNo;
-      })
-    );
+    // setCurrentMembersId(
+    //   responseMessage[0]?.members.map((member: any) => {
+    //     return member.memberNo;
+    //   })
+    // );
   }, [responseMessage]);
 
   /* 채팅 메세지 가져오기 */
@@ -521,7 +516,7 @@ export default function ChatMain({
       )}
 
       <DialogueBox ref={messagesEndRef} $isSearchBarOpen={isSearchBarOpen}>
-        {responseMessage &&
+        {Array.isArray(responseMessage) &&
           responseMessage.map((data, index) => {
             const prevMsg =
               index === 0

@@ -77,7 +77,6 @@ export default function ChatRoomCard({
   const settingChatRoomName = chatMemberData
     .map((member) => member.memberName)
     .join(", ");
-  console.log(settingChatRoomName);
 
   return (
     <Layout>

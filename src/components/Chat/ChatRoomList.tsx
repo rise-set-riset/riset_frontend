@@ -179,7 +179,7 @@ export default function ChatRoomList({
   setCurrentRoomId,
   setClickCreateRoom,
 }: ChatRoomListProps) {
-  const userId = 2;
+  const userId = Number(localStorage.getItem("userId"));
   const jwt = localStorage.getItem("jwt");
   const [chatRoomData, setChatRoomData] = useState<ChatRoomDataType[]>([]);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
