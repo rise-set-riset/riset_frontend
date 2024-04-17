@@ -75,7 +75,9 @@ export default function FileCard({ fileName, fileUrl }: FileType) {
         </File>
         <FileName>{fileName}</FileName>
       </FileInfo>
-      {fileUrl && <DownLoadIcon onClick={() => handleDownload(fileUrl, fileName)} />}
+      {fileUrl && (
+        <DownLoadIcon onClick={() => handleDownload(fileUrl, fileName)} />
+      )}
     </Layout>
   );
 }
