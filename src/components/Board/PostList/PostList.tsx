@@ -22,6 +22,7 @@ const Layout = styled.div`
 const Search = styled.div`
   width: 100%;
   max-width: 500px;
+
   @media screen and (max-width: 599px) {
     padding: 1rem 1rem 0 1rem;
   }
@@ -132,8 +133,9 @@ export default function PostList() {
   const [isChangeMenu, setIsChangeMenu] = useState<boolean>(false);
   // 모바일, 태블릿 여부 판단
   const { isTablet, isMobile } = useContext(ResponsiveContext);
+
   // Hook 사용
-  const { posts, hasMore, lastItemRef, setSearchWord } = usePosts(
+  const { posts, hasMore, lastItemRef, setSearchWord, handleComment } = usePosts(
     "https://dev.risetconstruction.net/board"
   );
   const {
@@ -142,20 +144,25 @@ export default function PostList() {
     lastItemRef: lastFavoriteItemRef,
     setPosts: setFavoritePosts,
     setSearchWord: setFavoriteSearchWord,
+    handleComment: handleFavoriteComment,
   } = usePosts("https://dev.risetconstruction.net/board/favorite");
+
   // 즐겨찾기, 게시물 열리는 조건
   const isFavoriteOpen = ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
   const isAllOpen = ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
+
   // jwt
   const jwt = localStorage.getItem("jwt");
 
   /* 검색창 검색 */
-  const handleSearchtitle = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTitle(value);
     setSearchWord(value);
     setFavoriteSearchWord(value);
   };
+
+  console.log(posts);
 
   /* 즐겨찾기 삭제 */
   const handleRemoveFavorite = async (e: React.MouseEvent<SVGElement>, postId: number) => {
@@ -173,14 +180,18 @@ export default function PostList() {
   /* 즐겨찾기 추가 */
   const handleAddFavorite = (e: React.MouseEvent<SVGElement>, post: any) => {
     e.stopPropagation();
-    fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setFavoritePosts(data));
+
+    const isValid = favoritePosts.find((posts) => posts.post.id === post.post.id);
+    if (!isValid) {
+      fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setFavoritePosts(data));
+    }
   };
 
   /* 휴대폰 화면에서 클릭 시 */
@@ -189,7 +200,7 @@ export default function PostList() {
     setIsChangeMenu(true);
     setTimeout(() => {
       setIsChangeMenu(false);
-    }, 500);
+    }, 1000);
 
     if (type === "favorite") {
       setIsMenuClick(false);
@@ -223,7 +234,7 @@ export default function PostList() {
           value={searchTitle}
           placeholder="제목 검색"
           autoComplete="false"
-          onChange={handleSearchtitle}
+          onChange={handleSearchTitle}
         />
       </Search>
 
@@ -263,6 +274,7 @@ export default function PostList() {
                       isManageClick={isFavoriteManageClick}
                       handleIconClick={handleRemoveFavorite}
                       isAllPosts={false}
+                      handleComment={handleFavoriteComment}
                     />
                   </Reorder.Item>
                 ))}
@@ -303,6 +315,7 @@ export default function PostList() {
                   isManageClick={isManageClick}
                   handleIconClick={handleAddFavorite}
                   isAllPosts={true}
+                  handleComment={handleComment}
                 />
               ))}
             {hasMore && (

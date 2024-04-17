@@ -10,6 +10,7 @@ import { LuCalendarDays } from "react-icons/lu";
 import { FiArrowRight } from "react-icons/fi";
 import { FiClock } from "react-icons/fi";
 import { FiPlusCircle } from "react-icons/fi";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const slideInAnimation = keyframes`
   from {
@@ -34,21 +35,21 @@ const fadeIn = keyframes`
 /* 전체 틀 */
 const FormLayout = styled.form<{
   $dateClickPosition: ClickPositionType;
+  $isLeftAligned: boolean;
+  $isTopAligned: boolean;
 }>`
-  @media screen and (max-width: 599px) {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: ${fadeIn} 0.3s ease;
-  }
-
   width: 375px;
   padding: 16px 24px 24px;
-  z-index: 10;
+  z-index: 100;
   position: fixed;
-  left: ${(props) => `${props.$dateClickPosition.x + 10}px`};
-  top: ${(props) => `${props.$dateClickPosition.y - 150}px`};
+  left: ${(props) =>
+    props.$isLeftAligned
+      ? `${props.$dateClickPosition.x + 10}px`
+      : `${props.$dateClickPosition.x - 400}px`};
+  top: ${(props) =>
+    props.$isTopAligned
+      ? `${props.$dateClickPosition.y - 150}px`
+      : `${props.$dateClickPosition.y - 450}px`};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,14 +69,32 @@ const FormLayout = styled.form<{
     font-size: 1rem;
     color: var(--color-brand-lightgray);
   }
+
+  @media screen and (max-width: 599px) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: ${fadeIn} 0.3s ease;
+  }
+`;
+
+const HeaderMenu = styled.div`
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+/* 삭제 아이콘 */
+const TrashIconBox = styled.div`
+  align-items: flex-end;
+  font-size: 1.2rem;
 `;
 
 /* 닫기 아이콘 */
 const CloseIconBox = styled.div`
   align-self: flex-end;
-`;
-
-const CloseIcon = styled(IoClose)`
   font-size: 1.5rem;
 `;
 
@@ -207,7 +226,8 @@ const SelectDateButton = styled.button<{ $isSelected: boolean }>`
     display: block;
     width: 80%;
     margin: 0.2rem auto;
-    border-bottom: ${(props) => (props.$isSelected ? "1px solid var(--color-brand-main)" : "none")};
+    border-bottom: ${(props) =>
+      props.$isSelected ? "1px solid var(--color-brand-main)" : "none"};
   }
 
   &:active {
@@ -219,7 +239,8 @@ const SelectDateEndButton = styled(SelectDateButton)<{
   $isSelected: boolean;
   $isDateValid: boolean;
 }>`
-  color: ${(props) => (props.$isDateValid ? "var(--color-black)" : "var(--color-error)")};
+  color: ${(props) =>
+    props.$isDateValid ? "var(--color-black)" : "var(--color-error)"};
 `;
 
 /* Date Picker 스타일 */
@@ -331,12 +352,15 @@ interface EventFormProps {
     dateClickPosition: 클릭한 날짜 위치
     handleFormCancel: 추가 혹은 수정 취소
     handleFormSubmit: 추가 혹은 수정
+    isEditorForm: 새로 추가되는 Form인지, 수정하는 Form인지(삭제 기능 추가)
     */
   eventForm: EventFormType;
   setEventForm: React.Dispatch<React.SetStateAction<EventFormType>>;
   dateClickPosition: ClickPositionType;
   handleFormCancel: () => void;
   handleFormSubmit: React.FormEventHandler<HTMLFormElement>;
+  isEditorForm: boolean;
+  handleRemoveEvent: (findId: number | string) => void;
 }
 
 export default function EventForm({
@@ -345,6 +369,8 @@ export default function EventForm({
   dateClickPosition,
   handleFormCancel,
   handleFormSubmit,
+  isEditorForm,
+  handleRemoveEvent,
 }: EventFormProps) {
   /* 
   eventColorList: 선택할 수 있는 색상 종류
@@ -361,22 +387,35 @@ export default function EventForm({
   isEndPickerOpen: 종료 날짜 선택창 표시 여부
   isDateValid: 종료 날짜가 시작 날짜와 같거나 이후에 있는지
   */
-  const eventColorList = ["#FFBFA7", "#FFE7A7", "#E1FFB0", "#C5DAFF", "#DECFFF"];
+  const eventColorList = [
+    "#FFBFA7",
+    "#FFE7A7",
+    "#E1FFB0",
+    "#C5DAFF",
+    "#DECFFF",
+  ];
   const [isColorOpen, setIsColorOpen] = useState<boolean>(false);
-  const [selectedColor, setSelectedColor] = useState<string>(eventColorList[0]);
+  const [selectedColor, setSelectedColor] = useState<string>(
+    eventForm.color ? eventForm.color : eventColorList[0]
+  );
   const [hasTime, setHasTime] = useState<boolean>(false);
   const [hasStartTime, setHasStartTime] = useState<boolean>(false);
   const [hasEndTime, setHasEndTime] = useState<boolean>(false);
-  const [selectedStartDate, setSelectedStartDate] = useState<string>(eventForm.start);
+  const [selectedStartDate, setSelectedStartDate] = useState<string>(
+    eventForm.start
+  );
   const [selectedEndDate, setSelectedEndDate] = useState<string>(eventForm.end);
   const [selectedStartTime, setSelectedStartTime] = useState<string>("00:00");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("00:00");
   const [isStartPickerOpen, setIsStartPickerOpen] = useState<boolean>(false);
   const [isEndPickerOpen, setIsEndPickerOpen] = useState<boolean>(false);
   const [isDateValid, setIsDateValid] = useState<boolean>(true);
-
+  const [isLeftAligned, setIsLeftAligned] = useState<boolean>(true);
+  const [isTopAligned, setIsTopAligned] = useState<boolean>(true);
   /* Event Form 변경 */
-  const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setEventForm((prevState) => ({
       ...prevState,
@@ -411,7 +450,10 @@ export default function EventForm({
   };
 
   /* 시작 시간 또는 종료 시간 추가 */
-  const handleAddSelectTime = (e: React.MouseEvent<HTMLButtonElement>, name: string) => {
+  const handleAddSelectTime = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    name: string
+  ) => {
     e.stopPropagation();
     if (name === "start") {
       setHasStartTime(true);
@@ -443,7 +485,9 @@ export default function EventForm({
     setEventForm((prev) => {
       return {
         ...prev,
-        start: hasStartTime ? `${setDateForm(date)}T${selectedStartTime}` : `${setDateForm(date)}`,
+        start: hasStartTime
+          ? `${setDateForm(date)}T${selectedStartTime}`
+          : `${setDateForm(date)}`,
       };
     });
   };
@@ -455,9 +499,19 @@ export default function EventForm({
     setEventForm((prev) => {
       return {
         ...prev,
-        end: hasEndTime ? `${setDateForm(date)}T${selectedEndTime}` : `${setDateForm(date)}`,
+        end: hasEndTime
+          ? `${setDateForm(date)}T${selectedEndTime}`
+          : `${setDateForm(date)}`,
       };
     });
+  };
+
+  /* 날짜 형식 조정 */
+  const setDateForm = (now: Date) => {
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const day = now.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   /* 시작 날짜와 종료 날짜 유효성 검사 */
@@ -484,25 +538,69 @@ export default function EventForm({
     setEventForm((prev) => {
       return {
         ...prev,
-        end: hasEndTime ? `${selectedEndDate.split("T")[0]}T${selectedEndTime}` : selectedEndDate,
+        end: hasEndTime
+          ? `${selectedEndDate.split("T")[0]}T${selectedEndTime}`
+          : selectedEndDate,
       };
     });
   }, [selectedEndTime]);
 
-  /* 날짜 형식 조정 */
-  const setDateForm = (now: Date) => {
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, "0");
-    const day = now.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+  /* 초기 날짜, 시간 설정 */
+  useEffect(() => {
+    // 시작 시간이 있으면
+    if (eventForm.start.includes("T")) {
+      setSelectedStartDate(eventForm.start.split("T")[0]);
+      setSelectedStartTime(eventForm.start.split("T")[1]);
+      setHasTime(true);
+      setHasStartTime(true);
+    } else {
+      setSelectedStartDate(eventForm.start);
+    }
+    // 끝나는 시간이 있으면
+    if (eventForm.end.includes("T")) {
+      setSelectedEndDate(eventForm.end.split("T")[0]);
+      // T24:00 형식이 아니면
+      if (eventForm.end.split("T")[1] !== "24:00") {
+        setSelectedEndTime(eventForm.end.split("T")[1]);
+        setHasEndTime(true);
+        setHasEndTime(true);
+      }
+    } else {
+      setSelectedEndDate(eventForm.end);
+    }
+  }, []);
+
+  /* Form 팝업창 위치 조정 */
+  useEffect(() => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    if (screenWidth - dateClickPosition.x - 390 < 0) {
+      setIsLeftAligned(false);
+    }
+    if (screenHeight - dateClickPosition.y - 370 < 0) {
+      setIsTopAligned(false);
+    }
+  }, []);
 
   return (
-    <FormLayout $dateClickPosition={dateClickPosition} onSubmit={handleFormSubmit}>
-      {/* 닫기 버튼 */}
-      <CloseIconBox onClick={handleFormCancel}>
-        <CloseIcon />
-      </CloseIconBox>
+    <FormLayout
+      $dateClickPosition={dateClickPosition}
+      $isLeftAligned={isLeftAligned}
+      $isTopAligned={isTopAligned}
+      onSubmit={handleFormSubmit}
+    >
+      <HeaderMenu>
+        {/* 삭제 버튼 */}
+        {isEditorForm && (
+          <TrashIconBox onClick={() => handleRemoveEvent(eventForm.scheduleNo)}>
+            <FaRegTrashAlt />
+          </TrashIconBox>
+        )}
+        {/* 닫기 버튼 */}
+        <CloseIconBox onClick={handleFormCancel}>
+          <IoClose />
+        </CloseIconBox>
+      </HeaderMenu>
 
       {/* 제목 입력 */}
       <TitleInputBox>
@@ -584,6 +682,7 @@ export default function EventForm({
             <Calendar
               isEvents={false}
               handleIsFormOpen={handleStartCalendar}
+              initialDate={selectedStartDate}
               defaultEvents={[
                 {
                   start: setDateForm(new Date()),
@@ -608,6 +707,7 @@ export default function EventForm({
             <Calendar
               isEvents={false}
               handleIsFormOpen={handleEndCalendar}
+              initialDate={selectedEndDate}
               defaultEvents={[
                 {
                   start: setDateForm(new Date()),
@@ -643,7 +743,10 @@ export default function EventForm({
                 <FiPlusCircle />
               </AddIconBox>
             ) : (
-              <TimePicker selectedTime={selectedStartTime} setSelectedTime={setSelectedStartTime} />
+              <TimePicker
+                selectedTime={selectedStartTime}
+                setSelectedTime={setSelectedStartTime}
+              />
             )}
 
             <LabelIconBox />
@@ -659,7 +762,10 @@ export default function EventForm({
               </AddIconBox>
             ) : (
               <div>
-                <TimePicker selectedTime={selectedEndTime} setSelectedTime={setSelectedEndTime} />
+                <TimePicker
+                  selectedTime={selectedEndTime}
+                  setSelectedTime={setSelectedEndTime}
+                />
               </div>
             )}
           </TimeInputBox>
@@ -689,8 +795,18 @@ export default function EventForm({
         ></textarea>
       </ContentInputBox>
       <ButtonBox>
-        <Button type={"reset"} active={false} title={"취소"} handleBtnClick={handleFormCancel} />
-        <Button type={"submit"} active={true} title={"저장"} disabled={!isDateValid} />
+        <Button
+          type={"reset"}
+          active={false}
+          title={"취소"}
+          handleBtnClick={handleFormCancel}
+        />
+        <Button
+          type={"submit"}
+          active={true}
+          title={"저장"}
+          disabled={!isDateValid}
+        />
       </ButtonBox>
     </FormLayout>
   );

@@ -9,12 +9,13 @@ export default function usePosts(url: string) {
   const lastItemRef = useRef<HTMLDivElement | null>(null);
   const { isTablet, isMobile } = useContext(ResponsiveContext);
   const jwt = localStorage.getItem("jwt");
-  const fullUrl = `${url}?size=5&page=${skip}${searchWord ? `&searchTitle=${searchWord}` : ""}`;
 
-  /* 게시글 조회 */
   useEffect(() => {
+    /* 게시글 조회 */
     const fetchMorePosts = async () => {
-      const data = await fetch(fullUrl, {
+      const fullUrl = `${url}?size=5&page=${skip}${searchWord ? `&title=${searchWord}` : ""}`;
+
+      const datas = await fetch(fullUrl, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -22,10 +23,10 @@ export default function usePosts(url: string) {
       }).then((res) => res.json());
 
       // 추가 게시글이 있는지 확인
-      if (data.length === 0) {
+      if (datas.length === 0) {
         setHasMore(false);
       } else {
-        setPosts((prevPosts) => [...prevPosts, ...data]);
+        setPosts((prevPosts) => [...prevPosts, ...datas]);
         setSkip((prevSkip) => prevSkip + 1);
       }
     };
@@ -41,7 +42,33 @@ export default function usePosts(url: string) {
     return () => {
       if (observer) observer.disconnect();
     };
-  }, [skip, hasMore, isTablet, isMobile, searchWord]);
+  }, [skip, hasMore, isTablet, isMobile]);
 
-  return { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord };
+  /* 댓글 등록 시 처리 함수 */
+  const handleComment = (comment: any, postId: number) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.post.id === postId) {
+          return {
+            ...post,
+            post: {
+              ...post.post,
+              comment: [comment, ...post.post.comment],
+            },
+          };
+        } else {
+          return post;
+        }
+      })
+    );
+  };
+
+  /* 검색 시 초기화 */
+  useEffect(() => {
+    setHasMore(true);
+    setSkip(0);
+    setPosts([]);
+  }, [searchWord]);
+
+  return { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord, handleComment };
 }
