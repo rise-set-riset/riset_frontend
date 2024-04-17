@@ -254,8 +254,6 @@ export default function ChatRoomList({
     setSearchResult(chatRoomData);
   }, [chatRoomData]);
 
-  console.log(chatRoomData);
-
   return (
     <Layout>
       <TitleBox>

@@ -363,8 +363,6 @@ export default function ChatMain({
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string>("");
 
-  console.log(responseMessage);
-
   /* 시간 변환 */
   const timeFormat = (date: string) => {
     let hours = new Date(date).getHours();
@@ -460,7 +458,6 @@ export default function ChatMain({
     /* 검색 결과로 이동 */
     const targetElement = document.getElementById("msg-0");
     if (targetElement) {
-      console.log(targetElement.innerHTML);
       targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
       targetElement.style.backgroundColor = "var(--color-brand-main)";
       targetElement.style.color = "var(--color-white)";

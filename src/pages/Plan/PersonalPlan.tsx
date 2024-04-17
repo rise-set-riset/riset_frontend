@@ -87,7 +87,7 @@ export default function PersonalPlan() {
       currentDate.getDate() + 1
     );
     const requestDate = setFitDate.toISOString().slice(0, 10);
-    console.log(requestDate);
+    // console.log(requestDate);
     fetch(
       // `https://dev.risetconstruction.net/api/employees?employeeDate=${requestDate}`,
       `https://dev.risetconstruction.net/api/employees?employeeDate=2024-04-08`,
@@ -99,8 +99,8 @@ export default function PersonalPlan() {
       }
     ).then((res) => {
       if (res.ok) {
-        console.log(res.ok);
-        res.json();
+        // console.log(res.ok);
+        // res.json();
       } else {
         console.log("통신실패");
       }
