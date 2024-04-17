@@ -9,13 +9,13 @@ const Layout = styled.div<{ $isFixed: boolean }>`
   justify-content: space-between;
   align-items: center;
   border-radius: 16px;
+  overflow: hidden;
   background-color: var(--color-brand-main);
 
   input {
     font-size: 18px;
     font-weight: bold;
-    color: ${(props) =>
-      props.$isFixed ? "var(--color-black)" : "var(--color-brand-lightgray)"};
+    color: ${(props) => (props.$isFixed ? "var(--color-black)" : "var(--color-brand-lightgray)")};
     border: none;
 
     &::placeholder {
@@ -84,9 +84,7 @@ const MenuButton = styled.div<{ $isFixed: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.$isFixed
-        ? "var(--color-brand-lightgray)"
-        : "var(--color-brand-orange)"};
+      props.$isFixed ? "var(--color-brand-lightgray)" : "var(--color-brand-orange)"};
   }
 `;
 
@@ -146,11 +144,7 @@ interface PlanCardProps {
   planContent: DayPlanType;
 }
 
-export default function PlanCard({
-  clickToAdd,
-  isEditable,
-  planContent,
-}: PlanCardProps) {
+export default function PlanCard({ clickToAdd, isEditable, planContent }: PlanCardProps) {
   /* 
   isFixed: 고정 여부
   dayPlan: 일정 내용
