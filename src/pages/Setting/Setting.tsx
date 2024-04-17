@@ -1,5 +1,4 @@
 import { useState } from "react";
-import TestChat from "../../components/Chat/TestChat";
 import styled from "styled-components";
 
 const Layout = styled.div`
@@ -79,7 +78,6 @@ export default function Setting() {
 
   return (
     <Layout>
-      {/* <TestChat /> */}
       <main className="main">
         <h2 className="title">초대코드</h2>
         <MainContentLayout>
