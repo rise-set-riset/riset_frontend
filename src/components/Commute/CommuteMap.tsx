@@ -131,6 +131,8 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     }
   }, [position, maps, setAddress, setIsInRange]);
 
+  console.log(maps);
+
   return (
     <Layout>
       <Map

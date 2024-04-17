@@ -7,6 +7,7 @@ import FileCard from "./FileCard";
 import { BsChatDots } from "react-icons/bs";
 import { IoMdArrowRoundUp } from "react-icons/io";
 import { FcDocument } from "react-icons/fc";
+import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -242,7 +243,7 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
         <Member>
           <MemberCard
             memberInfo={{
-              image: "/assets/default-emoji.png",
+              image: `${user.myImage}`,
               alt: "이미지",
               name: user.name,
               rank: user.jobGrade,
@@ -282,7 +283,11 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
             postItem.comment.map((com: any) => (
               <UserComment key={com.id}>
                 <CommentDetail>
-                  <CommentImg src="" alt="" />
+                  {JSON.parse(com.employee.myImage) ? (
+                    <CommentImg src={com.employee.myImage} alt="" />
+                  ) : (
+                    <Profile />
+                  )}
                   <div>
                     <CommentUserInfo>
                       <CommentEmployeeID>{com.employee.name}</CommentEmployeeID>
