@@ -185,8 +185,8 @@ export default function CommuteRecord() {
   }, []);
 
   return (
-    <Layout>
-      <CommuteCard>
+    <Layout className="commute-record">
+      <CommuteCard className="commute-map">
         <Title>
           <h2>출퇴근 기록</h2>
           <PlusBtn onClick={handleAddFormBtn} />
@@ -213,7 +213,7 @@ export default function CommuteRecord() {
           />
         </CommuteButtons>
       </CommuteCard>
-      <CommuteCard>
+      <CommuteCard className="commute-calendar">
         <Title>
           <h2>출퇴근 현황</h2>
         </Title>
