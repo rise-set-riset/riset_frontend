@@ -191,9 +191,17 @@ export default function Login() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("로그인 성공!");
-        localStorage.setItem("jwt", data.access_token);
-        navigate("/authority");
+        localStorage.setItem("jwt", data.access_token);  
+        // localStorage.setItem("userId", data.);     
+        
+      // const hasPreConfigured = localStorage.getItem("preConfigured");
+
+      // if (hasPreConfigured) {
+      //   navigate("/home");
+      // } else {
+      //   navigate("/authority");
+      // }
+
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -202,17 +210,20 @@ export default function Login() {
 
   // 네이버 로그인 버튼 클릭 이벤트 핸들러
   const handleNaverLogin = () => {
-    window.location.href = "네이버 로그인 URL";
+    const url = "https://dev.risetconstruction.net/oauth2/authorization/naver";
+    window.open(url);
   };
 
   // 카카오 로그인 버튼 클릭 이벤트 핸들러
   const handleKakaoLogin = () => {
-    window.location.href = "카카오 로그인 URL";
+    const url = "https://dev.risetconstruction.net/oauth2/authorization/kakao";
+    window.open(url);
   };
 
   // 구글 로그인 버튼 클릭 이벤트 핸들러
   const handleGoogleLogin = () => {
-    window.location.href = "구글 로그인 URL";
+    const url = "https://dev.risetconstruction.net/oauth2/authorization/google";
+    window.open(url);
   };
 
   return (

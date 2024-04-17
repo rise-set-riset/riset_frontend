@@ -98,7 +98,7 @@ export default function FindPassword() {
       <p>입력한 이메일로 임시 비밀번호가 발송됩니다.</p>
     </FindIdHeaderWrapper>
     <TextInput
-            label="아이디`"
+            label="아이디"
             type="text"
             value={id}
             onChange={handleIdChange}
