@@ -10,6 +10,10 @@ const Layout = styled.div`
   background-color: var(--color-brand-main);
   color: var(--color-black);
   font-size: 0.9rem;
+
+  @media screen and (max-width: 599px) {
+    width: 100%;
+  }
 `;
 
 export default function OfficialCard() {
