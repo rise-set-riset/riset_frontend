@@ -158,6 +158,7 @@ interface ChatMainProps {
   setCurrentRoomId: React.Dispatch<React.SetStateAction<number>>;
   selectToCreate: boolean;
   setSelectToCreate: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentMembersId: React.Dispatch<React.SetStateAction<any>>;
 }
 export default function ChatMain({
   handlePageChange,
@@ -165,8 +166,9 @@ export default function ChatMain({
   setCurrentRoomId,
   selectToCreate,
   setSelectToCreate,
+  setCurrentMembersId,
 }: ChatMainProps) {
-  const userId = 2;
+  const userId = localStorage.getItem("userId")?.toString();
   const jwt = localStorage.getItem("jwt");
   const [searchWord, setSearchWord] = useState<string>("");
   const [responseData, setResponseData] = useState<AllMemberDataType[]>([]);
@@ -202,6 +204,7 @@ export default function ChatMain({
     const finalSelectedMember = Object.keys(memberState).filter(
       (id) => memberState[id]
     );
+    setCurrentMembersId([...finalSelectedMember, userId]);
 
     /* 서버 통신 - 채팅방 생성 */
     fetch("https://dev.risetconstruction.net/chatRoom", {
@@ -216,7 +219,7 @@ export default function ChatMain({
     })
       .then((res) => res.json())
       .then((data) => {
-        setCurrentRoomId(data.RoomId);
+        setCurrentRoomId(data.chatRoomId);
         handlePageChange("message");
       });
   };
@@ -260,35 +263,36 @@ export default function ChatMain({
       </SearchBox>
 
       <MemberCardList>
-        {searchResult.map((member) => (
-          <MemberCardBox
-            key={member.employeeId}
-            onClick={() => handleSelectToCreate(member.employeeId)}
-          >
-            {selectToCreate && (
-              <CheckboxLayout>
-                <CustomCheckbox
-                  isChecked={memberState[member.employeeId]}
-                  onChange={() => handleSelectToCreate(member.employeeId)}
-                />
-              </CheckboxLayout>
-            )}
-            <MemberCard
-              memberInfo={{
-                image: "",
-                alt: `${member.name}-이미지`,
-                name:
-                  String(member.name) === "null"
-                    ? "홍길동"
-                    : member.name.toString(),
-                rank: "직급",
-                department: "부서",
-                position: "직무",
-              }}
-            />
-            <ChatBubbleIcon />
-          </MemberCardBox>
-        ))}
+        {searchResult &&
+          searchResult.map((member) => (
+            <MemberCardBox
+              key={member.employeeId}
+              onClick={() => handleSelectToCreate(member.employeeId)}
+            >
+              {selectToCreate && (
+                <CheckboxLayout>
+                  <CustomCheckbox
+                    isChecked={memberState[member.employeeId]}
+                    onChange={() => handleSelectToCreate(member.employeeId)}
+                  />
+                </CheckboxLayout>
+              )}
+              <MemberCard
+                memberInfo={{
+                  image: "",
+                  alt: `${member.name}-이미지`,
+                  name:
+                    String(member.name) === "null"
+                      ? "홍길동"
+                      : member.name.toString(),
+                  rank: "직급",
+                  department: "부서",
+                  position: "직무",
+                }}
+              />
+              <ChatBubbleIcon />
+            </MemberCardBox>
+          ))}
       </MemberCardList>
 
       {!selectToCreate ? (

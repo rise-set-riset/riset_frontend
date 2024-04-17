@@ -75,6 +75,11 @@ const ChatButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
+  transition: all 0.5s;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 
   @media screen and (max-width: 500px) {
     position: fixed;
@@ -92,11 +97,12 @@ export default function ChatScreen({
   setIsChatOpen,
 }: ChatScreenProps) {
   const { isMobile } = useContext(ResponsiveContext);
-  const [currentChatPage, setCurrentChatPage] = useState<string>("main");
   const chatRef = useRef<HTMLDivElement | null>(null);
+  const [currentChatPage, setCurrentChatPage] = useState<string>("main");
   const [currentRoomId, setCurrentRoomId] = useState<number>(0);
   const [selectToCreate, setSelectToCreate] = useState<boolean>(false);
   const [clickCreateRoom, setClickCreateRoom] = useState<boolean>(false);
+  const [currentMembersId, setCurrentMembersId] = useState<any>([]);
 
   // 마저 확인 필요
   const handlePageChange = (name: string) => {
@@ -134,6 +140,7 @@ export default function ChatScreen({
                       setCurrentRoomId={setCurrentRoomId}
                       selectToCreate={selectToCreate}
                       setSelectToCreate={setSelectToCreate}
+                      setCurrentMembersId={setCurrentMembersId}
                     />
                   )}
                   {currentChatPage === "list" && (
@@ -142,6 +149,7 @@ export default function ChatScreen({
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
                       setClickCreateRoom={setClickCreateRoom}
+                      setCurrentMembersId={setCurrentMembersId}
                     />
                   )}
                   {currentChatPage === "message" && (
@@ -149,6 +157,7 @@ export default function ChatScreen({
                       currentRoomId={currentRoomId}
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
+                      currentMembersId={currentMembersId}
                     />
                   )}
                 </ChatPageLayout>
