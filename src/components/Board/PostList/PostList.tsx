@@ -12,7 +12,7 @@ const Layout = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1.5rem 60px 1.5rem;
+  padding: 1.5rem;
 
   @media screen and (max-width: 599px) {
     padding: 0;
@@ -108,17 +108,19 @@ const CommonSection = css`
   padding: 0 1rem;
   overflow-y: scroll;
   overflow-x: hidden;
-  li {
+
+  li:not(:last-child) {
     margin-bottom: 1.5rem;
+  }
+
+  @media screen and (max-width: 599px) {
+    padding: 0 3rem;
+    margin-bottom: 150px;
   }
 `;
 
 const Favorites = styled.div`
   ${CommonSection}
-
-  @media screen and (max-width: 599px) {
-    padding: 0 3rem;
-  }
 `;
 
 const Posts = styled.div`
