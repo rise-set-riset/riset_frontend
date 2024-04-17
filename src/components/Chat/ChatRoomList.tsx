@@ -26,6 +26,9 @@ const TitleBox = styled.header`
     align-items: center;
     gap: 0.5rem;
   }
+  h2 {
+    font-size: 1.4rem;
+  }
 `;
 
 const SearchBox = styled.div`

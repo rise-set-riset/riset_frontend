@@ -33,6 +33,10 @@ const TitleBox = styled.header`
     align-items: center;
     gap: 0.5rem;
   }
+
+  h2 {
+    font-size: 1.4rem;
+  }
 `;
 
 const SearchIcon = styled(IoSearch)`
@@ -452,6 +456,15 @@ export default function ChatMain({
           console.log(data);
         });
     }
+
+    /* 검색 결과로 이동 */
+    const targetElement = document.getElementById("msg-0");
+    if (targetElement) {
+      console.log(targetElement.innerHTML);
+      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      targetElement.style.backgroundColor = "var(--color-brand-main)";
+      targetElement.style.color = "var(--color-white)";
+    }
   };
 
   /* Custom File Icon 클릭 */
@@ -561,7 +574,7 @@ export default function ChatMain({
                   <ContainFileMessageBox>
                     {data.msg !== "" && (
                       <MyMessage>
-                        <div>{data.msg}</div>
+                        <div id={`msg-${index}`}>{data.msg}</div>
                         {(index === 0 ||
                           data.date.slice(0, 16) !== prevMsg) && (
                           <div>{timeFormat(data.date)}</div>
@@ -574,7 +587,7 @@ export default function ChatMain({
                           <MyFileIcon>
                             <FiPaperclip />
                           </MyFileIcon>
-                          <span>
+                          <span id={`msg-${index}`}>
                             {data.fileNames.slice(0, 20)}
                             {data.fileNames.length > 20 ? "..." : ""}
                           </span>
@@ -591,10 +604,7 @@ export default function ChatMain({
                     {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
                       <ChatPartner>
                         {data.sender.myImage ? (
-                          <img
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
-                            alt="대화상대"
-                          />
+                          <img src={data.sender.myImage} alt="대화상대" />
                         ) : (
                           <Profile />
                         )}
@@ -604,7 +614,7 @@ export default function ChatMain({
                     <ContainFileMessageBox>
                       {data.msg !== "" && (
                         <PartnerMessage>
-                          <div>{data.msg}</div>
+                          <div id={`msg-${index}`}>{data.msg}</div>
                           {(index === 0 ||
                             data.date.slice(0, 16) !== prevMsg) && (
                             <div>{timeFormat(data.date)}</div>
@@ -617,7 +627,7 @@ export default function ChatMain({
                             <PartnerFileIcon>
                               <FiPaperclip />
                             </PartnerFileIcon>
-                            <span>
+                            <span id={`msg-${index}`}>
                               {data.fileNames.slice(0, 20)}
                               {data.fileNames.length > 20 ? "..." : ""}
                             </span>
