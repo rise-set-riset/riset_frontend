@@ -89,31 +89,22 @@ export default function PersonalPlan() {
     const requestDate = setFitDate.toISOString().slice(0, 10);
     // console.log(requestDate);
     fetch(
-      // `https://dev.risetconstruction.net/api/employees?employeeDate=${requestDate}`,
-      `https://dev.risetconstruction.net/api/employees?employeeDate=2024-04-08`,
+      "https://dev.risetconstruction.net/api/employees?employeeDate=2024-04-10",
       {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
         },
       }
-    ).then((res) => {
-      if (res.ok) {
-        // console.log(res.ok);
-        // res.json();
-      } else {
-        console.log("통신실패");
-      }
-    });
-    // .then((data) => setResponseData(data));
-
-    // fetch("/test.json")
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     setResponseData(data);
-    //   });
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("data");
+        console.log(data);
+      });
   }, [currentDate]);
 
+  console.log(jwt);
   /* 데이터 형식 변환 */
   useEffect(() => {
     const modifiedData = responseData.map((data) => {

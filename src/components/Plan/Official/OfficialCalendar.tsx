@@ -442,7 +442,7 @@ export default function OfficialCalendar() {
     })
       .then((res) => res.json())
       .then((data) => {
-        // console.log("data", data);
+        console.log("data", data);
         setEventFormList(data);
       });
   }, [month, year]);
