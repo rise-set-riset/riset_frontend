@@ -122,11 +122,13 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     };
 
     // 어떤 지점이라도 상관없이 반경 안에 들어왔을 경우
-    const isInRange = maps.some((map) =>
-      handleInRange(map.latitude, map.longitude, position.latitude, position.longitude)
-    );
+    if (maps.length > 0) {
+      const isInRange = maps.some((map) =>
+        handleInRange(map.latitude, map.longitude, position.latitude, position.longitude)
+      );
 
-    setIsInRange(isInRange);
+      setIsInRange(isInRange);
+    }
   }, [position, maps, setAddress, setIsInRange]);
 
   return (
