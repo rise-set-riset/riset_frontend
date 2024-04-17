@@ -57,7 +57,7 @@ const LoginForm = styled.div`
   width: 90%;
   max-width: 381px;
   max-height: 908px;
-  font-color: #353535;
+  color: #353535;
   font-size: 16px;
 
   div {
@@ -247,7 +247,9 @@ export default function Login() {
                 onChange={handlePasswordChange}
                 placeholder="비밀번호를 입력하세요"
               />
-              <FindIdButton onClick={handleFindPassword}>비밀번호 찾기</FindIdButton>
+              <FindIdButton onClick={handleFindPassword}>
+                비밀번호 찾기
+              </FindIdButton>
             </TextInputWrapper>
 
             <RememberIdWrapper>

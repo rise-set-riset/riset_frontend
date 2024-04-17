@@ -76,24 +76,24 @@ const DropMenu = styled.ul`
 `;
 
 interface PlanSearchProps {
-  /* 선택한 날짜 상태값 */
-  currentDate: Date;
+  searchWord: string;
+  // handleSearchWord: (searchWord: string) => void;
+  filterCategory: string;
+  setFilterCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function PlanSearch({ currentDate }: PlanSearchProps) {
+export default function PlanSearch({
+  searchWord,
+  // handleSearchWord,
+  filterCategory,
+  setFilterCategory,
+}: PlanSearchProps) {
   /* 
   searchWord: 검색어
   isFilterOpen: 검색 기준 필터 드롭다운 표시 여부
   filterCategory: 검색 기준
   */
-  const [searchWord, setSearchWord] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
-  const [filterCategory, setFilterCategory] = useState<string>("이름");
-
-  /* 검색어 변경 */
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchWord(e.target.value);
-  };
 
   /* 검색 기준 변경*/
   const handleFilterCategory = (category: string) => {
@@ -127,7 +127,7 @@ export default function PlanSearch({ currentDate }: PlanSearchProps) {
         name={"search-plan"}
         value={searchWord}
         placeholder="이름 검색"
-        onChange={handleSearch}
+        // onChange={handleSearchWord}
         autoComplete={"on"}
       />
     </Layout>

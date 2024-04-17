@@ -7,6 +7,7 @@ import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg"
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
+import { useNavigate } from "react-router-dom";
 
 const List = styled.ul`
   position: fixed;
@@ -29,24 +30,29 @@ const Item = styled.li`
   }
 `;
 
-export default function BottomMenu() {
+interface BottomMenuProps {
+  handleChatOpen: () => void;
+}
+
+export default function BottomMenu({ handleChatOpen }: BottomMenuProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   return (
     <List>
       <Item>
         <Hamburger onClick={() => dispatch(sideMenuAction.toggleSideMenu())} />
       </Item>
-      <Item>
+      <Item onClick={() => navigate("/board/postlist")}>
         <Board />
       </Item>
-      <Item>
+      <Item onClick={() => navigate("/home")}>
         <Home />
       </Item>
-      <Item>
+      <Item onClick={() => navigate("/commute")}>
         <Commute />
       </Item>
-      <Item>
+      <Item onClick={handleChatOpen}>
         <Chat />
       </Item>
     </List>

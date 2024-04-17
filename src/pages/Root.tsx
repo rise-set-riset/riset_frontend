@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Header from "../components/Header/Header";
 import { Outlet, useLocation } from "react-router-dom";
 import { ResponsiveContext } from "../contexts/ResponsiveContext";
@@ -77,6 +77,11 @@ export default function Root() {
   const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
   const sideOpenState: SideOpenState = isMobile ? "mobile" : isSideMenuOpen ? "pcOpen" : "pcClose";
 
+  /* 채팅 화면 */
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const handleChatOpen = () => {
+    setIsChatOpen(!isChatOpen);
+  };
   return (
     <>
       <GlobalOutletStyle $sideOpenState={sideOpenState} />
@@ -84,8 +89,10 @@ export default function Root() {
       {isAuth && <Header />}
       <Outlet />
       {isAuth && <SideMenu />}
-      {isMobile && isAuth && <BottomMenu />}
-      {isAuth && <ChatScreen />}
+      {isMobile && isAuth && <BottomMenu handleChatOpen={handleChatOpen} />}
+      {isAuth && (
+        <ChatScreen isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
+      )}
     </>
   );
 }

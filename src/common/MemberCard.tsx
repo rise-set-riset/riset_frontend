@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { ReactComponent as Profile } from "../assets/header/profile.svg";
 
 const Layout = styled.div`
   width: 100%;
@@ -46,7 +47,6 @@ const MoreInfo = styled.div`
 
 interface MemberCardProps {
   memberInfo: {
-    // [key: string]: string;
     image: string;
     alt?: string;
     name: string;
@@ -60,7 +60,11 @@ export default function MemberCard({ memberInfo }: MemberCardProps) {
   return (
     <Layout>
       <ImageBox>
-        <img src={memberInfo.image} alt={memberInfo.alt} />
+        {memberInfo.image ? (
+          <img src={memberInfo.image} alt={memberInfo.alt} />
+        ) : (
+          <Profile />
+        )}
       </ImageBox>
       <MemberInfoBox>
         <MemberName>
