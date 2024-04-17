@@ -9,11 +9,12 @@ export default function usePosts(url: string) {
   const lastItemRef = useRef<HTMLDivElement | null>(null);
   const { isTablet, isMobile } = useContext(ResponsiveContext);
   const jwt = localStorage.getItem("jwt");
-  const fullUrl = `${url}?size=5&page=${skip}${searchWord ? `&searchTitle=${searchWord}` : ""}`;
 
   useEffect(() => {
     /* 게시글 조회 */
     const fetchMorePosts = async () => {
+      const fullUrl = `${url}?size=5&page=${skip}${searchWord ? `&title=${searchWord}` : ""}`;
+
       const datas = await fetch(fullUrl, {
         method: "GET",
         headers: {
@@ -43,5 +44,31 @@ export default function usePosts(url: string) {
     };
   }, [skip, hasMore, isTablet, isMobile]);
 
-  return { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord };
+  /* 댓글 등록 시 처리 함수 */
+  const handleComment = (comment: any, postId: number) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.post.id === postId) {
+          return {
+            ...post,
+            post: {
+              ...post.post,
+              comment: [comment, ...post.post.comment],
+            },
+          };
+        } else {
+          return post;
+        }
+      })
+    );
+  };
+
+  /* 검색 시 초기화 */
+  useEffect(() => {
+    setHasMore(true);
+    setSkip(0);
+    setPosts([]);
+  }, [searchWord]);
+
+  return { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord, handleComment };
 }

@@ -150,6 +150,7 @@ interface PostCardType {
   isManageClick: boolean;
   isAllPosts: boolean;
   handleIconClick: (e: React.MouseEvent<SVGElement>, postId: number) => void;
+  handleComment: (comment: any, postId: number) => void;
 }
 
 export default function PostCard({
@@ -157,6 +158,7 @@ export default function PostCard({
   isManageClick,
   isAllPosts,
   handleIconClick,
+  handleComment,
 }: PostCardType) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { user, post: postItem } = post;
@@ -188,7 +190,7 @@ export default function PostCard({
         </FileWrapper>
       )}
       <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
-        <PostShow post={post} setIsFormOpen={setIsFormOpen} />
+        <PostShow post={post} setIsFormOpen={setIsFormOpen} handleComment={handleComment} />
       </Modal>
     </Layout>
   );
