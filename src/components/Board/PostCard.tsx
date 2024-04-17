@@ -1,11 +1,12 @@
 import styled, { css } from "styled-components";
-import { ReactComponent as File } from "../../assets/board/file-orange.svg";
-import { ReactComponent as Minus } from "../../assets/board/minus.svg";
-import { ReactComponent as Star } from "../../assets/board/star.svg";
 import { Transition } from "react-transition-group";
 import { useState } from "react";
 import Modal from "../../common/Modal";
 import PostShow from "./PostShow";
+import { FiPaperclip } from "react-icons/fi";
+import { TiStarFullOutline } from "react-icons/ti";
+import { LuMinus } from "react-icons/lu";
+import { FcDocument } from "react-icons/fc";
 
 const Layout = styled.div`
   position: relative;
@@ -41,10 +42,9 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const EmojiIcon = styled.img`
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
+const EmojiIcon = styled(FcDocument)`
+  font-size: 1.2rem;
+  margin-right: 0.3rem;
 `;
 
 const Title = styled.h3`
@@ -69,16 +69,28 @@ const Date = styled.p`
   margin-top: 8px;
 `;
 
-const FileIcon = styled(File)`
+const FileWrapper = styled.div`
   position: absolute;
-  right: 0;
-  margin: 1.5rem;
-  width: 45px;
-  height: 45px;
+  right: 1rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background-color: var(--color-brand-main);
 
   @media screen and (max-width: 650px) {
     width: 30px;
     height: 30px;
+  }
+`;
+
+const FileIcon = styled(FiPaperclip)`
+  font-size: 1.5rem;
+
+  @media screen and (max-width: 650px) {
+    font-size: 1.1rem;
   }
 `;
 
@@ -111,12 +123,26 @@ const CommonIcon = css<{ $state: string }>`
   }}
 `;
 
-const MinusIcon = styled(Minus)<{ $state: string }>`
+const MinusWrapper = styled.div<{ $state: string }>`
   ${CommonIcon}
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-error);
 `;
 
-const StarIcon = styled(Star)<{ $state: string }>`
+const MinusIcon = styled(LuMinus)`
+  font-size: 1.3rem;
+  color: var(--color-white);
+`;
+
+const StarIcon = styled(TiStarFullOutline)<{ $state: string }>`
   ${CommonIcon}
+  font-size: 1.5rem;
+  color: var(--color-brand-yellow);
 `;
 
 interface PostCardType {
@@ -124,6 +150,7 @@ interface PostCardType {
   isManageClick: boolean;
   isAllPosts: boolean;
   handleIconClick: (e: React.MouseEvent<SVGElement>, postId: number) => void;
+  handleComment: (comment: any, postId: number) => void;
 }
 
 export default function PostCard({
@@ -131,14 +158,10 @@ export default function PostCard({
   isManageClick,
   isAllPosts,
   handleIconClick,
+  handleComment,
 }: PostCardType) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { user, post: postItem } = post;
-
-  /* 날짜 형식 변환 */
-  const convertDateTime = (date: string) => {
-    return date.split("T")[0];
-  };
 
   return (
     <Layout onClick={() => setIsFormOpen(true)}>
@@ -147,21 +170,27 @@ export default function PostCard({
           isAllPosts ? (
             <StarIcon $state={state} onClick={(e) => handleIconClick(e, post)} />
           ) : (
-            <MinusIcon $state={state} onClick={(e) => handleIconClick(e, post.id)} />
+            <MinusWrapper $state={state}>
+              <MinusIcon onClick={(e) => handleIconClick(e, post.id)} />
+            </MinusWrapper>
           )
         }
       </Transition>
       <Info>
         <Header>
-          <EmojiIcon src="/assets/default-emoji.png" />
+          <EmojiIcon />
           <Title>{postItem.title}</Title>
         </Header>
         <Writer>{user.name}</Writer>
-        <Date>{convertDateTime(postItem.date)}</Date>
+        <Date>{postItem.date.split("T")[0]}</Date>
       </Info>
-      {postItem.files.length > 0 && <FileIcon />}
+      {postItem.files.length > 0 && (
+        <FileWrapper>
+          <FileIcon />
+        </FileWrapper>
+      )}
       <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
-        <PostShow post={post} setIsFormOpen={setIsFormOpen} />
+        <PostShow post={post} setIsFormOpen={setIsFormOpen} handleComment={handleComment} />
       </Modal>
     </Layout>
   );

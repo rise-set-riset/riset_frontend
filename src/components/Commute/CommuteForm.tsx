@@ -137,14 +137,14 @@ export default function CommuteForm({
     const jwt = localStorage.getItem("jwt");
 
     const data = {
-      commuteDate: form.start,
+      commuteDate: form.start || form.commuteDate,
       commuteStart: form.startTime,
       commuteEnd: form.endTime,
       commutePlace: form.way,
       commuteStatus: "END",
     };
 
-    fetch("https://dev.risetconstruction.net/commute/register-commute", {
+    fetch("https://dev.risetconstruction.net/commute/add-commute", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
