@@ -324,6 +324,7 @@ const SendButtonIcon = styled.button`
 `;
 
 interface ResponseDataType {
+  chatId: number;
   chatRoomId: number;
   date: string;
   fileNames: string;
@@ -346,9 +347,7 @@ export default function ChatMain({
   currentMembersId,
 }: ChatMainProps) {
   /* 통신 */
-  // const userId = Number(localStorage.getItem("userId"));
-  const userId = 11;
-
+  const userId = Number(localStorage.getItem("userId"));
   const jwt = localStorage.getItem("jwt");
   const client = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -362,6 +361,8 @@ export default function ChatMain({
   const [base64String, setBase64String] = useState<any>("");
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string>("");
+  const [searchResult, setSearchResult] = useState<ResponseDataType[]>();
+  const [searchShowIndex, setSearchShowIndex] = useState<number>(0);
 
   /* 시간 변환 */
   const timeFormat = (date: string) => {
@@ -451,16 +452,52 @@ export default function ChatMain({
       )
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
+          setSearchResult(data);
+          setSearchShowIndex(data.length - 1);
+
+          if (data.length !== 0) {
+            /* 검색 결과로 이동 */
+            const targetElement = document.getElementById(
+              `msg-${searchResult?.[searchResult.length - 1]?.chatId}`
+            );
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+              targetElement.style.backgroundColor = "var(--color-brand-main)";
+              targetElement.style.color = "var(--color-white)";
+            }
+          }
         });
     }
+  };
 
+  useEffect(() => {
     /* 검색 결과로 이동 */
-    const targetElement = document.getElementById("msg-0");
+    const targetElement = document.getElementById(
+      `msg-${searchResult?.[searchShowIndex]?.chatId}`
+    );
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
       targetElement.style.backgroundColor = "var(--color-brand-main)";
       targetElement.style.color = "var(--color-white)";
+    }
+  }, [searchShowIndex]);
+
+  const handleSearchIndex = (name: string) => {
+    if (name === "up") {
+      setSearchShowIndex(
+        searchShowIndex - 1 < 0 ? searchShowIndex : searchShowIndex - 1
+      );
+    } else {
+      if (searchResult) {
+        setSearchShowIndex(
+          searchResult.length - 1 === searchShowIndex
+            ? searchShowIndex
+            : searchShowIndex + 1
+        );
+      }
     }
   };
 
@@ -522,6 +559,24 @@ export default function ChatMain({
       });
   }, []);
 
+  const handleDownload = async (fileUrl: string, fileName: string) => {
+    const jwt = localStorage.getItem("jwt");
+
+    await fetch(fileUrl, {
+      method: "GET",
+    })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        const aEle = document.createElement("a");
+
+        aEle.href = blobUrl;
+        aEle.download = fileName;
+        aEle.click();
+        aEle.remove();
+      });
+  };
+
   return (
     <Layout>
       <TitleBox>
@@ -549,10 +604,10 @@ export default function ChatMain({
             value={searchWord}
             onChange={handleSearchMessage}
           />
-          <ArrowIconStyle>
+          <ArrowIconStyle onClick={() => handleSearchIndex("down")}>
             <IoIosArrowDown />
           </ArrowIconStyle>
-          <ArrowIconStyle>
+          <ArrowIconStyle onClick={() => handleSearchIndex("up")}>
             <IoIosArrowUp />
           </ArrowIconStyle>
         </SearchNavBox>
@@ -571,7 +626,7 @@ export default function ChatMain({
                   <ContainFileMessageBox>
                     {data.msg !== "" && (
                       <MyMessage>
-                        <div id={`msg-${index}`}>{data.msg}</div>
+                        <div id={`msg-${data.chatId}`}>{data.msg}</div>
                         {(index === 0 ||
                           data.date.slice(0, 16) !== prevMsg) && (
                           <div>{timeFormat(data.date)}</div>
@@ -579,12 +634,16 @@ export default function ChatMain({
                       </MyMessage>
                     )}
                     {data.fileNames !== "null" && (
-                      <MyMessage>
+                      <MyMessage
+                        onClick={() =>
+                          handleDownload(data.fileNames, data.fileNames)
+                        }
+                      >
                         <div>
                           <MyFileIcon>
                             <FiPaperclip />
                           </MyFileIcon>
-                          <span id={`msg-${index}`}>
+                          <span id={`msg-${data.chatId}`}>
                             {data.fileNames.slice(0, 20)}
                             {data.fileNames.length > 20 ? "..." : ""}
                           </span>
@@ -611,7 +670,7 @@ export default function ChatMain({
                     <ContainFileMessageBox>
                       {data.msg !== "" && (
                         <PartnerMessage>
-                          <div id={`msg-${index}`}>{data.msg}</div>
+                          <div id={`msg-${data.chatId}`}>{data.msg}</div>
                           {(index === 0 ||
                             data.date.slice(0, 16) !== prevMsg) && (
                             <div>{timeFormat(data.date)}</div>
@@ -619,12 +678,16 @@ export default function ChatMain({
                         </PartnerMessage>
                       )}
                       {data.fileNames !== "null" && (
-                        <PartnerMessage>
+                        <PartnerMessage
+                          onClick={() =>
+                            handleDownload(data.fileNames, data.fileNames)
+                          }
+                        >
                           <div>
                             <PartnerFileIcon>
                               <FiPaperclip />
                             </PartnerFileIcon>
-                            <span id={`msg-${index}`}>
+                            <span id={`msg-${data.chatId}`}>
                               {data.fileNames.slice(0, 20)}
                               {data.fileNames.length > 20 ? "..." : ""}
                             </span>
