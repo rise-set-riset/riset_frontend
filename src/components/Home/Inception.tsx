@@ -202,13 +202,17 @@ const SwiperCustom = styled(Swiper)`
   cursor: grab;
 `;
 
+interface DaysType {
+  [key: string]: number;
+}
+
 export default function Inception() {
   const [posts, setPosts] = useState<any>([]);
+  const [days, setDays] = useState<DaysType>({});
+  const jwt = localStorage.getItem("jwt");
 
   /* 게시글 3개만 가져오기 */
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-
     fetch("https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''", {
       method: "GET",
       headers: {
@@ -217,6 +221,18 @@ export default function Inception() {
     })
       .then((res) => res.json())
       .then((data) => setPosts(data));
+  }, []);
+
+  /* 출근일, 잔여연차 가져오기 */
+  useEffect(() => {
+    fetch("https://dev.risetconstruction.net/commute/days", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setDays(data));
   }, []);
 
   /* 댓글 등록 시 처리 함수 */
@@ -244,13 +260,14 @@ export default function Inception() {
         <TotalCntAbbr>
           <WorkCnt>
             <p>출근일</p>
-            <p>4</p>
+            <p>{days.commuteDays}</p>
           </WorkCnt>
           <MidLine />
           <LeftAnnual>
             <p>잔여연차</p>
             <p>
-              12<span>/15</span>
+              {days.restLeaves}
+              <span>/{days.totalLeaves}</span>
             </p>
           </LeftAnnual>
         </TotalCntAbbr>
