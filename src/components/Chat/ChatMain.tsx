@@ -158,9 +158,7 @@ interface ChatMainProps {
   setCurrentRoomId: React.Dispatch<React.SetStateAction<number>>;
   selectToCreate: boolean;
   setSelectToCreate: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentMembersId: React.Dispatch<
-    React.SetStateAction<number[] | string[]>
-  >;
+  setCurrentMembersId: React.Dispatch<React.SetStateAction<any>>;
 }
 export default function ChatMain({
   handlePageChange,
@@ -206,8 +204,7 @@ export default function ChatMain({
     const finalSelectedMember = Object.keys(memberState).filter(
       (id) => memberState[id]
     );
-
-    console.log("check", [...finalSelectedMember, userId]);
+    setCurrentMembersId([...finalSelectedMember, userId]);
 
     /* 서버 통신 - 채팅방 생성 */
     fetch("https://dev.risetconstruction.net/chatRoom", {

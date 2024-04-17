@@ -101,7 +101,15 @@ export default function ChatRoomCard({
           {/* {chatMemberData.length > 1 && <span>{chatMemberData.length}명</span>} */}
           <span>{chatMemberData.length}명</span>
         </ChatName>
-        <MoreInfo>{lastChat?.msg || lastChat?.fileNames}</MoreInfo>
+        {/* <MoreInfo>{lastChat?.msg || lastChat?.fileNames}</MoreInfo> */}
+        <MoreInfo>
+          {lastChat?.msg?.slice(0, 40) || lastChat?.fileNames?.slice(0, 40)}
+          {lastChat?.msg?.length > 40
+            ? "..."
+            : "" || lastChat?.fileNames?.length > 40
+            ? "..."
+            : ""}
+        </MoreInfo>
       </ChatInfoBox>
     </Layout>
   );

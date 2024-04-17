@@ -11,6 +11,8 @@ import { FiMoreVertical } from "react-icons/fi";
 import { Client } from "@stomp/stompjs";
 import { v4 as uuidv4 } from "uuid";
 import { IoSearch } from "react-icons/io5";
+import FileCard from "../Board/FileCard";
+import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 
 const Layout = styled.div`
   height: 100%;
@@ -77,7 +79,7 @@ const DropdownMenu = styled.ul`
   }
 `;
 
-const SearchNavBox = styled.div`
+const SearchNavBox = styled.form`
   height: 5.5rem;
   display: flex;
   justify-content: space-between;
@@ -142,6 +144,7 @@ const CloseIcon = styled(CgClose)`
 `;
 
 const DialogueBox = styled.main<{ $isSearchBarOpen: boolean }>`
+  position: relative;
   margin-top: 1.2rem;
   height: ${(props) =>
     props.$isSearchBarOpen ? "calc(100% - 295px)" : "calc(100% - 205px)"};
@@ -163,7 +166,8 @@ const ChatPartner = styled.div`
   h2 {
     font-size: 1.2rem;
   }
-  img {
+  img,
+  svg {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
@@ -223,13 +227,10 @@ const MyFileIcon = styled(PartnerFileIcon)`
   }
 `;
 
-const SendFileIcon = styled(PartnerFileIcon)`
-  border: 1px solid var(--color-brand-main);
-  background-color: var(--color-brand-main);
-  cursor: pointer;
-  svg path {
-    stroke: var(--color-white);
-  }
+const ContainFileMessageBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const SendMessageBox = styled.form`
@@ -257,6 +258,15 @@ const SendMessageBox = styled.form`
   }
 `;
 
+const SelectFile = styled.div`
+  position: absolute;
+  bottom: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
 const SendInputBox = styled.div`
   flex: 1;
   padding: 0.5rem 1rem;
@@ -272,6 +282,27 @@ const SendInputBox = styled.div`
       outline: none;
     }
   }
+`;
+
+const FileAdd = styled.div`
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background-color: var(--color-brand-main);
+`;
+
+const FileIcon = styled(FiPaperclip)`
+  font-size: 1.5rem;
+  path {
+    stroke: var(--color-white);
+  }
+`;
+
+const FileInput = styled.input`
+  display: none;
 `;
 
 const SendButtonIcon = styled.button`
@@ -290,11 +321,11 @@ const SendButtonIcon = styled.button`
 
 interface ResponseDataType {
   chatRoomId: number;
-  date: string; //"2024-04-17T08:23:25.875"
+  date: string;
   fileNames: string;
-  members: any; // memberId, memberName, memberNo(고유아이디), profileImg.profilePath
+  members: any;
   msg: string;
-  sender: any; // employeeId, name, myImage
+  sender: any;
 }
 
 interface ChatMainProps {
@@ -311,7 +342,9 @@ export default function ChatMain({
   currentMembersId,
 }: ChatMainProps) {
   /* 통신 */
-  const userId = Number(localStorage.getItem("userId"));
+  // const userId = Number(localStorage.getItem("userId"));
+  const userId = 11;
+
   const jwt = localStorage.getItem("jwt");
   const client = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -323,9 +356,10 @@ export default function ChatMain({
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(true);
   const [base64String, setBase64String] = useState<any>("");
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [selectedFileName, setSelectedFileName] = useState<string>("");
 
   console.log(responseMessage);
-  console.log("roomid", currentRoomId);
 
   /* 시간 변환 */
   const timeFormat = (date: string) => {
@@ -343,8 +377,6 @@ export default function ChatMain({
     setSearchWord(e.target.value);
   };
 
-  console.log(responseMessage);
-
   useEffect(() => {
     /* 소켓 함수 */
     client.current = new Client({
@@ -353,7 +385,7 @@ export default function ChatMain({
         Authorization: `Bearer ${jwt}`,
       },
       debug: (str: string) => {
-        console.log(str);
+        // console.log(str);
       },
       reconnectDelay: 5000, //자동 재 연결
       heartbeatIncoming: 4000,
@@ -382,13 +414,11 @@ export default function ChatMain({
     };
   }, [responseMessage]);
 
-  console.log("currentMembersId", currentMembersId);
-
   /* 메세지 전송시 */
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (sendText.trim() !== "") {
+    if (sendText.trim() !== "" || base64String !== "") {
       client.current?.publish({
         destination: `/send/chat/message/${currentRoomId}`,
         body: JSON.stringify({
@@ -400,23 +430,39 @@ export default function ChatMain({
         }),
       });
       setSendText("");
+      setBase64String("");
+      setSelectedFileName("");
     }
   };
 
   /* 검색 결과 받아오기 */
-  const handleSendSearch = () => {
-    fetch(
-      `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
+  const handleSubmitSearch: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    if (isSearchBarOpen) {
+      fetch(
+        `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
+    }
+  };
+
+  /* Custom File Icon 클릭 */
+  const handleFileClick = () => {
+    if (fileRef.current) fileRef.current.click();
+  };
+
+  /* 파일 선택 취소 */
+  const handleFileCancel = () => {
+    setSelectedFileName("");
+    setBase64String("");
   };
 
   // 파일 선택(input) 이벤트 핸들러
@@ -428,6 +474,7 @@ export default function ChatMain({
     };
     if (file) {
       reader.readAsDataURL(file);
+      setSelectedFileName(file.name);
     }
   };
 
@@ -450,13 +497,6 @@ export default function ChatMain({
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     }
-
-    /* 현재 채팅방에 있는 모든 멤버 ID */
-    // setCurrentMembersId(
-    //   responseMessage[0]?.members.map((member: any) => {
-    //     return member.memberNo;
-    //   })
-    // );
   }, [responseMessage]);
 
   /* 채팅 메세지 가져오기 */
@@ -477,13 +517,7 @@ export default function ChatMain({
       <TitleBox>
         <div>
           <ArrowBackIcon onClick={() => handlePageChange("list")} />
-          <ChatPartner>
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
-              alt="대화상대"
-            />
-            <h2>박씨</h2>
-          </ChatPartner>
+          <h2>{currentMembersId.length > 2 ? "그룹채팅" : "채팅"}</h2>
         </div>
         <div>
           <SearchIcon onClick={() => setIsSearchBarOpen(!isSearchBarOpen)} />
@@ -499,13 +533,12 @@ export default function ChatMain({
       </TitleBox>
 
       {isSearchBarOpen && (
-        <SearchNavBox>
+        <SearchNavBox onSubmit={handleSubmitSearch}>
           <SearchBar
             placeholder="내용 검색"
             value={searchWord}
             onChange={handleSearchMessage}
           />
-          <button onClick={handleSendSearch}>찾기</button>
           <ArrowIconStyle>
             <IoIosArrowDown />
           </ArrowIconStyle>
@@ -525,29 +558,77 @@ export default function ChatMain({
             return (
               <div key={uuidv4()}>
                 {data.sender.employeeNo === userId ? (
-                  <MyMessage>
-                    <div>{data.msg}</div>
-                    {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
-                      <div>{timeFormat(data.date)}</div>
+                  <ContainFileMessageBox>
+                    {data.msg !== "" && (
+                      <MyMessage>
+                        <div>{data.msg}</div>
+                        {(index === 0 ||
+                          data.date.slice(0, 16) !== prevMsg) && (
+                          <div>{timeFormat(data.date)}</div>
+                        )}
+                      </MyMessage>
                     )}
-                  </MyMessage>
+                    {data.fileNames !== "null" && (
+                      <MyMessage>
+                        <div>
+                          <MyFileIcon>
+                            <FiPaperclip />
+                          </MyFileIcon>
+                          <span>
+                            {data.fileNames.slice(0, 20)}
+                            {data.fileNames.length > 20 ? "..." : ""}
+                          </span>
+                        </div>
+                        {(index === 0 ||
+                          data.date.slice(0, 16) !== prevMsg) && (
+                          <div>{timeFormat(data.date)}</div>
+                        )}
+                      </MyMessage>
+                    )}
+                  </ContainFileMessageBox>
                 ) : (
                   <div>
                     {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
                       <ChatPartner>
-                        <img
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
-                          alt="대화상대"
-                        />
+                        {data.sender.myImage ? (
+                          <img
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
+                            alt="대화상대"
+                          />
+                        ) : (
+                          <Profile />
+                        )}
                         <h2>{data.sender.name}</h2>
                       </ChatPartner>
                     )}
-                    <PartnerMessage>
-                      <div>{data.msg}</div>
-                      {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
-                        <div>{timeFormat(data.date)}</div>
+                    <ContainFileMessageBox>
+                      {data.msg !== "" && (
+                        <PartnerMessage>
+                          <div>{data.msg}</div>
+                          {(index === 0 ||
+                            data.date.slice(0, 16) !== prevMsg) && (
+                            <div>{timeFormat(data.date)}</div>
+                          )}
+                        </PartnerMessage>
                       )}
-                    </PartnerMessage>
+                      {data.fileNames !== "null" && (
+                        <PartnerMessage>
+                          <div>
+                            <PartnerFileIcon>
+                              <FiPaperclip />
+                            </PartnerFileIcon>
+                            <span>
+                              {data.fileNames.slice(0, 20)}
+                              {data.fileNames.length > 20 ? "..." : ""}
+                            </span>
+                          </div>
+                          {(index === 0 ||
+                            data.date.slice(0, 16) !== prevMsg) && (
+                            <div>{timeFormat(data.date)}</div>
+                          )}
+                        </PartnerMessage>
+                      )}
+                    </ContainFileMessageBox>
                   </div>
                 )}
               </div>
@@ -555,49 +636,24 @@ export default function ChatMain({
           })}
       </DialogueBox>
 
-      {/* <ChatPartner>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
-            alt="대화상대"
-          />
-          <h2>박씨</h2>
-        </ChatPartner>
-
-        <PartnerMessage>
-          <div>안녕하세요?</div>
-          <div>오전 8:40</div>
-        </PartnerMessage>
-
-        <PartnerMessage>
-          <div>
-            <PartnerFileIcon>
-              <FiPaperclip />
-            </PartnerFileIcon>
-            <span>파일명.pdf</span>
-          </div>
-          <div>오전 8:40</div>
-        </PartnerMessage>
-
-        <MyMessage>
-          <div>안녕하세요?</div>
-          <div>오전 8:40</div>
-        </MyMessage>
-
-        <MyMessage>
-          <div>
-            <MyFileIcon>
-              <FiPaperclip />
-            </MyFileIcon>
-            <span>파일명.pdf</span>
-          </div>
-          <div>오전 8:40</div>
-        </MyMessage> */}
-
       <SendMessageBox onSubmit={handleSendMessage}>
-        {/* <SendFileIcon>
-          <FiPaperclip />
-        </SendFileIcon> */}
-        <input type="file" onChange={handleFileInputChange} />
+        {selectedFileName !== "" && (
+          <SelectFile>
+            <FileCard fileName={selectedFileName} />
+            <div>
+              <CloseIcon onClick={handleFileCancel} />
+            </div>
+          </SelectFile>
+        )}
+        <FileAdd>
+          <FileIcon onClick={handleFileClick} />
+          <FileInput
+            type="file"
+            ref={fileRef}
+            onChange={handleFileInputChange}
+            multiple
+          />
+        </FileAdd>
 
         <SendInputBox>
           <input

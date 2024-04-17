@@ -97,9 +97,7 @@ export default function ChatScreen({
   const [currentRoomId, setCurrentRoomId] = useState<number>(0);
   const [selectToCreate, setSelectToCreate] = useState<boolean>(false);
   const [clickCreateRoom, setClickCreateRoom] = useState<boolean>(false);
-  const [currentMembersId, setCurrentMembersId] = useState<string[] | number[]>(
-    []
-  );
+  const [currentMembersId, setCurrentMembersId] = useState<any>([]);
 
   // 마저 확인 필요
   const handlePageChange = (name: string) => {
@@ -146,6 +144,7 @@ export default function ChatScreen({
                       handlePageChange={handlePageChange}
                       handleChatClose={handleChatClose}
                       setClickCreateRoom={setClickCreateRoom}
+                      setCurrentMembersId={setCurrentMembersId}
                     />
                   )}
                   {currentChatPage === "message" && (

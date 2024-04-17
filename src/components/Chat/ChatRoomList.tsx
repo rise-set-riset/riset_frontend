@@ -172,12 +172,16 @@ interface ChatRoomListProps {
   handleChatClose: () => void;
   setCurrentRoomId: React.Dispatch<React.SetStateAction<number>>;
   setClickCreateRoom: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentMembersId: React.Dispatch<
+    React.SetStateAction<string[] | number[]>
+  >;
 }
 export default function ChatRoomList({
   handlePageChange,
   handleChatClose,
   setCurrentRoomId,
   setClickCreateRoom,
+  setCurrentMembersId,
 }: ChatRoomListProps) {
   const userId = Number(localStorage.getItem("userId"));
   const jwt = localStorage.getItem("jwt");
@@ -187,9 +191,10 @@ export default function ChatRoomList({
   const [searchResult, setSearchResult] = useState<ChatRoomDataType[]>([]);
 
   /* 채팅방 클릭시 */
-  const handleRoomClick = (roomId: number) => {
+  const handleRoomClick = (roomId: number, members: any) => {
     setCurrentRoomId(roomId);
     handlePageChange("message");
+    setCurrentMembersId(members.map((member: MembersType) => member.memberNo));
   };
 
   /* 새 채팅 클릭시 */
@@ -246,6 +251,8 @@ export default function ChatRoomList({
     setSearchResult(chatRoomData);
   }, [chatRoomData]);
 
+  console.log(chatRoomData);
+
   return (
     <Layout>
       <TitleBox>
@@ -275,7 +282,9 @@ export default function ChatRoomList({
         {searchResult.map((roomData) => (
           <ChatRoomCardBox key={roomData.chatRoomId}>
             <ChatRoomContent
-              onClick={() => handleRoomClick(roomData.chatRoomId)}
+              onClick={() =>
+                handleRoomClick(roomData.chatRoomId, roomData.members)
+              }
             >
               <ChatRoomCard
                 chatMemberData={roomData.members.filter(
