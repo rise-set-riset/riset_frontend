@@ -273,9 +273,8 @@ export default function ChatRoomList({
 
       <ChatRoomCardList>
         {searchResult.map((roomData) => (
-          <ChatRoomCardBox>
+          <ChatRoomCardBox key={roomData.chatRoomId}>
             <ChatRoomContent
-              key={roomData.chatRoomId}
               onClick={() => handleRoomClick(roomData.chatRoomId)}
             >
               <ChatRoomCard

@@ -166,6 +166,7 @@ export default function ChatMain({
   selectToCreate,
   setSelectToCreate,
 }: ChatMainProps) {
+  const userId = 2;
   const jwt = localStorage.getItem("jwt");
   const [searchWord, setSearchWord] = useState<string>("");
   const [responseData, setResponseData] = useState<AllMemberDataType[]>([]);
@@ -191,7 +192,7 @@ export default function ChatMain({
   const handleSelectToCreate = (memberId: string | number) => {
     setSelectToCreate(true);
     setMemberState((prev) => {
-      return { ...prev, [memberId]: true };
+      return { ...prev, [memberId]: !memberState[memberId] };
     });
   };
 
@@ -210,7 +211,7 @@ export default function ChatMain({
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify({
-        members: finalSelectedMember,
+        members: [...finalSelectedMember, userId],
       }),
     })
       .then((res) => res.json())
@@ -224,7 +225,11 @@ export default function ChatMain({
   useEffect(() => {
     fetch("https://dev.risetconstruction.net/auth/userInfo")
       .then((res) => res.json())
-      .then((data) => setResponseData(data));
+      .then((data) =>
+        setResponseData(
+          data.filter((member: any) => member.employeeId !== userId)
+        )
+      );
   }, []);
 
   /* 직원 선택 상태값 담을 객체 생성 및 초기화 */

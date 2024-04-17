@@ -9,6 +9,7 @@ import { IoIosArrowUp } from "react-icons/io";
 import { IoMdArrowRoundUp } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
 import { Client } from "@stomp/stompjs";
+import { v4 as uuidv4 } from "uuid";
 
 const Layout = styled.div`
   height: 100%;
@@ -91,7 +92,8 @@ const SearchNavBox = styled.div`
 
 const DialogueBox = styled.main`
   margin-top: 1.2rem;
-  height: calc(100% - 200px);
+  /* height: calc(100% - 200px); */
+  height: calc(100% - 280px);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -272,27 +274,48 @@ interface Content {
   content: string;
   sender?: string;
 }
+
+interface ResponseDataType {
+  chatRoomId: number;
+  date: string; //"2024-04-17T08:23:25.875"
+  fileNames: string;
+  members: any; // memberId, memberName, memberNo(고유아이디), profileImg.profilePath
+  msg: string;
+  sender: any; // employeeId, name, myImage
+}
+
 interface ChatMainProps {
   handlePageChange: (name: string) => void;
   handleChatClose: () => void;
   currentRoomId: number;
 }
+
 export default function ChatMain({
   handlePageChange,
   handleChatClose,
   currentRoomId,
 }: ChatMainProps) {
   /* 통신 */
-  const userId = 11;
+  const userId = 2;
+  // const userId = 11;
   const jwt = localStorage.getItem("jwt");
   const client = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sendText, setSendText] = useState<string>("");
   const [searchWord, setSearchWord] = useState<string>("");
   const [messages, setMessages] = useState<Content[]>([]);
-  const [responseMessage, setResponseMessage] = useState<any>([]);
+  const [responseMessage, setResponseMessage] = useState<ResponseDataType[]>(
+    []
+  );
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(true);
+  const [showProfileState, setShowProfileState] = useState<boolean[]>([]);
+
+  console.log(responseMessage);
+  /* 시간 변환 */
+  const timeFormat = (date: string) => {
+    const sendDate = date.slice(11, 16);
+  };
 
   /* 내용 검색 */
   const handleSearchMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -311,6 +334,8 @@ export default function ChatMain({
         setResponseMessage(data);
       });
   }, []);
+
+  console.log(responseMessage);
 
   useEffect(() => {
     /* 소켓 함수 */
@@ -335,7 +360,11 @@ export default function ChatMain({
         (frame) => {
           if (frame.body) {
             let parsedMessage = JSON.parse(frame.body);
-            setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+            setResponseMessage((prevMessages) => [
+              ...prevMessages,
+              parsedMessage,
+            ]);
+            console.log("mes", messages);
           }
         }
       );
@@ -346,25 +375,28 @@ export default function ChatMain({
     };
   }, [responseMessage]);
 
-  /* 스크롤 최하단 */
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
-    }
-  }, [responseMessage]);
-
   /* 메세지 전송시 */
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    console.log(
+      JSON.stringify({
+        roomId: currentRoomId,
+        msg: sendText,
+        members: [2, 13, 22],
+        sender: 2,
+        base64File: [base64String],
+      })
+    );
     if (sendText.trim() !== "") {
       client.current?.publish({
         destination: `/send/chat/message/${currentRoomId}`,
         body: JSON.stringify({
-          roomId: "10",
+          roomId: currentRoomId,
           msg: sendText,
-          members: [2, 11],
+          members: [2, 13, 22],
           sender: 2,
-          base64File: [],
+          base64File: [base64String],
         }),
       });
 
@@ -378,6 +410,7 @@ export default function ChatMain({
     }
   };
 
+  /* 채팅방 삭제 */
   const handleRemoveChatRoom = () => {
     fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}`, {
       method: "PATCH",
@@ -390,6 +423,74 @@ export default function ChatMain({
       }
     });
   };
+
+  /* 스크롤 최하단 */
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [responseMessage]);
+
+  /* 1분이 지났는지 확인 */
+  useEffect(() => {
+    const today = new Date().toISOString().slice(0, 16);
+    const dateState: boolean[] = [];
+
+    responseMessage.map((data, index) => {
+      if (index === 0) {
+        dateState.push(true);
+      }
+      {
+        console.log("check", responseMessage[index - 1]);
+        // const sendDate = responseMessage[index - 1].date.slice(0, 16);
+        // if (
+        //   data.sender.employeeNo ===
+        //     responseMessage[index - 1].sender.employeeNo &&
+        //   today === sendDate
+        // ) {
+        //   dateState.push(false);
+        // } else {
+        //   dateState.push(true);
+        // }
+      }
+    });
+    setShowProfileState(dateState);
+  }, [responseMessage]);
+
+  const handleSendSearch = () => {
+    fetch(
+      `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  };
+
+  const [base64String, setBase64String] = useState<any>("");
+
+  // 파일 선택(input) 이벤트 핸들러
+  const handleFileInputChange = (e: any) => {
+    const file = e.target.files[0]; // 첫 번째 파일만 처리
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      // 파일을 Base64 문자열로 변환하여 state에 저장
+      setBase64String(reader.result);
+    };
+
+    if (file) {
+      // 파일을 읽어들임
+      reader.readAsDataURL(file);
+    }
+  };
+
+  console.log("base64", base64String);
 
   return (
     <Layout>
@@ -423,6 +524,7 @@ export default function ChatMain({
             value={searchWord}
             onChange={handleSearchMessage}
           />
+          <button onClick={handleSendSearch}>찾기</button>
           <ArrowIconStyle>
             <IoIosArrowDown />
           </ArrowIconStyle>
@@ -433,7 +535,38 @@ export default function ChatMain({
       )}
 
       <DialogueBox ref={messagesEndRef}>
-        <ChatPartner>
+        {responseMessage.map((data, index) => {
+          return (
+            <div key={uuidv4()}>
+              {data.sender.employeeNo === userId ? (
+                <MyMessage>
+                  <div>{data.msg}</div>
+                  <div>오전 8:40</div>
+                </MyMessage>
+              ) : (
+                <div>
+                  {showProfileState[index] && (
+                    <ChatPartner>
+                      <img
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
+                        alt="대화상대"
+                      />
+                      <h2>{data.sender.name}</h2>
+                      <h2></h2>
+                    </ChatPartner>
+                  )}
+                  <PartnerMessage>
+                    <div>{data.msg}</div>
+                    <div>오전 8:40</div>
+                  </PartnerMessage>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </DialogueBox>
+
+      {/* <ChatPartner>
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3R8k9sWgWuIC4AyfZhUWU8nmoWo6AdJLZsw&s"
             alt="대화상대"
@@ -469,13 +602,13 @@ export default function ChatMain({
             <span>파일명.pdf</span>
           </div>
           <div>오전 8:40</div>
-        </MyMessage>
-      </DialogueBox>
+        </MyMessage> */}
 
       <SendMessageBox onSubmit={handleSendMessage}>
-        <SendFileIcon>
+        {/* <SendFileIcon>
           <FiPaperclip />
-        </SendFileIcon>
+        </SendFileIcon> */}
+        <input type="file" onChange={handleFileInputChange} />
 
         <SendInputBox>
           <input

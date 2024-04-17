@@ -76,7 +76,8 @@ export default function ChatRoomCard({
 }: ChatRoomCardProps) {
   const settingChatRoomName = chatMemberData
     .map((member) => member.memberName)
-    .join(",");
+    .join(", ");
+  console.log(settingChatRoomName);
 
   return (
     <Layout>
@@ -96,7 +97,8 @@ export default function ChatRoomCard({
       </ImageBox>
       <ChatInfoBox>
         <ChatName>
-          <div>{chatRoomName || settingChatRoomName}</div>
+          {/* <div>{chatRoomName ? chatRoomName : settingChatRoomName}</div> */}
+          <div>{settingChatRoomName}</div>
           {/* {chatMemberData.length > 1 && <span>{chatMemberData.length}명</span>} */}
           <span>{chatMemberData.length}명</span>
         </ChatName>
