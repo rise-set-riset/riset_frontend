@@ -12,7 +12,7 @@ const Layout = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 60px 1.5rem;
 
   @media screen and (max-width: 599px) {
     padding: 0;
@@ -115,6 +115,10 @@ const CommonSection = css`
 
 const Favorites = styled.div`
   ${CommonSection}
+
+  @media screen and (max-width: 599px) {
+    padding: 0 3rem;
+  }
 `;
 
 const Posts = styled.div`
@@ -161,8 +165,6 @@ export default function PostList() {
     setSearchWord(value);
     setFavoriteSearchWord(value);
   };
-
-  console.log(posts);
 
   /* 즐겨찾기 삭제 */
   const handleRemoveFavorite = async (e: React.MouseEvent<SVGElement>, postId: number) => {
