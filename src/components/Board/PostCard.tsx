@@ -179,12 +179,12 @@ export default function PostCard({
       <Info>
         <Header>
           <EmojiIcon />
-          <Title>{postItem.title}</Title>
+          <Title>{postItem?.title}</Title>
         </Header>
-        <Writer>{user.name}</Writer>
-        <Date>{postItem.date.split("T")[0]}</Date>
+        <Writer>{user?.name}</Writer>
+        <Date>{postItem?.date.split("T")[0]}</Date>
       </Info>
-      {postItem.files.length > 0 && (
+      {postItem?.files.length > 0 && (
         <FileWrapper>
           <FileIcon />
         </FileWrapper>
