@@ -28,7 +28,8 @@ const CustomLink = styled(Link)<{ $isCurrentPage: boolean }>`
   font-weight: bold;
   color: ${(props) => (props.$isCurrentPage ? "var(--color-white)" : "var(--color-black)")};
   background-color: ${(props) =>
-    props.$isCurrentPage ? "var(--color-brand-main)" : "var(--color-white)"};
+    props.$isCurrentPage ? "var(--color-brand-main) !important" : "var(--color-white)"};
+  background-color: var(--color-drakmode-white);
   path {
     stroke: ${(props) => (props.$isCurrentPage ? "var(--color-white)" : "var(--color-black)")};
   }
@@ -50,7 +51,8 @@ const SubList = styled.ul<{ $isMenuOpen: boolean; $state: string }>`
   position: relative;
   transition: all 0.5s;
   background-color: ${(props) =>
-    props.$isMenuOpen ? "var(--color-brand-orange)" : "var(--color-white)"};
+    props.$isMenuOpen ? "var(--color-brand-orange) !important" : "var(--color-white)"};
+  background-color: var(--color-drakmode-white);
   color: ${(props) => (props.$isMenuOpen ? "var(--color-white)" : "var(--color-black)")};
   ${(props) => {
     switch (props.$state) {

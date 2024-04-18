@@ -6,7 +6,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import PlanCard from "../Plan/Personal/PlanCard";
 import { Link } from "react-router-dom";
 import PostCard from "../Board/PostCard";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { EventFormType } from "../Plan/Official/OfficialCalendar";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   display: flex;
@@ -27,13 +29,14 @@ const FirstSection = styled.section`
   }
 `;
 
-const TotalCntAbbr = styled.div`
+const TotalCntAbbr = styled.div<{ $isDarkmode: boolean }>`
   width: 50%;
   min-width: 300px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   border-radius: 1rem;
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
   padding: 0.5rem;
   font-weight: bold;
   overflow: hidden;
@@ -75,12 +78,13 @@ const LeftAnnual = styled.div`
   }
 `;
 
-const OfficialPlanAbbr = styled.div`
+const OfficialPlanAbbr = styled.div<{ $isDarkmode: boolean }>`
   width: 50%;
   min-width: 300px;
   display: flex;
   align-items: center;
   border-radius: 1rem;
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
   background-color: var(--color-white);
   overflow: hidden;
 
@@ -112,6 +116,7 @@ const OfficialTitle = styled.div`
 
 const OfficialInfo = styled.div`
   width: 70%;
+  max-height: 150px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -155,11 +160,12 @@ const SecondSection = styled.section`
   }
 `;
 
-const ThirdSection = styled.section`
+const ThirdSection = styled.section<{ $isDarkmode: boolean }>`
   height: 164px;
   padding: 1rem;
   border-radius: 1rem;
-  background-color: var(--color-brand-yellow);
+  background-color: ${(props) =>
+    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-brand-yellow)"};
 `;
 
 const SectionTitle = styled.div`
@@ -185,8 +191,10 @@ const SectionTitle = styled.div`
   }
 `;
 
-const FourthSection = styled.section`
+const FourthSection = styled.section<{ $isDarkmode: boolean }>`
   padding: 1rem;
+  border-radius: 1rem;
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
 `;
 
 const Posts = styled.div`
@@ -202,6 +210,10 @@ const SwiperCustom = styled(Swiper)`
   cursor: grab;
 `;
 
+const MoreBtn = styled.button`
+  color: var(--color-black);
+`;
+
 interface DaysType {
   [key: string]: number;
 }
@@ -209,22 +221,14 @@ interface DaysType {
 export default function Inception() {
   const [posts, setPosts] = useState<any>([]);
   const [days, setDays] = useState<DaysType>({});
+  const [officialPlan, setOfficialPlan] = useState<EventFormType[]>([]);
+  const [personalPlan, setPersonalPlan] = useState<any>([]);
   const jwt = localStorage.getItem("jwt");
+  const { isDarkmode } = useContext(DarkModeContext);
 
-  /* 게시글 3개만 가져오기 */
+  /* 초기 데이터 세팅 */
   useEffect(() => {
-    fetch("https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setPosts(data));
-  }, []);
-
-  /* 출근일, 잔여연차 가져오기 */
-  useEffect(() => {
+    // 출근일, 잔여연차 가져오기
     fetch("https://dev.risetconstruction.net/commute/days", {
       method: "GET",
       headers: {
@@ -233,10 +237,54 @@ export default function Inception() {
     })
       .then((res) => res.json())
       .then((data) => setDays(data));
+
+    // 게시글 3개 가져오기
+    fetch("https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setPosts(data));
+
+    // 회사 일정 가져오기 (월별)
+    fetch(
+      `https://dev.risetconstruction.net/api/get?currentMonth=${new Date()
+        .toISOString()
+        .slice(0, 7)
+        .replace("-", "")}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setOfficialPlan(data));
+
+    // 근무 일정 가져오기 (일별)
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 9);
+
+    fetch(
+      `https://dev.risetconstruction.net/api/employees?employeeDate=${
+        currentDate.toISOString().split("T")[0]
+      }`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setPersonalPlan(data));
   }, []);
 
-  /* 댓글 등록 시 처리 함수 */
-  const handleComment = (comment: any, postId: number) => {
+  /* 댓글 등록 */
+  const handleCommentRegist = (comment: any, postId: number) => {
     setPosts((prevPosts: any) =>
       prevPosts.map((post: any) => {
         if (post.post.id === postId) {
@@ -254,10 +302,35 @@ export default function Inception() {
     );
   };
 
+  /* 댓글 삭제 */
+  const handleCommentDelete = (commentId: number) => {
+    setPosts((prevPosts: any) =>
+      prevPosts.map((post: any) => post.post.comment.filter((com: any) => com.id !== commentId))
+    );
+  };
+
+  /* 게시글 삭제 */
+  const handlePostDelete = (postId: number) => {
+    setPosts((prevPosts: any) => prevPosts.filter((post: any) => post.post.id !== postId));
+  };
+
+  /* 게시글 수정 */
+  const handlePostModify = (post: any) => {
+    setPosts((prevPosts: any) =>
+      prevPosts.map((info: any) => {
+        if (info.post.id === post.post.id) {
+          return post;
+        } else {
+          return info;
+        }
+      })
+    );
+  };
+
   return (
     <Layout>
       <FirstSection>
-        <TotalCntAbbr>
+        <TotalCntAbbr $isDarkmode={isDarkmode}>
           <WorkCnt>
             <p>출근일</p>
             <p>{days.commuteDays}</p>
@@ -271,18 +344,16 @@ export default function Inception() {
             </p>
           </LeftAnnual>
         </TotalCntAbbr>
-        <OfficialPlanAbbr>
+        <OfficialPlanAbbr $isDarkmode={isDarkmode}>
           <OfficialTitle>
             <span>Today</span>
             <span>회사일정</span>
           </OfficialTitle>
           <OfficialInfo>
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
+            {officialPlan.length > 0 &&
+              officialPlan.map((plan) => (
+                <OfficialCard key={plan.scheduleNo} title={plan.title} color={plan.color} />
+              ))}
           </OfficialInfo>
         </OfficialPlanAbbr>
       </FirstSection>
@@ -291,14 +362,14 @@ export default function Inception() {
         <CommuteRecord />
       </SecondSection>
 
-      <ThirdSection>
+      <ThirdSection $isDarkmode={isDarkmode}>
         <SectionTitle>
           <h2>근무일정</h2>
           <Link to="/plan/official">
-            <button type="button">
+            <MoreBtn type="button">
               <span>더보기</span>
               <IoIosArrowForward />
-            </button>
+            </MoreBtn>
           </Link>
         </SectionTitle>
         <SwiperCustom
@@ -307,7 +378,7 @@ export default function Inception() {
           pagination={{ clickable: true }}
           breakpoints={{ 600: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
         >
-          {Array.from({ length: 10 }, (_, idx) => (
+          {Array.from({ length: 5 }, (_, idx) => (
             <SwiperSlide key={idx}>
               <PlanCard
                 clickToAdd={false}
@@ -319,14 +390,14 @@ export default function Inception() {
         </SwiperCustom>
       </ThirdSection>
 
-      <FourthSection>
+      <FourthSection $isDarkmode={isDarkmode}>
         <SectionTitle>
           <h2>게시판</h2>
           <Link to="/board/postlist">
-            <button type="button">
+            <MoreBtn type="button">
               <span>더보기</span>
               <IoIosArrowForward />
-            </button>
+            </MoreBtn>
           </Link>
         </SectionTitle>
         <Posts>
@@ -337,8 +408,10 @@ export default function Inception() {
                 post={post}
                 isManageClick={false}
                 isAllPosts={false}
-                handleIconClick={() => {}}
-                handleComment={handleComment}
+                handleCommentRegist={handleCommentRegist}
+                handleCommentDelete={handleCommentDelete}
+                handlePostModify={handlePostModify}
+                handleAllPostDelete={handlePostDelete}
               />
             ))}
         </Posts>

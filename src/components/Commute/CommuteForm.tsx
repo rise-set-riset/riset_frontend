@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { IoClose } from "react-icons/io5";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import RadioButton from "../../common/RadioButton";
 import { LuCalendarDays } from "react-icons/lu";
 import { FiClock } from "react-icons/fi";
@@ -8,12 +8,15 @@ import Button from "../../common/Button";
 import { EventType } from "./CommuteRecord";
 import TimePicker from "../../common/TimePicker";
 import { FiArrowRight } from "react-icons/fi";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
-const Layout = styled.div`
+const Layout = styled.div<{ $isDarkmode: boolean }>`
   width: 373px;
   padding: 18px 16px;
   background-color: var(--color-white);
+  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   border-radius: 8px;
+  color: var(--color-black);
 `;
 
 const Header = styled.div`
@@ -131,10 +134,13 @@ export default function CommuteForm({
   handleStartTime,
   handleEndTime,
 }: CommuteModalProp) {
-  // form submit
-  const handleFormSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
+  const [isCurrentDate, setIsCurrentDate] = useState<boolean>(false);
+  const jwt = localStorage.getItem("jwt");
+  const { isDarkmode } = useContext(DarkModeContext);
+
+  /* 일정 저장 */
+  const handleFormSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const jwt = localStorage.getItem("jwt");
 
     const data = {
       commuteDate: form.start || form.commuteDate,
@@ -144,14 +150,16 @@ export default function CommuteForm({
       commuteStatus: "END",
     };
 
-    fetch("https://dev.risetconstruction.net/commute/add-commute", {
-      method: "POST",
+    await fetch("https://dev.risetconstruction.net/commute/add-commute", {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify(data),
     });
+
+    setIsFormOpen(false);
   };
 
   /* 날짜 형식 변환 */
@@ -161,8 +169,15 @@ export default function CommuteForm({
     return `${rawDate.getMonth() + 1} / ${rawDate.getDate()} (${week})`;
   };
 
+  /* 선택한 날짜가 오늘 날짜인지 판별 */
+  useEffect(() => {
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 9);
+    setIsCurrentDate(form.start === currentDate.toISOString().split("T")[0]);
+  }, []);
+
   return (
-    <Layout>
+    <Layout $isDarkmode={isDarkmode}>
       <Header>
         <Title>출퇴근 기록 추가</Title>
         <CloseIcon onClick={() => setIsFormOpen(false)} />
@@ -197,12 +212,18 @@ export default function CommuteForm({
           <TimeZone>
             <Times>
               <TimeZoneText>출근</TimeZoneText>
-              <TimePicker selectedTime={form?.startTime} setSelectedTime={handleStartTime} />
+              <TimePicker
+                selectedTime={form?.startTime ? form?.startTime : "00:00"}
+                setSelectedTime={handleStartTime}
+              />
             </Times>
             <FiArrowRight />
             <Times>
               <TimeZoneText>퇴근</TimeZoneText>
-              <TimePicker selectedTime={form?.endTime} setSelectedTime={handleEndTime} />
+              <TimePicker
+                selectedTime={form?.endTime ? form?.endTime : "00:00"}
+                setSelectedTime={handleEndTime}
+              />
             </Times>
           </TimeZone>
         </Time>
@@ -213,7 +234,7 @@ export default function CommuteForm({
             title="취소"
             handleBtnClick={() => setIsFormOpen(false)}
           />
-          <Button type="submit" active={true} title="저장" />
+          <Button type="submit" active={true} title="저장" disabled={!isCurrentDate} />
         </Buttons>
       </Form>
     </Layout>

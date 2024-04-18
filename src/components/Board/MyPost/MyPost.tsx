@@ -1,9 +1,8 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../../../common/SearchBar";
 import { GoPlusCircle } from "react-icons/go";
 import usePosts from "../../../hooks/usePosts";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Modal from "../../../common/Modal";
 import PostMake from "../PostMake";
 import PostCard from "../PostCard";
@@ -63,13 +62,18 @@ const Loading = styled.div`
 
 export default function MyPost() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord, handleComment } =
-    usePosts("https://dev.risetconstruction.net/board/mine");
-
-  /* 내 게시글 등록 시 화면 업데이트 */
-  const handlePostAdd = (post: any) => {
-    setPosts((prev) => [post, ...prev]);
-  };
+  const {
+    posts,
+    hasMore,
+    lastItemRef,
+    searchWord,
+    setSearchWord,
+    handleCommentRegist,
+    handleCommentDelete,
+    handlePostRegist,
+    handlePostDelete,
+    handlePostModify,
+  } = usePosts("https://dev.risetconstruction.net/board/mine");
 
   return (
     <Layout>
@@ -90,25 +94,28 @@ export default function MyPost() {
           </PostHeader>
           <Posts>
             {posts &&
-              posts.map((post, idx) => (
+              posts.map((post) => (
                 <PostCard
-                  key={idx}
+                  key={post.post.id}
                   post={post}
                   isManageClick={false}
                   isAllPosts={false}
-                  handleIconClick={() => {}}
-                  handleComment={handleComment}
+                  handleCommentRegist={handleCommentRegist}
+                  handleCommentDelete={handleCommentDelete}
+                  handlePostModify={handlePostModify}
+                  handleAllPostDelete={handlePostDelete}
+                  handlePostRegist={handlePostRegist}
                 />
               ))}
-            {hasMore && (
-              <Loading ref={lastItemRef}>
-                <AiOutlineLoading3Quarters />
-              </Loading>
-            )}
+            {hasMore && <Loading ref={lastItemRef} />}
           </Posts>
         </MyPosts>
         <Modal isModalOpen={isModalOpen} handleIsModalOpen={setIsModalOpen}>
-          <PostMake setIsFormOpen={setIsModalOpen} handlePostAdd={handlePostAdd} />
+          <PostMake
+            setIsFormOpen={setIsModalOpen}
+            handlePostRegist={handlePostRegist}
+            handlePostModify={handlePostModify}
+          />
         </Modal>
       </Contents>
     </Layout>

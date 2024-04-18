@@ -16,6 +16,8 @@
   --color-svg-fill: #ffffff;
   --color-svg-stroke: #353535;
   --color-gray-1: #f5f5f5;
+  --color-gray-2: #eeeeee;
+  --color-drakmode-white: #ffffff;
 }
 
 html.darkmode {
@@ -24,9 +26,7 @@ html.darkmode {
   --color-svg-fill: #ffdb7a;
   --color-svg-stroke: #ffdb7a;
   --color-gray-1: #353535;
-  /*
-    추후에 다크모드 관련 스타일링 필요 (미완)
-  */
+  --color-drakmode-white: #000000;
 }
 
 html {
@@ -46,7 +46,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--color-white);
+  background-color: var(--color-drakmode-white);
 }
 
 code {

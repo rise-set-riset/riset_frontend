@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { IoClose } from "react-icons/io5";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useContext, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import { FiPaperclip } from "react-icons/fi";
 import "quill/dist/quill.snow.css";
@@ -8,11 +8,13 @@ import FileCard from "./FileCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
-const Layout = styled.form`
+const Layout = styled.form<{ $isDarkmode: boolean }>`
   width: 90%;
   max-width: 900px;
   border-radius: 1rem;
+  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   padding: 1.5rem;
   overflow: hidden;
   background-color: var(--color-white);
@@ -22,6 +24,7 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: var(--color-black);
 `;
 
 const HeaderTitle = styled.h2`
@@ -42,6 +45,8 @@ const TitleInput = styled.input`
   outline: none;
   border: none;
   border-bottom: 1px solid var(--color-brand-lightgray);
+  background-color: var(--color-white);
+  color: var(--color-black);
 `;
 
 const Wysiwyg = styled(ReactQuill)`
@@ -49,6 +54,14 @@ const Wysiwyg = styled(ReactQuill)`
 
   .ql-container {
     height: 500px;
+  }
+
+  .ql-snow .ql-stroke {
+    stroke: var(--color-black) !important;
+  }
+
+  .ql-snow .ql-picker {
+    color: var(--color-black);
   }
 `;
 
@@ -76,10 +89,10 @@ const FileAdd = styled.div`
   background-color: var(--color-brand-main);
 `;
 
-const FileIcon = styled(FiPaperclip)`
+const FileIcon = styled(FiPaperclip)<{ $isDarkmode: boolean }>`
   font-size: 1.5rem;
   path {
-    stroke: var(--color-white);
+    stroke: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
   }
 `;
 
@@ -87,13 +100,14 @@ const FileInput = styled.input`
   display: none;
 `;
 
-const ButtonSubmit = styled.button`
+const ButtonSubmit = styled.button<{ $isDarkmode: boolean }>`
   height: 50px;
   border: none;
   border-radius: 0.5rem;
   padding: 0 1rem;
   background-color: var(--color-brand-main);
-  color: var(--color-white);
+  font-weight: bold;
+  color: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
   transition: transform 0.3s;
   cursor: pointer;
 
@@ -104,14 +118,23 @@ const ButtonSubmit = styled.button`
 
 interface PostMakeType {
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handlePostAdd: (post: any) => void;
+  handlePostModify: (post: any) => void;
+  handlePostRegist: (post: any) => void;
+  post?: any;
 }
 
-export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType) {
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+export default function PostMake({
+  setIsFormOpen,
+  handlePostModify,
+  handlePostRegist,
+  post,
+}: PostMakeType) {
+  const [title, setTitle] = useState<string>(post ? post.title : "");
+  const [content, setContent] = useState<string>(post ? post.content : "");
   const [files, setFiles] = useState<File[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const jwt = localStorage.getItem("jwt");
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* react-quill 설정 */
   const modules = {
@@ -144,7 +167,6 @@ export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType)
       content: content,
     };
 
-    const jwt = localStorage.getItem("jwt");
     const formData = new FormData();
     formData.append("dto", JSON.stringify(dto));
 
@@ -152,23 +174,37 @@ export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType)
       formData.append("file", files[i]);
     }
 
-    fetch("https://dev.risetconstruction.net/board", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => handlePostAdd(data));
+    if (post) {
+      fetch(`https://dev.risetconstruction.net/board/${post.id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          handlePostModify(data);
+        });
+    } else {
+      fetch("https://dev.risetconstruction.net/board", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => handlePostRegist(data));
+    }
 
     setIsFormOpen(false);
   };
 
   return (
-    <Layout onSubmit={handleSubmit}>
+    <Layout onSubmit={handleSubmit} $isDarkmode={isDarkmode}>
       <Header>
-        <HeaderTitle>게시물 작성</HeaderTitle>
+        <HeaderTitle>{post ? "게시물 수정" : "게시물 작성"}</HeaderTitle>
         <CloseIcon onClick={() => setIsFormOpen(false)} />
       </Header>
 
@@ -198,10 +234,12 @@ export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType)
 
       <FileAndSubmit>
         <FileAdd>
-          <FileIcon onClick={handleFileClick} />
+          <FileIcon onClick={handleFileClick} $isDarkmode={isDarkmode} />
           <FileInput type="file" ref={fileRef} onChange={handleFileUpload} multiple />
         </FileAdd>
-        <ButtonSubmit type="submit">등록하기</ButtonSubmit>
+        <ButtonSubmit type="submit" $isDarkmode={isDarkmode}>
+          등록하기
+        </ButtonSubmit>
       </FileAndSubmit>
     </Layout>
   );

@@ -54,7 +54,7 @@ const SendButton = styled.button`
   cursor: pointer;
 `;
 
-export default function Setting() {
+export default function SettingInvite() {
   const jwt = localStorage.getItem("jwt");
   const [employeeName, setEmployeeName] = useState<string>("");
   const [employeeEmail, setEmployeeEmail] = useState<string>("");

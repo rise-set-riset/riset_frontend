@@ -237,10 +237,14 @@ export default function OfficialCalendar() {
   const formRef = useRef<any>(null);
   const todayRef = useRef<any>(null);
   const calendarRef = useRef<any>(null);
-  const [year, setYear] = useState<string>("");
-  const [month, setMonth] = useState<string>("");
+  const [year, setYear] = useState<string>(
+    new Date().toISOString().slice(0, 4)
+  );
+  const [month, setMonth] = useState<string>(
+    new Date().toISOString().slice(5, 7)
+  );
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [eventFormList, setEventFormList] = useState<EventFormType[] | []>([]);
+  const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
   const [eventForm, setEventForm] = useState<EventFormType>({
     title: "",
     color: "#FFBFA7",
@@ -256,6 +260,7 @@ export default function OfficialCalendar() {
     }
   );
   const [isEditorForm, setIsEditorForm] = useState<boolean>(false);
+  const [selectedScheduleNo, setSelectedScheduleNo] = useState<number>();
 
   /* 날짜 선택시 */
   const handleDateClick = (info: any) => {
@@ -312,6 +317,7 @@ export default function OfficialCalendar() {
   /* 이벤트 저장 */
   const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+
     const finalForm = {
       ...eventForm,
       // 종료 시간이 없다면 24:00 추가
@@ -321,24 +327,50 @@ export default function OfficialCalendar() {
           : `${eventForm.end}T24:00`,
     };
 
-    /* 최종 저장 Form */
-    setEventFormList((prevState) => [...prevState, finalForm]);
-
-    /* 서버에 데이터 전송 */
-    fetch("https://dev.risetconstruction.net/api/companySchedule", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-      body: JSON.stringify(finalForm),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setEventFormList((prevList) => {
-          return [...prevList, data];
+    /* 추가시 */
+    if (!isEditorForm) {
+      /* 서버에 데이터 전송 */
+      fetch("https://dev.risetconstruction.net/api/companySchedule", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(finalForm),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setEventFormList((prevList: any) => {
+              return [...prevList, data];
+            });
+          }
         });
-      });
+    } else {
+      console.log(eventFormList);
+      /* 수정시 */
+      fetch("https://dev.risetconstruction.net/api/update", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({ ...finalForm, scheduleNo: selectedScheduleNo }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setEventFormList((prevList: any) => {
+            const filterdata = prevList.filter(
+              (plan: any) => Number(plan.scheduleNo) !== selectedScheduleNo
+            );
+            return [
+              ...filterdata,
+              { ...finalForm, scheduleNo: selectedScheduleNo },
+            ];
+          });
+        });
+    }
 
     /* 초기화 */
     setEventForm({
@@ -367,9 +399,10 @@ export default function OfficialCalendar() {
     const selectedEvent = eventFormList.filter(
       (form) => form.scheduleNo === findId
     )[0];
+    setSelectedScheduleNo(findId);
     setEventForm(selectedEvent);
-    setIsFormOpen(true);
     setIsEditorForm(true);
+    setIsFormOpen(true);
   };
 
   /* Event 삭제 */
@@ -386,9 +419,7 @@ export default function OfficialCalendar() {
         Authorization: `Bearer ${jwt}`,
       },
     }).then((res) => {
-      if (res.ok) {
-        console.log("ok");
-      } else {
+      if (!res.ok) {
         throw new Error("이벤트 삭제 실패");
       }
     });
@@ -431,21 +462,24 @@ export default function OfficialCalendar() {
     }
   });
 
-  /* 페이지 진입시 일정 데이터 받아오기 */
+  /* 페이지 처음 진입시 일정 데이터 받아오기 */
   useEffect(() => {
-    const current = `${year}${month.padStart(2, "0")}`;
+    const current =
+      `${year}${month}` ===
+      new Date().toISOString().slice(0, 7).replace("-", "")
+        ? `${year}${month}`
+        : `${year}${month.padStart(2, "0")}`;
     fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
         setEventFormList(data);
       });
-  }, [month, year]);
+  }, []);
+  console.log(eventFormList);
 
   return (
     <Layout>

@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import { ReactComponent as Profile } from "../assets/header/profile.svg";
 
@@ -60,7 +59,7 @@ export default function MemberCard({ memberInfo }: MemberCardProps) {
   return (
     <Layout>
       <ImageBox>
-        {memberInfo.image ? (
+        {JSON.parse(memberInfo.image) ? (
           <img src={memberInfo.image} alt={memberInfo.alt} />
         ) : (
           <Profile />

@@ -8,21 +8,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
 
-const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number }>`
+const Layout = styled.div<{
+  $isSideMenuOpen: boolean;
+  $sideMenuPosition: number;
+}>`
   position: fixed;
   left: ${(props) => props.$sideMenuPosition}px;
   top: 60px;
   z-index: 50;
   width: ${(props) => (props.$isSideMenuOpen ? "200px" : "60px")};
   height: calc(100vh - 60px);
-  background-color: var(--color-white);
+  background-color: var(--color-drakmode-white);
   border-right: 1px solid var(--color-brand-lightgray);
   transition: background-color 0.3s, width 0.3s;
   overflow: auto;
   overflow-x: hidden;
-  @media screen and (max-width: 600px) {
+
+  @media screen and (max-width: 599px) {
     width: ${(props) => (props.$isSideMenuOpen ? "200px" : "0")};
     height: calc(100vh - 120px);
+    padding-bottom: 200px;
   }
 `;
 
@@ -141,7 +146,6 @@ export default function SideMenu() {
           .then((res) => res.json())
           .then((data) => setSideMenus(data));
       } catch (err: any) {
-        console.log(err);
         fetch("/data/side-menu.json")
           .then((res) => res.json())
           .then((data) => setSideMenus(data));
@@ -158,7 +162,11 @@ export default function SideMenu() {
           {sideMenus && (
             <>
               <Profile>
-                {<UserImg src={sideMenus.user.icon} alt="profile" /> || sideMenuIcon["profile"]()}
+                {sideMenus.user.icon ? (
+                  <UserImg src={sideMenus.user.icon} alt="profile" />
+                ) : (
+                  sideMenuIcon["profile"]()
+                )}
                 <UserInfo>
                   <p>{sideMenus.user.name}</p>
                   <p>{sideMenus.user.rank}</p>

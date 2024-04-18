@@ -39,6 +39,7 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
     background-color: var(--color-gray-1);
     transition: width 0.3s;
     padding-bottom: 60px;
+    color: var(--color-black);
     width: ${(props) => {
       switch (props.$sideOpenState) {
         case "mobile":
@@ -55,7 +56,7 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
   .title {
     height: 4rem;
     padding: 18px 24px;
-    background-color: var(--color-white);
+    background-color: var(--color-drakmode-white);
     color: var(--color-black);
 
     @media screen and (max-width: 430px) {
@@ -90,9 +91,7 @@ export default function Root() {
       <Outlet />
       {isAuth && <SideMenu />}
       {isMobile && isAuth && <BottomMenu handleChatOpen={handleChatOpen} />}
-      {isAuth && (
-        <ChatScreen isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
-      )}
+      {isAuth && <ChatScreen isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />}
     </>
   );
 }

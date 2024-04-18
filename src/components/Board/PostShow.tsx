@@ -1,22 +1,26 @@
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MemberCard from "../../common/MemberCard";
 import FileCard from "./FileCard";
 import { BsChatDots } from "react-icons/bs";
 import { IoMdArrowRoundUp } from "react-icons/io";
 import { FcDocument } from "react-icons/fc";
+import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
-const Layout = styled.div`
+const Layout = styled.div<{ $isDarkmode: boolean }>`
   width: 90%;
   max-width: 900px;
+  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   border-radius: 1rem;
   overflow: hidden;
   background-color: var(--color-white);
+  color: var(--color-black);
 `;
 
 const PostWrapper = styled.div`
@@ -58,6 +62,26 @@ const CloseIcon = styled(IoClose)`
 
 const ModifyIcon = styled(BsThreeDotsVertical)`
   font-size: 1.5rem;
+`;
+
+const ModDel = styled.div`
+  position: absolute;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-brand-lightgray);
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  p {
+    padding: 0.5rem 1rem;
+  }
+
+  p:first-child {
+    border-bottom: 1px solid var(--color-brand-lightgray);
+  }
+
+  p:last-child {
+    color: var(--color-error);
+  }
 `;
 
 const Date = styled.p`
@@ -123,6 +147,8 @@ const Comment = styled.div`
 const CommentInput = styled.input`
   flex: 1;
   font-size: 1rem;
+  background-color: var(--color-white);
+  color: var(--color-black);
   outline: none;
   border: none;
 `;
@@ -139,8 +165,8 @@ const SendComment = styled.button`
   background-color: var(--color-brand-main);
 `;
 
-const SendIcon = styled(IoMdArrowRoundUp)`
-  color: var(--color-white);
+const SendIcon = styled(IoMdArrowRoundUp)<{ $isDarkmode: boolean }>`
+  color: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
   font-size: 1.2rem;
 `;
 
@@ -193,20 +219,53 @@ const CommentDate = styled.p`
 interface Post {
   post: any;
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleComment: (comment: any, postId: number) => void;
+  setIsModifyOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleCommentRegist: (comment: any, postId: number) => void;
+  handleCommentDelete: (commentId: number) => void;
+  handleAllPostDelete: (postId: number) => void;
 }
 
-export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
+export default function PostShow({
+  post,
+  setIsFormOpen,
+  handleCommentRegist,
+  handleCommentDelete,
+  handleAllPostDelete,
+  setIsModifyOpen,
+}: Post) {
   const [comment, setComment] = useState<string>("");
   const [isPrevCommentOpen, setIsPrevCommentOpen] = useState(false);
+  const [myInfo, setMyInfo] = useState<any>({});
+  const [isModify, setIsModify] = useState<boolean>(false);
+  const [isModifyComment, setIsModifyComment] = useState<boolean[]>([]);
   const { user, post: postItem } = post;
+  const { isDarkmode } = useContext(DarkModeContext);
+  const userId = localStorage.getItem("userId");
+  const jwt = localStorage.getItem("jwt");
 
+  /* 게시글 수정 */
+  const handleModifyClick = () => {
+    setIsModifyOpen(true);
+    setIsFormOpen(false);
+  };
+
+  /* 게시글 삭제 */
+  const handleDelete = async (postId: number) => {
+    await fetch(`https://dev.risetconstruction.net/board/deleted/${postId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
+    handleAllPostDelete(postId);
+  };
+
+  /* 댓글 등록 */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (comment.trim()) {
-      const jwt = localStorage.getItem("jwt");
-
       fetch(`https://dev.risetconstruction.net/reply/${postItem.id}`, {
         method: "POST",
         headers: {
@@ -219,14 +278,49 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
       })
         .then((res) => res.json())
         .then((data) => {
-          handleComment(data, postItem.id);
+          handleCommentRegist(data, postItem.id);
           setComment("");
         });
     }
   };
 
+  /* 댓글 삭제 */
+  const handleCommentDel = (commentId: number) => {
+    fetch(`https://dev.risetconstruction.net/reply/deleted/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
+    handleCommentDelete(commentId);
+  };
+
+  /* 댓글 수정,삭제 열기/닫기 */
+  const handleIsModifyComment = (idx: number) => {
+    setIsModifyComment((prev) => prev.map((value, index) => (index === idx ? !value : value)));
+  };
+
+  /* 내 정보 가져오기 */
+  useEffect(() => {
+    fetch("https://dev.risetconstruction.net/preset", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setMyInfo(data));
+  }, []);
+
+  /* 댓글 관련 */
+  useEffect(() => {
+    // 댓글 수 만큼 배열 생성
+    setIsModifyComment(Array.from({ length: postItem.comment.length }, () => false));
+  }, [postItem.comment]);
+
   return (
-    <Layout>
+    <Layout $isDarkmode={isDarkmode}>
       <PostWrapper>
         <Header>
           <Title>
@@ -234,15 +328,23 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
             {postItem.title}
           </Title>
           <div>
-            <ModifyIcon />
+            {Number(userId) === user.employeeNo && (
+              <ModifyIcon onClick={() => setIsModify(!isModify)} />
+            )}
             <CloseIcon onClick={() => setIsFormOpen(false)} />
+            {isModify && (
+              <ModDel>
+                <p onClick={handleModifyClick}>수정</p>
+                <p onClick={() => handleDelete(postItem.id)}>삭제</p>
+              </ModDel>
+            )}
           </div>
         </Header>
         <Date>{postItem.date.split("T")[0]}</Date>
         <Member>
           <MemberCard
             memberInfo={{
-              image: "/assets/default-emoji.png",
+              image: `${user.myImage}`,
               alt: "이미지",
               name: user.name,
               rank: user.jobGrade,
@@ -279,10 +381,14 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
         )}
         <CommentScroll $isPrevCommentOpen={isPrevCommentOpen}>
           {postItem.comment.length > 0 &&
-            postItem.comment.map((com: any) => (
+            postItem.comment.map((com: any, idx: number) => (
               <UserComment key={com.id}>
                 <CommentDetail>
-                  <CommentImg src="" alt="" />
+                  {JSON.parse(com.employee.myImage) ? (
+                    <CommentImg src={com.employee.myImage} alt="" />
+                  ) : (
+                    <Profile />
+                  )}
                   <div>
                     <CommentUserInfo>
                       <CommentEmployeeID>{com.employee.name}</CommentEmployeeID>
@@ -291,13 +397,23 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
                     <p>{com.content}</p>
                   </div>
                 </CommentDetail>
-                <ModifyIcon />
+                {Number(userId) === com.employee.employeeNo && (
+                  <div>
+                    <ModifyIcon onClick={() => handleIsModifyComment(idx)} />
+                    {isModifyComment[idx] && (
+                      <ModDel>
+                        <p>수정</p>
+                        <p onClick={() => handleCommentDel(com.id)}>삭제</p>
+                      </ModDel>
+                    )}
+                  </div>
+                )}
               </UserComment>
             ))}
         </CommentScroll>
       </CommentWrapper>
       <MyComment onSubmit={handleSubmit}>
-        <img src="/assets/default-emoji.png" alt="" />
+        {myInfo.myImage ? <img src={myInfo.myImage} alt="myImage" /> : <Profile />}
         <Comment>
           <CommentInput
             placeholder="내용을 입력해주세요"
@@ -305,7 +421,7 @@ export default function PostShow({ post, setIsFormOpen, handleComment }: Post) {
             onChange={(e) => setComment(e.target.value)}
           />
           <SendComment type="submit">
-            <SendIcon />
+            <SendIcon $isDarkmode={isDarkmode} />
           </SendComment>
         </Comment>
       </MyComment>

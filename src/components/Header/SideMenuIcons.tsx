@@ -13,7 +13,7 @@ export const sideMenuIcon: SideMenuIcon = {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g clip-path="url(#clip0_176_426)">
+        <g clipPath="url(#clip0_176_426)">
           <rect width="40" height="40" rx="20" fill="#FFDB7B" />
           <path
             d="M20 24C23.866 24 27 20.866 27 17C27 13.134 23.866 10 20 10C16.134 10 13 13.134 13 17C13 20.866 16.134 24 20 24Z"

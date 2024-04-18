@@ -77,14 +77,14 @@ const DropMenu = styled.ul`
 
 interface PlanSearchProps {
   searchWord: string;
-  // handleSearchWord: (searchWord: string) => void;
+  handleSearchWord: (searchWord: string) => void;
   filterCategory: string;
   setFilterCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function PlanSearch({
   searchWord,
-  // handleSearchWord,
+  handleSearchWord,
   filterCategory,
   setFilterCategory,
 }: PlanSearchProps) {
@@ -100,6 +100,8 @@ export default function PlanSearch({
     setIsFilterOpen(false);
     setFilterCategory(category);
   };
+
+  const handleTest = () => {};
 
   return (
     <Layout>
@@ -127,7 +129,7 @@ export default function PlanSearch({
         name={"search-plan"}
         value={searchWord}
         placeholder="이름 검색"
-        // onChange={handleSearchWord}
+        onChange={handleTest}
         autoComplete={"on"}
       />
     </Layout>

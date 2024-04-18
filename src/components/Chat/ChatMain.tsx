@@ -263,8 +263,8 @@ export default function ChatMain({
       </SearchBox>
 
       <MemberCardList>
-        {searchResult &&
-          searchResult.map((member) => (
+        {searchResult.length !== 0 &&
+          searchResult?.map((member) => (
             <MemberCardBox
               key={member.employeeId}
               onClick={() => handleSelectToCreate(member.employeeId)}
@@ -279,12 +279,9 @@ export default function ChatMain({
               )}
               <MemberCard
                 memberInfo={{
-                  image: "",
+                  image: member.profilePath ? member.profilePath : "false",
                   alt: `${member.name}-이미지`,
-                  name:
-                    String(member.name) === "null"
-                      ? "홍길동"
-                      : member.name.toString(),
+                  name: member.name ? member.name : "",
                   rank: "직급",
                   department: "부서",
                   position: "직무",
