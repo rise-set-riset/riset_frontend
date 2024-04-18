@@ -116,6 +116,7 @@ const OfficialTitle = styled.div`
 
 const OfficialInfo = styled.div`
   width: 70%;
+  max-height: 150px;
   display: flex;
   align-items: center;
   justify-content: space-between;
