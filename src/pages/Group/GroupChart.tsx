@@ -11,7 +11,7 @@ export default function GroupChart() {
   return (
     <Layout>
       <main className="main">
-        <h2 className="title">출퇴근</h2>
+        <h2 className="title">조직도</h2>
         <CompanyChart />
       </main>
     </Layout>

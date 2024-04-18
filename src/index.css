@@ -16,6 +16,7 @@
   --color-svg-fill: #ffffff;
   --color-svg-stroke: #353535;
   --color-gray-1: #f5f5f5;
+  --color-gray-2: #eeeeee;
 }
 
 html.darkmode {
@@ -50,7 +51,8 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }
 
 * {

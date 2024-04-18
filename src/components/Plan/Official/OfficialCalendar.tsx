@@ -237,10 +237,14 @@ export default function OfficialCalendar() {
   const formRef = useRef<any>(null);
   const todayRef = useRef<any>(null);
   const calendarRef = useRef<any>(null);
-  const [year, setYear] = useState<string>("");
-  const [month, setMonth] = useState<string>("");
+  const [year, setYear] = useState<string>(
+    new Date().toISOString().slice(0, 4)
+  );
+  const [month, setMonth] = useState<string>(
+    new Date().toISOString().slice(5, 7)
+  );
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [eventFormList, setEventFormList] = useState<EventFormType[] | []>([]);
+  const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
   const [eventForm, setEventForm] = useState<EventFormType>({
     title: "",
     color: "#FFBFA7",
@@ -318,9 +322,6 @@ export default function OfficialCalendar() {
           ? eventForm.end
           : `${eventForm.end}T24:00`,
     };
-
-    /* 최종 저장 Form */
-    setEventFormList((prevState) => [...prevState, finalForm]);
 
     /* 서버에 데이터 전송 */
     fetch("https://dev.risetconstruction.net/api/companySchedule", {
@@ -425,12 +426,15 @@ export default function OfficialCalendar() {
     }
   });
 
-  /* 페이지 진입시 일정 데이터 받아오기 */
+  /* 페이지 처음 진입시 일정 데이터 받아오기 */
   useEffect(() => {
-    const current = `${year}${month.padStart(2, "0")}`;
+    const current =
+      `${year}${month}` ===
+      new Date().toISOString().slice(0, 7).replace("-", "")
+        ? `${year}${month}`
+        : `${year}${month.padStart(2, "0")}`;
     fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
     })
@@ -438,7 +442,7 @@ export default function OfficialCalendar() {
       .then((data) => {
         setEventFormList(data);
       });
-  }, [month, year]);
+  }, []);
 
   return (
     <Layout>
