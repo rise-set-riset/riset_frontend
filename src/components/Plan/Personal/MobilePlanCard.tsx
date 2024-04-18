@@ -89,10 +89,10 @@ export default function MobilePlanCard({
         <MemberCard
           memberInfo={{
             name: memberPlanData.name,
-            department: memberPlanData.department || "",
-            position: memberPlanData.position || "",
-            image: memberPlanData.image,
-            rank: memberPlanData.rank || "",
+            department: memberPlanData.department || "false",
+            position: memberPlanData.position || "false",
+            image: memberPlanData.image || "false",
+            rank: memberPlanData.rank || "false",
           }}
         />
         {/* <ShowLength>{memberPlanData.length}개</ShowLength> */}

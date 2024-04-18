@@ -253,11 +253,14 @@ export default function OfficialCalendar() {
     writer: "",
     content: "",
   });
-  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>({
-    x: 0,
-    y: 0,
-  });
+  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>(
+    {
+      x: 0,
+      y: 0,
+    }
+  );
   const [isEditorForm, setIsEditorForm] = useState<boolean>(false);
+  const [selectedScheduleNo, setSelectedScheduleNo] = useState<number>();
 
   /* 날짜 선택시 */
   const handleDateClick = (info: any) => {
@@ -314,6 +317,7 @@ export default function OfficialCalendar() {
   /* 이벤트 저장 */
   const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+
     const finalForm = {
       ...eventForm,
       // 종료 시간이 없다면 24:00 추가
@@ -323,21 +327,50 @@ export default function OfficialCalendar() {
           : `${eventForm.end}T24:00`,
     };
 
-    /* 서버에 데이터 전송 */
-    fetch("https://dev.risetconstruction.net/api/companySchedule", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-      body: JSON.stringify(finalForm),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setEventFormList((prevList) => {
-          return [...prevList, data];
+    /* 추가시 */
+    if (!isEditorForm) {
+      /* 서버에 데이터 전송 */
+      fetch("https://dev.risetconstruction.net/api/companySchedule", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(finalForm),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setEventFormList((prevList: any) => {
+              return [...prevList, data];
+            });
+          }
         });
-      });
+    } else {
+      console.log(eventFormList);
+      /* 수정시 */
+      fetch("https://dev.risetconstruction.net/api/update", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({ ...finalForm, scheduleNo: selectedScheduleNo }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setEventFormList((prevList: any) => {
+            const filterdata = prevList.filter(
+              (plan: any) => Number(plan.scheduleNo) !== selectedScheduleNo
+            );
+            return [
+              ...filterdata,
+              { ...finalForm, scheduleNo: selectedScheduleNo },
+            ];
+          });
+        });
+    }
 
     /* 초기화 */
     setEventForm({
@@ -363,10 +396,13 @@ export default function OfficialCalendar() {
 
     /* id에 해당하는 이벤트 찾기 */
     const findId = info.event._def.extendedProps.scheduleNo;
-    const selectedEvent = eventFormList.filter((form) => form.scheduleNo === findId)[0];
+    const selectedEvent = eventFormList.filter(
+      (form) => form.scheduleNo === findId
+    )[0];
+    setSelectedScheduleNo(findId);
     setEventForm(selectedEvent);
-    setIsFormOpen(true);
     setIsEditorForm(true);
+    setIsFormOpen(true);
   };
 
   /* Event 삭제 */
@@ -443,6 +479,7 @@ export default function OfficialCalendar() {
         setEventFormList(data);
       });
   }, []);
+  console.log(eventFormList);
 
   return (
     <Layout>
