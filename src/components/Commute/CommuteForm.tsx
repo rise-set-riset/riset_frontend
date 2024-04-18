@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { IoClose } from "react-icons/io5";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import RadioButton from "../../common/RadioButton";
 import { LuCalendarDays } from "react-icons/lu";
 import { FiClock } from "react-icons/fi";
@@ -8,12 +8,15 @@ import Button from "../../common/Button";
 import { EventType } from "./CommuteRecord";
 import TimePicker from "../../common/TimePicker";
 import { FiArrowRight } from "react-icons/fi";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
-const Layout = styled.div`
+const Layout = styled.div<{ $isDarkmode: boolean }>`
   width: 373px;
   padding: 18px 16px;
   background-color: var(--color-white);
+  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   border-radius: 8px;
+  color: var(--color-black);
 `;
 
 const Header = styled.div`
@@ -133,6 +136,7 @@ export default function CommuteForm({
 }: CommuteModalProp) {
   const [isCurrentDate, setIsCurrentDate] = useState<boolean>(false);
   const jwt = localStorage.getItem("jwt");
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 일정 저장 */
   const handleFormSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
@@ -173,7 +177,7 @@ export default function CommuteForm({
   }, []);
 
   return (
-    <Layout>
+    <Layout $isDarkmode={isDarkmode}>
       <Header>
         <Title>출퇴근 기록 추가</Title>
         <CloseIcon onClick={() => setIsFormOpen(false)} />

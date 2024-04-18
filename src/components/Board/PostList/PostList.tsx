@@ -94,6 +94,7 @@ const ManageBtn = styled.button`
   outline: none;
   background-color: transparent;
   transition: transform 0.3s;
+  color: var(--color-black);
   cursor: pointer;
 
   &:hover {

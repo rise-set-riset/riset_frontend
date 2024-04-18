@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MemberCard from "../../common/MemberCard";
 import FileCard from "./FileCard";
 import { BsChatDots } from "react-icons/bs";
@@ -11,13 +11,16 @@ import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
-const Layout = styled.div`
+const Layout = styled.div<{ $isDarkmode: boolean }>`
   width: 90%;
   max-width: 900px;
+  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   border-radius: 1rem;
   overflow: hidden;
   background-color: var(--color-white);
+  color: var(--color-black);
 `;
 
 const PostWrapper = styled.div`
@@ -144,6 +147,8 @@ const Comment = styled.div`
 const CommentInput = styled.input`
   flex: 1;
   font-size: 1rem;
+  background-color: var(--color-white);
+  color: var(--color-black);
   outline: none;
   border: none;
 `;
@@ -160,8 +165,8 @@ const SendComment = styled.button`
   background-color: var(--color-brand-main);
 `;
 
-const SendIcon = styled(IoMdArrowRoundUp)`
-  color: var(--color-white);
+const SendIcon = styled(IoMdArrowRoundUp)<{ $isDarkmode: boolean }>`
+  color: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
   font-size: 1.2rem;
 `;
 
@@ -234,6 +239,7 @@ export default function PostShow({
   const [isModify, setIsModify] = useState<boolean>(false);
   const [isModifyComment, setIsModifyComment] = useState<boolean[]>([]);
   const { user, post: postItem } = post;
+  const { isDarkmode } = useContext(DarkModeContext);
   const userId = localStorage.getItem("userId");
   const jwt = localStorage.getItem("jwt");
 
@@ -314,7 +320,7 @@ export default function PostShow({
   }, [postItem.comment]);
 
   return (
-    <Layout>
+    <Layout $isDarkmode={isDarkmode}>
       <PostWrapper>
         <Header>
           <Title>
@@ -415,7 +421,7 @@ export default function PostShow({
             onChange={(e) => setComment(e.target.value)}
           />
           <SendComment type="submit">
-            <SendIcon />
+            <SendIcon $isDarkmode={isDarkmode} />
           </SendComment>
         </Comment>
       </MyComment>
