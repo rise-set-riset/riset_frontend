@@ -253,12 +253,10 @@ export default function OfficialCalendar() {
     writer: "",
     content: "",
   });
-  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>(
-    {
-      x: 0,
-      y: 0,
-    }
-  );
+  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>({
+    x: 0,
+    y: 0,
+  });
   const [isEditorForm, setIsEditorForm] = useState<boolean>(false);
 
   /* 날짜 선택시 */
@@ -365,9 +363,7 @@ export default function OfficialCalendar() {
 
     /* id에 해당하는 이벤트 찾기 */
     const findId = info.event._def.extendedProps.scheduleNo;
-    const selectedEvent = eventFormList.filter(
-      (form) => form.scheduleNo === findId
-    )[0];
+    const selectedEvent = eventFormList.filter((form) => form.scheduleNo === findId)[0];
     setEventForm(selectedEvent);
     setIsFormOpen(true);
     setIsEditorForm(true);
@@ -387,9 +383,7 @@ export default function OfficialCalendar() {
         Authorization: `Bearer ${jwt}`,
       },
     }).then((res) => {
-      if (res.ok) {
-        console.log("ok");
-      } else {
+      if (!res.ok) {
         throw new Error("이벤트 삭제 실패");
       }
     });
@@ -446,7 +440,6 @@ export default function OfficialCalendar() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
         setEventFormList(data);
       });
   }, []);

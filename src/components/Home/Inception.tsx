@@ -7,6 +7,7 @@ import PlanCard from "../Plan/Personal/PlanCard";
 import { Link } from "react-router-dom";
 import PostCard from "../Board/PostCard";
 import { useEffect, useState } from "react";
+import { EventFormType } from "../Plan/Official/OfficialCalendar";
 
 const Layout = styled.div`
   display: flex;
@@ -209,22 +210,13 @@ interface DaysType {
 export default function Inception() {
   const [posts, setPosts] = useState<any>([]);
   const [days, setDays] = useState<DaysType>({});
+  const [officialPlan, setOfficialPlan] = useState<EventFormType[]>([]);
+  const [personalPlan, setPersonalPlan] = useState<any>([]);
   const jwt = localStorage.getItem("jwt");
 
-  /* 게시글 3개만 가져오기 */
+  /* 초기 데이터 세팅 */
   useEffect(() => {
-    fetch("https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setPosts(data));
-  }, []);
-
-  /* 출근일, 잔여연차 가져오기 */
-  useEffect(() => {
+    // 출근일, 잔여연차 가져오기
     fetch("https://dev.risetconstruction.net/commute/days", {
       method: "GET",
       headers: {
@@ -233,10 +225,51 @@ export default function Inception() {
     })
       .then((res) => res.json())
       .then((data) => setDays(data));
+
+    // 게시글 3개 가져오기
+    fetch("https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setPosts(data));
+
+    // 회사 일정 가져오기 (월별)
+    fetch(
+      `https://dev.risetconstruction.net/api/get?currentMonth=${new Date()
+        .toISOString()
+        .slice(0, 7)
+        .replace("-", "")}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setOfficialPlan(data));
+
+    // 근무 일정 가져오기 (일별)
+    fetch(
+      `https://dev.risetconstruction.net/api/employees?employeeDate=${
+        new Date().toISOString().split("T")[0]
+      }`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setPersonalPlan(data));
   }, []);
 
-  /* 댓글 등록 시 처리 함수 */
-  const handleComment = (comment: any, postId: number) => {
+  /* 댓글 등록 시 상태값 처리 */
+  const handleCommentRegist = (comment: any, postId: number) => {
     setPosts((prevPosts: any) =>
       prevPosts.map((post: any) => {
         if (post.post.id === postId) {
@@ -252,6 +285,11 @@ export default function Inception() {
         }
       })
     );
+  };
+
+  /* 게시글 삭제 */
+  const handlePostDelete = (postId: number) => {
+    setPosts((prevPosts: any) => prevPosts.filter((post: any) => post.post.id !== postId));
   };
 
   return (
@@ -277,12 +315,10 @@ export default function Inception() {
             <span>회사일정</span>
           </OfficialTitle>
           <OfficialInfo>
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
-            <OfficialCard />
+            {officialPlan.length > 0 &&
+              officialPlan.map((plan) => (
+                <OfficialCard key={plan.scheduleNo} title={plan.title} color={plan.color} />
+              ))}
           </OfficialInfo>
         </OfficialPlanAbbr>
       </FirstSection>
@@ -307,7 +343,7 @@ export default function Inception() {
           pagination={{ clickable: true }}
           breakpoints={{ 600: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
         >
-          {Array.from({ length: 10 }, (_, idx) => (
+          {Array.from({ length: 5 }, (_, idx) => (
             <SwiperSlide key={idx}>
               <PlanCard
                 clickToAdd={false}
@@ -337,8 +373,8 @@ export default function Inception() {
                 post={post}
                 isManageClick={false}
                 isAllPosts={false}
-                handleIconClick={() => {}}
-                handleComment={handleComment}
+                handleCommentRegist={handleCommentRegist}
+                handleAllPostDelete={handlePostDelete}
               />
             ))}
         </Posts>
