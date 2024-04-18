@@ -198,10 +198,10 @@ export default function PlanList({
                 <MemberCard
                   memberInfo={{
                     name: userPlanData.name,
-                    department: userPlanData.department || "",
-                    position: userPlanData.position || "",
-                    image: userPlanData.image,
-                    rank: userPlanData.rank || "",
+                    department: userPlanData.department || "false",
+                    position: userPlanData.position || "false",
+                    image: userPlanData.image || "false",
+                    rank: userPlanData.rank || "false",
                   }}
                 />
               </MemberCardStyle>
@@ -218,10 +218,10 @@ export default function PlanList({
                     <MemberCard
                       memberInfo={{
                         name: othersPlan.name,
-                        department: othersPlan.department || "",
-                        position: othersPlan.position || "",
-                        image: othersPlan.image,
-                        rank: othersPlan.rank || "",
+                        department: othersPlan.department || "false",
+                        position: othersPlan.position || "false",
+                        image: othersPlan.image || "false",
+                        rank: othersPlan.rank || "false",
                       }}
                     />
                   </MemberCardStyle>
