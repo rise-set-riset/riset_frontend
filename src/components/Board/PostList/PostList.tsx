@@ -116,7 +116,7 @@ const CommonSection = css`
   }
 
   @media screen and (max-width: 599px) {
-    padding: 0 3rem;
+    padding: 0 2rem;
     max-height: 300px;
   }
 `;
