@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Table from "../../hooks/useTable";
 import { CiCirclePlus } from "react-icons/ci";
-import { ReactComponent as Profile } from "../../assets/header/profile.svg";
+import ProfileImgage from "../../assets/profile-img.png";
+import { useNavigate } from "react-router-dom";
 
 const Layout = styled.div`
   width: 100%;
@@ -15,7 +16,7 @@ const ProfileImg = styled.div`
   height: 100px;
   border-radius: 50%;
   position: relative;
-  margin: auto;
+  margin: 30px auto 0px;
 
   img {
     width: 100%;
@@ -104,6 +105,7 @@ const SaveBtn = styled.button`
 
 export default function Mypage() {
   const jwt = localStorage.getItem("jwt");
+  const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
     image: "",
@@ -142,12 +144,47 @@ export default function Mypage() {
       });
   };
 
+  // 회원 탈퇴 버튼을 클릭했을 때 실행될 함수
+  const handleDeleteAccount = () => {
+    // 회원 탈퇴를 위한 API 엔드포인트 URL
+    const deleteEndpoint =
+      "https://dev.risetconstruction.net/api/myPage/deleteUser";
+
+    // fetch API를 사용하여 DELETE 요청을 보냄
+    fetch(deleteEndpoint, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      // 필요한 경우 요청 바디에 데이터를 추가할 수 있습니다.
+      // body: JSON.stringify({ /* 요청 바디 데이터 */ }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to delete account");
+        }
+        // 성공적으로 회원 탈퇴가 완료되면 여기에 추가적인 작업을 수행할 수 있습니다.
+        // 예를 들어 로그아웃 등의 작업을 수행할 수 있습니다.
+        console.log("Account deleted successfully");
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error deleting account:", error);
+        // 실패한 경우 오류 처리를 수행할 수 있습니다.
+      });
+  };
+
   return (
     <Layout>
       <main className="main">
         <h2 className="title">마이페이지</h2>
         <ProfileImg>
-          {userData.image ? <img src={userData.image} alt="" /> : <Profile />}
+          {userData.image ? (
+            <img src={userData.image} alt="" />
+          ) : (
+            <img src={ProfileImgage} alt="" />
+          )}
           <CustomCiCirclePlus />
         </ProfileImg>
         <NameandPositionWrapper>
@@ -157,7 +194,9 @@ export default function Mypage() {
         <MypageContainer>
           <Table userData={userData} />
           <BtnWrapper>
-            <DeleteAccountBtn>회원탈퇴</DeleteAccountBtn>
+            <DeleteAccountBtn onClick={handleDeleteAccount}>
+              회원탈퇴
+            </DeleteAccountBtn>
             <SaveBtn>저장</SaveBtn>
           </BtnWrapper>
         </MypageContainer>
