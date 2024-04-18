@@ -104,11 +104,17 @@ const ButtonSubmit = styled.button`
 
 interface PostMakeType {
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handlePostModify: (post: any) => void;
   handlePostRegist: (post: any) => void;
   post?: any;
 }
 
-export default function PostMake({ setIsFormOpen, handlePostRegist, post }: PostMakeType) {
+export default function PostMake({
+  setIsFormOpen,
+  handlePostModify,
+  handlePostRegist,
+  post,
+}: PostMakeType) {
   const [title, setTitle] = useState<string>(post ? post.title : "");
   const [content, setContent] = useState<string>(post ? post.content : "");
   const [files, setFiles] = useState<File[]>([]);
@@ -160,7 +166,11 @@ export default function PostMake({ setIsFormOpen, handlePostRegist, post }: Post
           Authorization: `Bearer ${jwt}`,
         },
         body: formData,
-      });
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          handlePostModify(data);
+        });
     } else {
       fetch("https://dev.risetconstruction.net/board", {
         method: "POST",

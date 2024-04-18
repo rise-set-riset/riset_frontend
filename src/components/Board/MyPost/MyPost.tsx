@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../../../common/SearchBar";
 import { GoPlusCircle } from "react-icons/go";
@@ -69,8 +69,10 @@ export default function MyPost() {
     searchWord,
     setSearchWord,
     handleCommentRegist,
+    handleCommentDelete,
     handlePostRegist,
     handlePostDelete,
+    handlePostModify,
   } = usePosts("https://dev.risetconstruction.net/board/mine");
 
   return (
@@ -99,6 +101,8 @@ export default function MyPost() {
                   isManageClick={false}
                   isAllPosts={false}
                   handleCommentRegist={handleCommentRegist}
+                  handleCommentDelete={handleCommentDelete}
+                  handlePostModify={handlePostModify}
                   handleAllPostDelete={handlePostDelete}
                   handlePostRegist={handlePostRegist}
                 />
@@ -107,7 +111,11 @@ export default function MyPost() {
           </Posts>
         </MyPosts>
         <Modal isModalOpen={isModalOpen} handleIsModalOpen={setIsModalOpen}>
-          <PostMake setIsFormOpen={setIsModalOpen} handlePostRegist={handlePostRegist} />
+          <PostMake
+            setIsFormOpen={setIsModalOpen}
+            handlePostRegist={handlePostRegist}
+            handlePostModify={handlePostModify}
+          />
         </Modal>
       </Contents>
     </Layout>

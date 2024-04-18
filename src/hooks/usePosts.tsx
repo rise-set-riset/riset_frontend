@@ -47,18 +47,34 @@ export default function usePosts(url: string) {
   /* 댓글 등록 */
   const handleCommentRegist = (comment: any, postId: number) => {
     setPosts((prevPosts) =>
-      prevPosts.map((post) => {
-        if (post.post.id === postId) {
+      prevPosts.map((info) => {
+        if (info.post.id === postId) {
           return {
-            ...post,
+            ...info,
             post: {
-              ...post.post,
-              comment: [comment, ...post.post.comment],
+              ...info.post,
+              comment: [comment, ...info.post.comment],
             },
           };
         } else {
-          return post;
+          return info;
         }
+      })
+    );
+  };
+
+  /* 댓글 삭제 */
+  const handleCommentDelete = (commentId: number) => {
+    // 내 게시글에서는 적용되는데 게시글 목록쪽에서 지우면 안되는 문제
+    setPosts((prevPosts) =>
+      prevPosts.map((info) => {
+        return {
+          ...info,
+          post: {
+            ...info.post,
+            comment: info.post.comment.filter((com: any) => com.id !== commentId),
+          },
+        };
       })
     );
   };
@@ -66,6 +82,20 @@ export default function usePosts(url: string) {
   /* 게시글 등록 */
   const handlePostRegist = (post: any) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
+  };
+
+  /* 게시글 수정 */
+  const handlePostModify = (post: any) => {
+    console.log("test");
+    setPosts((prevPosts) =>
+      prevPosts.map((info) => {
+        if (info.post.id === post.post.id) {
+          return post;
+        } else {
+          return info;
+        }
+      })
+    );
   };
 
   /* 게시글 삭제 */
@@ -93,7 +123,9 @@ export default function usePosts(url: string) {
     setPosts,
     setSearchWord,
     handleCommentRegist,
+    handleCommentDelete,
     handlePostRegist,
+    handlePostModify,
     handlePostDelete,
     handleIsPostExists,
   };

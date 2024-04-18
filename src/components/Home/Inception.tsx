@@ -6,8 +6,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import PlanCard from "../Plan/Personal/PlanCard";
 import { Link } from "react-router-dom";
 import PostCard from "../Board/PostCard";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { EventFormType } from "../Plan/Official/OfficialCalendar";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   display: flex;
@@ -28,13 +29,14 @@ const FirstSection = styled.section`
   }
 `;
 
-const TotalCntAbbr = styled.div`
+const TotalCntAbbr = styled.div<{ $isDarkmode: boolean }>`
   width: 50%;
   min-width: 300px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   border-radius: 1rem;
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
   padding: 0.5rem;
   font-weight: bold;
   overflow: hidden;
@@ -76,12 +78,13 @@ const LeftAnnual = styled.div`
   }
 `;
 
-const OfficialPlanAbbr = styled.div`
+const OfficialPlanAbbr = styled.div<{ $isDarkmode: boolean }>`
   width: 50%;
   min-width: 300px;
   display: flex;
   align-items: center;
   border-radius: 1rem;
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
   background-color: var(--color-white);
   overflow: hidden;
 
@@ -156,11 +159,12 @@ const SecondSection = styled.section`
   }
 `;
 
-const ThirdSection = styled.section`
+const ThirdSection = styled.section<{ $isDarkmode: boolean }>`
   height: 164px;
   padding: 1rem;
   border-radius: 1rem;
-  background-color: var(--color-brand-yellow);
+  background-color: ${(props) =>
+    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-brand-yellow)"};
 `;
 
 const SectionTitle = styled.div`
@@ -186,8 +190,10 @@ const SectionTitle = styled.div`
   }
 `;
 
-const FourthSection = styled.section`
+const FourthSection = styled.section<{ $isDarkmode: boolean }>`
   padding: 1rem;
+  border-radius: 1rem;
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
 `;
 
 const Posts = styled.div`
@@ -213,6 +219,7 @@ export default function Inception() {
   const [officialPlan, setOfficialPlan] = useState<EventFormType[]>([]);
   const [personalPlan, setPersonalPlan] = useState<any>([]);
   const jwt = localStorage.getItem("jwt");
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 초기 데이터 세팅 */
   useEffect(() => {
@@ -253,9 +260,12 @@ export default function Inception() {
       .then((data) => setOfficialPlan(data));
 
     // 근무 일정 가져오기 (일별)
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 9);
+
     fetch(
       `https://dev.risetconstruction.net/api/employees?employeeDate=${
-        new Date().toISOString().split("T")[0]
+        currentDate.toISOString().split("T")[0]
       }`,
       {
         method: "GET",
@@ -268,7 +278,7 @@ export default function Inception() {
       .then((data) => setPersonalPlan(data));
   }, []);
 
-  /* 댓글 등록 시 상태값 처리 */
+  /* 댓글 등록 */
   const handleCommentRegist = (comment: any, postId: number) => {
     setPosts((prevPosts: any) =>
       prevPosts.map((post: any) => {
@@ -287,15 +297,35 @@ export default function Inception() {
     );
   };
 
+  /* 댓글 삭제 */
+  const handleCommentDelete = (commentId: number) => {
+    setPosts((prevPosts: any) =>
+      prevPosts.map((post: any) => post.post.comment.filter((com: any) => com.id !== commentId))
+    );
+  };
+
   /* 게시글 삭제 */
   const handlePostDelete = (postId: number) => {
     setPosts((prevPosts: any) => prevPosts.filter((post: any) => post.post.id !== postId));
   };
 
+  /* 게시글 수정 */
+  const handlePostModify = (post: any) => {
+    setPosts((prevPosts: any) =>
+      prevPosts.map((info: any) => {
+        if (info.post.id === post.post.id) {
+          return post;
+        } else {
+          return info;
+        }
+      })
+    );
+  };
+
   return (
     <Layout>
       <FirstSection>
-        <TotalCntAbbr>
+        <TotalCntAbbr $isDarkmode={isDarkmode}>
           <WorkCnt>
             <p>출근일</p>
             <p>{days.commuteDays}</p>
@@ -309,7 +339,7 @@ export default function Inception() {
             </p>
           </LeftAnnual>
         </TotalCntAbbr>
-        <OfficialPlanAbbr>
+        <OfficialPlanAbbr $isDarkmode={isDarkmode}>
           <OfficialTitle>
             <span>Today</span>
             <span>회사일정</span>
@@ -327,7 +357,7 @@ export default function Inception() {
         <CommuteRecord />
       </SecondSection>
 
-      <ThirdSection>
+      <ThirdSection $isDarkmode={isDarkmode}>
         <SectionTitle>
           <h2>근무일정</h2>
           <Link to="/plan/official">
@@ -355,7 +385,7 @@ export default function Inception() {
         </SwiperCustom>
       </ThirdSection>
 
-      <FourthSection>
+      <FourthSection $isDarkmode={isDarkmode}>
         <SectionTitle>
           <h2>게시판</h2>
           <Link to="/board/postlist">
@@ -374,6 +404,8 @@ export default function Inception() {
                 isManageClick={false}
                 isAllPosts={false}
                 handleCommentRegist={handleCommentRegist}
+                handleCommentDelete={handleCommentDelete}
+                handlePostModify={handlePostModify}
                 handleAllPostDelete={handlePostDelete}
               />
             ))}
