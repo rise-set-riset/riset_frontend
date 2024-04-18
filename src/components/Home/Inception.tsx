@@ -210,6 +210,10 @@ const SwiperCustom = styled(Swiper)`
   cursor: grab;
 `;
 
+const MoreBtn = styled.button`
+  color: var(--color-black);
+`;
+
 interface DaysType {
   [key: string]: number;
 }
@@ -362,10 +366,10 @@ export default function Inception() {
         <SectionTitle>
           <h2>근무일정</h2>
           <Link to="/plan/official">
-            <button type="button">
+            <MoreBtn type="button">
               <span>더보기</span>
               <IoIosArrowForward />
-            </button>
+            </MoreBtn>
           </Link>
         </SectionTitle>
         <SwiperCustom
@@ -390,10 +394,10 @@ export default function Inception() {
         <SectionTitle>
           <h2>게시판</h2>
           <Link to="/board/postlist">
-            <button type="button">
+            <MoreBtn type="button">
               <span>더보기</span>
               <IoIosArrowForward />
-            </button>
+            </MoreBtn>
           </Link>
         </SectionTitle>
         <Posts>

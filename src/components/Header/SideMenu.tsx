@@ -18,7 +18,7 @@ const Layout = styled.div<{
   z-index: 50;
   width: ${(props) => (props.$isSideMenuOpen ? "200px" : "60px")};
   height: calc(100vh - 60px);
-  background-color: var(--color-white);
+  background-color: var(--color-drakmode-white);
   border-right: 1px solid var(--color-brand-lightgray);
   transition: background-color 0.3s, width 0.3s;
   overflow: auto;

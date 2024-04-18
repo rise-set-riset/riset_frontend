@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { DarkModeContext } from "../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   position: relative;
@@ -12,6 +13,7 @@ const SelectDateButton = styled.button`
   font-size: 18px;
   font-weight: 500;
   border: none;
+  color: var(--color-black);
   background-color: transparent;
   cursor: pointer;
 `;
@@ -54,10 +56,10 @@ const TimeItem = styled.li<{ $fixed: boolean }>`
   }
 `;
 
-const TimeTitle = styled.li`
+const TimeTitle = styled.li<{ $isDarkmode: boolean }>`
   padding: 0.5rem;
   font-weight: bold;
-  color: var(--color-white);
+  color: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
   background-color: var(--color-brand-main);
 `;
 
@@ -84,6 +86,7 @@ export default function TimePicker({ selectedTime = "00:00", setSelectedTime }: 
   const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
   const [isFixedHour, setIsFixedHour] = useState<boolean>(false);
   const [isFixedMin, setIsFixedMin] = useState<boolean>(false);
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 팝업창 표시 여부 제어 함수 */
   const handlePickerOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -123,7 +126,7 @@ export default function TimePicker({ selectedTime = "00:00", setSelectedTime }: 
       {isPickerOpen && (
         <TimePickerLayout>
           <TimeListBox>
-            <TimeTitle>시간</TimeTitle>
+            <TimeTitle $isDarkmode={isDarkmode}>시간</TimeTitle>
             {hourList.map((hour, index) => (
               <TimeItem
                 $fixed={hour === selectedTime.split(":")[0]}
@@ -135,7 +138,7 @@ export default function TimePicker({ selectedTime = "00:00", setSelectedTime }: 
             ))}
           </TimeListBox>
           <TimeListBox>
-            <TimeTitle>분</TimeTitle>
+            <TimeTitle $isDarkmode={isDarkmode}>분</TimeTitle>
             {minList.map((minute, index) => (
               <TimeItem
                 $fixed={minute === selectedTime.split(":")[1]}
