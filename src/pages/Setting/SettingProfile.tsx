@@ -207,9 +207,6 @@ export default function SettingProfile() {
       }
     });
     setResponseData(newArray);
-    console.log(
-      rankIdList.filter((dep: any) => dep.gradeNo === value)[0].grade
-    );
   };
 
   const handleSaveData = () => {
@@ -231,7 +228,6 @@ export default function SettingProfile() {
           dataToSend[key] = value;
         }
       }
-      console.log("========data", dataToSend, userData.employeeNum);
 
       fetch(
         `https://dev.risetconstruction.net/preset/profiles/${userData.employeeNum}`,
@@ -294,8 +290,6 @@ export default function SettingProfile() {
       .then((res) => res.json())
       .then((data) => setRankIdList(data));
   }, []);
-
-  console.log(responseData);
 
   return (
     <Layout>
