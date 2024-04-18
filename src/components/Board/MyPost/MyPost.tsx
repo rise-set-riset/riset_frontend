@@ -67,16 +67,11 @@ export default function MyPost() {
     hasMore,
     lastItemRef,
     searchWord,
-    setPosts,
     setSearchWord,
-    handleComment,
-    handlePost,
+    handleCommentRegist,
+    handlePostRegist,
+    handlePostDelete,
   } = usePosts("https://dev.risetconstruction.net/board/mine");
-
-  /* 내 게시글 등록 시 화면 업데이트 */
-  const handlePostAdd = (post: any) => {
-    setPosts((prev) => [post, ...prev]);
-  };
 
   return (
     <Layout>
@@ -97,22 +92,22 @@ export default function MyPost() {
           </PostHeader>
           <Posts>
             {posts &&
-              posts.map((post, idx) => (
+              posts.map((post) => (
                 <PostCard
-                  key={idx}
+                  key={post.post.id}
                   post={post}
                   isManageClick={false}
                   isAllPosts={false}
-                  handleIconClick={() => {}}
-                  handleComment={handleComment}
-                  handlePost={handlePost}
+                  handleCommentRegist={handleCommentRegist}
+                  handleAllPostDelete={handlePostDelete}
+                  handlePostRegist={handlePostRegist}
                 />
               ))}
             {hasMore && <Loading ref={lastItemRef} />}
           </Posts>
         </MyPosts>
         <Modal isModalOpen={isModalOpen} handleIsModalOpen={setIsModalOpen}>
-          <PostMake setIsFormOpen={setIsModalOpen} handlePostAdd={handlePostAdd} />
+          <PostMake setIsFormOpen={setIsModalOpen} handlePostRegist={handlePostRegist} />
         </Modal>
       </Contents>
     </Layout>

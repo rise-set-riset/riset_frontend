@@ -268,15 +268,8 @@ export default function Inception() {
       .then((data) => setPersonalPlan(data));
   }, []);
 
-  // console.log(
-  //   personalPlan[0].schedulesDetail.concat(
-  //     personalPlan[0].halfLeaveDetail,
-  //     personalPlan[0].annualLeaveDetail
-  //   )
-  // );
-
   /* 댓글 등록 시 상태값 처리 */
-  const handleComment = (comment: any, postId: number) => {
+  const handleCommentRegist = (comment: any, postId: number) => {
     setPosts((prevPosts: any) =>
       prevPosts.map((post: any) => {
         if (post.post.id === postId) {
@@ -294,8 +287,8 @@ export default function Inception() {
     );
   };
 
-  /* 게시글 삭제 시 상태값 처리 */
-  const handlePost = (postId: number) => {
+  /* 게시글 삭제 */
+  const handlePostDelete = (postId: number) => {
     setPosts((prevPosts: any) => prevPosts.filter((post: any) => post.post.id !== postId));
   };
 
@@ -350,7 +343,7 @@ export default function Inception() {
           pagination={{ clickable: true }}
           breakpoints={{ 600: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
         >
-          {Array.from({ length: 10 }, (_, idx) => (
+          {Array.from({ length: 5 }, (_, idx) => (
             <SwiperSlide key={idx}>
               <PlanCard
                 clickToAdd={false}
@@ -380,9 +373,8 @@ export default function Inception() {
                 post={post}
                 isManageClick={false}
                 isAllPosts={false}
-                handleIconClick={() => {}}
-                handleComment={handleComment}
-                handlePost={handlePost}
+                handleCommentRegist={handleCommentRegist}
+                handleAllPostDelete={handlePostDelete}
               />
             ))}
         </Posts>

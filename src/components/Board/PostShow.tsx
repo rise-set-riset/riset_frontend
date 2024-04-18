@@ -222,15 +222,15 @@ interface Post {
   post: any;
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsModifyOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleComment: (comment: any, postId: number) => void;
-  handlePost: (postId: number) => void;
+  handleCommentRegist: (comment: any, postId: number) => void;
+  handleAllPostDelete: (postId: number) => void;
 }
 
 export default function PostShow({
   post,
   setIsFormOpen,
-  handleComment,
-  handlePost,
+  handleCommentRegist,
+  handleAllPostDelete,
   setIsModifyOpen,
 }: Post) {
   const [comment, setComment] = useState<string>("");
@@ -241,6 +241,12 @@ export default function PostShow({
   const userId = localStorage.getItem("userId");
   const jwt = localStorage.getItem("jwt");
 
+  /* 게시글 수정 */
+  const handleModifyClick = () => {
+    setIsModifyOpen(true);
+    setIsFormOpen(false);
+  };
+
   /* 게시글 삭제 */
   const handleDelete = async (postId: number) => {
     await fetch(`https://dev.risetconstruction.net/board/deleted/${postId}`, {
@@ -250,13 +256,7 @@ export default function PostShow({
       },
     });
 
-    handlePost(postId);
-  };
-
-  /* 게시글 수정 */
-  const handleModifyClick = () => {
-    setIsModifyOpen(true);
-    setIsFormOpen(false);
+    handleAllPostDelete(postId);
   };
 
   /* 댓글 등록 */
@@ -276,7 +276,7 @@ export default function PostShow({
       })
         .then((res) => res.json())
         .then((data) => {
-          handleComment(data, postItem.id);
+          handleCommentRegist(data, postItem.id);
           setComment("");
         });
     }
