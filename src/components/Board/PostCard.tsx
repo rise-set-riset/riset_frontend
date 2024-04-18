@@ -7,6 +7,7 @@ import { FiPaperclip } from "react-icons/fi";
 import { TiStarFullOutline } from "react-icons/ti";
 import { LuMinus } from "react-icons/lu";
 import { FcDocument } from "react-icons/fc";
+import PostMake from "./PostMake";
 
 const Layout = styled.div`
   position: relative;
@@ -149,33 +150,83 @@ interface PostCardType {
   post: any;
   isManageClick: boolean;
   isAllPosts: boolean;
-  handleIconClick: (e: React.MouseEvent<SVGElement>, postId: number) => void;
-  handleComment: (comment: any, postId: number) => void;
+  handleCommentRegist: (comment: any, postId: number) => void;
+  handleAllPostDelete: (postId: number) => void;
+  handlePostRegist?: (post: any) => void;
+  handleFavoritePostRegist?: (post: any) => void;
+  handleFavoritePostDelete?: (postId: number) => void;
+  handleFavoriteIsPostExists?: (postId: number) => boolean;
 }
 
 export default function PostCard({
   post,
-  isManageClick,
   isAllPosts,
-  handleIconClick,
-  handleComment,
+  isManageClick,
+  handleCommentRegist,
+  handleAllPostDelete,
+  handlePostRegist,
+  handleFavoritePostRegist,
+  handleFavoritePostDelete,
+  handleFavoriteIsPostExists,
 }: PostCardType) {
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isPostShowOpen, setIsPostShowOpen] = useState(false);
+  const [isModifyModalOpen, setIsModifyModalOpen] = useState<boolean>(false);
   const { user, post: postItem } = post;
+  const jwt = localStorage.getItem("jwt");
+
+  /* 즐겨찾기 추가 */
+  const handleRegistFavorite = async (e: React.MouseEvent<SVGElement>, post: any) => {
+    e.stopPropagation();
+
+    if (handleFavoriteIsPostExists) {
+      const isExists = handleFavoriteIsPostExists(post.post.id);
+
+      // 즐겨찾기 목록에 없을 경우에만 추가
+      if (!isExists) {
+        await fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
+
+        if (handleFavoritePostRegist) {
+          handleFavoritePostRegist(post);
+        }
+      }
+    }
+  };
+
+  /* 즐겨찾기 삭제 */
+  const handleDeleteFavorite = async (e: React.MouseEvent<SVGElement>, post: any) => {
+    e.stopPropagation();
+
+    await fetch(`https://dev.risetconstruction.net/board/favorite/delete/${post.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
+    if (handleFavoritePostDelete) {
+      handleFavoritePostDelete(post.post.id);
+    }
+  };
 
   return (
-    <Layout onClick={() => setIsFormOpen(true)}>
+    <Layout onClick={() => setIsPostShowOpen(true)}>
       <Transition in={isManageClick} timeout={300} unmountOnExit mountOnEnter>
         {(state) =>
           isAllPosts ? (
-            <StarIcon $state={state} onClick={(e) => handleIconClick(e, post)} />
+            <StarIcon $state={state} onClick={(e) => handleRegistFavorite(e, post)} />
           ) : (
             <MinusWrapper $state={state}>
-              <MinusIcon onClick={(e) => handleIconClick(e, post.id)} />
+              <MinusIcon onClick={(e) => handleDeleteFavorite(e, post)} />
             </MinusWrapper>
           )
         }
       </Transition>
+
       <Info>
         <Header>
           <EmojiIcon />
@@ -184,13 +235,29 @@ export default function PostCard({
         <Writer>{user?.name}</Writer>
         <Date>{postItem?.date.split("T")[0]}</Date>
       </Info>
+
       {postItem?.files.length > 0 && (
         <FileWrapper>
           <FileIcon />
         </FileWrapper>
       )}
-      <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
-        <PostShow post={post} setIsFormOpen={setIsFormOpen} handleComment={handleComment} />
+
+      <Modal isModalOpen={isPostShowOpen} handleIsModalOpen={setIsPostShowOpen}>
+        <PostShow
+          post={post}
+          setIsFormOpen={setIsPostShowOpen}
+          setIsModifyOpen={setIsModifyModalOpen}
+          handleCommentRegist={handleCommentRegist}
+          handleAllPostDelete={handleAllPostDelete}
+        />
+      </Modal>
+
+      <Modal isModalOpen={isModifyModalOpen} handleIsModalOpen={setIsModifyModalOpen}>
+        <PostMake
+          setIsFormOpen={setIsModifyModalOpen}
+          handlePostRegist={handlePostRegist ? handlePostRegist : () => {}}
+          post={postItem}
+        />
       </Modal>
     </Layout>
   );

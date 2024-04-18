@@ -150,8 +150,7 @@ const CloseIcon = styled(CgClose)`
 const DialogueBox = styled.main<{ $isSearchBarOpen: boolean }>`
   position: relative;
   margin-top: 1.2rem;
-  height: ${(props) =>
-    props.$isSearchBarOpen ? "calc(100% - 295px)" : "calc(100% - 205px)"};
+  height: ${(props) => (props.$isSearchBarOpen ? "calc(100% - 295px)" : "calc(100% - 205px)")};
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -353,9 +352,7 @@ export default function ChatMain({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sendText, setSendText] = useState<string>("");
   const [searchWord, setSearchWord] = useState<string>("");
-  const [responseMessage, setResponseMessage] = useState<ResponseDataType[]>(
-    []
-  );
+  const [responseMessage, setResponseMessage] = useState<ResponseDataType[]>([]);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(true);
   const [base64String, setBase64String] = useState<any>("");
@@ -387,9 +384,7 @@ export default function ChatMain({
       connectHeaders: {
         Authorization: `Bearer ${jwt}`,
       },
-      debug: (str: string) => {
-        // console.log(str);
-      },
+      debug: (str: string) => {},
       reconnectDelay: 5000, //자동 재 연결
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -398,18 +393,12 @@ export default function ChatMain({
     /* 채팅방 구독 */
     client.current.activate();
     client.current.onConnect = function () {
-      client.current?.subscribe(
-        `/sub/chat/message/${currentRoomId}`,
-        (frame) => {
-          if (frame.body) {
-            let parsedMessage = JSON.parse(frame.body);
-            setResponseMessage((prevMessages) => [
-              ...prevMessages,
-              parsedMessage,
-            ]);
-          }
+      client.current?.subscribe(`/sub/chat/message/${currentRoomId}`, (frame) => {
+        if (frame.body) {
+          let parsedMessage = JSON.parse(frame.body);
+          setResponseMessage((prevMessages) => [...prevMessages, parsedMessage]);
         }
-      );
+      });
     };
 
     return () => {
@@ -475,9 +464,7 @@ export default function ChatMain({
 
   useEffect(() => {
     /* 검색 결과로 이동 */
-    const targetElement = document.getElementById(
-      `msg-${searchResult?.[searchShowIndex]?.chatId}`
-    );
+    const targetElement = document.getElementById(`msg-${searchResult?.[searchShowIndex]?.chatId}`);
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
       targetElement.style.backgroundColor = "var(--color-brand-main)";
@@ -487,15 +474,11 @@ export default function ChatMain({
 
   const handleSearchIndex = (name: string) => {
     if (name === "up") {
-      setSearchShowIndex(
-        searchShowIndex - 1 < 0 ? searchShowIndex : searchShowIndex - 1
-      );
+      setSearchShowIndex(searchShowIndex - 1 < 0 ? searchShowIndex : searchShowIndex - 1);
     } else {
       if (searchResult) {
         setSearchShowIndex(
-          searchResult.length - 1 === searchShowIndex
-            ? searchShowIndex
-            : searchShowIndex + 1
+          searchResult.length - 1 === searchShowIndex ? searchShowIndex : searchShowIndex + 1
         );
       }
     }
@@ -599,11 +582,7 @@ export default function ChatMain({
 
       {isSearchBarOpen && (
         <SearchNavBox onSubmit={handleSubmitSearch}>
-          <SearchBar
-            placeholder="내용 검색"
-            value={searchWord}
-            onChange={handleSearchMessage}
-          />
+          <SearchBar placeholder="내용 검색" value={searchWord} onChange={handleSearchMessage} />
           <ArrowIconStyle onClick={() => handleSearchIndex("down")}>
             <IoIosArrowDown />
           </ArrowIconStyle>
@@ -627,18 +606,13 @@ export default function ChatMain({
                     {data.msg !== "" && (
                       <MyMessage>
                         <div id={`msg-${data.chatId}`}>{data.msg}</div>
-                        {(index === 0 ||
-                          data.date.slice(0, 16) !== prevMsg) && (
+                        {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
                           <div>{timeFormat(data.date)}</div>
                         )}
                       </MyMessage>
                     )}
                     {data.fileNames !== "null" && (
-                      <MyMessage
-                        onClick={() =>
-                          handleDownload(data.fileNames, data.fileNames)
-                        }
-                      >
+                      <MyMessage onClick={() => handleDownload(data.fileNames, data.fileNames)}>
                         <div>
                           <MyFileIcon>
                             <FiPaperclip />
@@ -648,8 +622,7 @@ export default function ChatMain({
                             {data.fileNames.length > 20 ? "..." : ""}
                           </span>
                         </div>
-                        {(index === 0 ||
-                          data.date.slice(0, 16) !== prevMsg) && (
+                        {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
                           <div>{timeFormat(data.date)}</div>
                         )}
                       </MyMessage>
@@ -671,17 +644,14 @@ export default function ChatMain({
                       {data.msg !== "" && (
                         <PartnerMessage>
                           <div id={`msg-${data.chatId}`}>{data.msg}</div>
-                          {(index === 0 ||
-                            data.date.slice(0, 16) !== prevMsg) && (
+                          {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
                             <div>{timeFormat(data.date)}</div>
                           )}
                         </PartnerMessage>
                       )}
                       {data.fileNames !== "null" && (
                         <PartnerMessage
-                          onClick={() =>
-                            handleDownload(data.fileNames, data.fileNames)
-                          }
+                          onClick={() => handleDownload(data.fileNames, data.fileNames)}
                         >
                           <div>
                             <PartnerFileIcon>
@@ -692,8 +662,7 @@ export default function ChatMain({
                               {data.fileNames.length > 20 ? "..." : ""}
                             </span>
                           </div>
-                          {(index === 0 ||
-                            data.date.slice(0, 16) !== prevMsg) && (
+                          {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
                             <div>{timeFormat(data.date)}</div>
                           )}
                         </PartnerMessage>
@@ -717,12 +686,7 @@ export default function ChatMain({
         )}
         <FileAdd>
           <FileIcon onClick={handleFileClick} />
-          <FileInput
-            type="file"
-            ref={fileRef}
-            onChange={handleFileInputChange}
-            multiple
-          />
+          <FileInput type="file" ref={fileRef} onChange={handleFileInputChange} multiple />
         </FileAdd>
 
         <SendInputBox>

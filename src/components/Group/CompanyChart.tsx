@@ -85,15 +85,8 @@ export default function CompanyChart() {
     }
   };
 
-  /* 회사정보 받아오기 (회사명, 이미지) */
-  useEffect(() => {}, []);
-
-  /* 이미지 업로드 */
-  useEffect(() => {
-    // 업로드
-    fetch("/url").then((res) => res.json());
-    // fetch로 가져오기
-  }, []);
+  // /* 회사정보 받아오기 (회사명, 이미지) */
+  // useEffect(() => {}, []);
 
   return (
     <Layout>
