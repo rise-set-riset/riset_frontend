@@ -56,7 +56,7 @@ const GlobalOutletStyle = createGlobalStyle<{ $sideOpenState: string }>`
   .title {
     height: 4rem;
     padding: 18px 24px;
-    background-color: var(--color-white);
+    background-color: var(--color-drakmode-white);
     color: var(--color-black);
 
     @media screen and (max-width: 430px) {

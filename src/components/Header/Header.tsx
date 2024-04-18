@@ -17,7 +17,7 @@ const Layout = styled.header`
   position: fixed;
   width: 100vw;
   height: 60px;
-  background-color: var(--color-white);
+  background-color: var(--color-drakmode-white);
   z-index: 100;
   border-bottom: 1px solid var(--color-brand-lightgray);
   box-shadow: 0px 3px 30px -20px rgba(0, 0, 0, 0.75);
