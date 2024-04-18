@@ -2,10 +2,11 @@ import styled from "styled-components";
 import CommuteMap from "./CommuteMap";
 import { GoPlusCircle } from "react-icons/go";
 import Button from "../../common/Button";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Calendar from "../../common/Calendar";
 import Modal from "../../common/Modal";
 import CommuteForm from "./CommuteForm";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   width: 100%;
@@ -21,7 +22,7 @@ const Layout = styled.div`
   }
 `;
 
-const CommuteCard = styled.div`
+const CommuteCard = styled.div<{ $isDarkmode: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,6 +30,7 @@ const CommuteCard = styled.div`
   min-width: 460px;
   height: 570px;
   border-radius: 1rem;
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
   padding: 1rem;
   background-color: var(--color-white);
 
@@ -85,6 +87,7 @@ export default function CommuteRecord() {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [form, setForm] = useState<EventType>({});
   const jwt = localStorage.getItem("jwt");
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 근무, 재택, 외근 여부 */
   const handleFormWay = (way: string) => {
@@ -155,14 +158,21 @@ export default function CommuteRecord() {
 
   /* 버튼(+) 클릭해서 Form 열기 */
   const handleAddFormBtn = async () => {
-    await fetch("https://dev.risetconstruction.net/commute/record", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    await fetch(
+      `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
       .then((res) => res.json())
-      .then((data) => setForm(data));
+      .then((data) => setForm(data[data.length - 1]));
     setIsFormOpen(true);
   };
 
@@ -187,7 +197,7 @@ export default function CommuteRecord() {
 
   return (
     <Layout className="commute-record">
-      <CommuteCard className="commute-map">
+      <CommuteCard className="commute-map" $isDarkmode={isDarkmode}>
         <Title>
           <h2>출퇴근 기록</h2>
           <PlusBtn onClick={handleAddFormBtn} />
@@ -214,7 +224,7 @@ export default function CommuteRecord() {
           />
         </CommuteButtons>
       </CommuteCard>
-      <CommuteCard className="commute-calendar">
+      <CommuteCard className="commute-calendar" $isDarkmode={isDarkmode}>
         <Title>
           <h2>출퇴근 현황</h2>
         </Title>

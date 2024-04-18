@@ -25,9 +25,6 @@ html.darkmode {
   --color-svg-fill: #ffdb7a;
   --color-svg-stroke: #ffdb7a;
   --color-gray-1: #353535;
-  /*
-    추후에 다크모드 관련 스타일링 필요 (미완)
-  */
 }
 
 html {

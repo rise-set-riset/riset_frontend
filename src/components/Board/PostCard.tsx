@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { Transition } from "react-transition-group";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Modal from "../../common/Modal";
 import PostShow from "./PostShow";
 import { FiPaperclip } from "react-icons/fi";
@@ -8,13 +8,15 @@ import { TiStarFullOutline } from "react-icons/ti";
 import { LuMinus } from "react-icons/lu";
 import { FcDocument } from "react-icons/fc";
 import PostMake from "./PostMake";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
-const Layout = styled.div`
+const Layout = styled.div<{ $isDarkmode: boolean }>`
   position: relative;
   width: 100%;
   display: flex;
   align-items: center;
-  background-color: var(--color-white);
+  background-color: ${(props) =>
+    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-white)"};
   border-radius: 1rem;
   padding: 1.5rem 1rem;
   transition: transform 0.3s;
@@ -151,6 +153,8 @@ interface PostCardType {
   isManageClick: boolean;
   isAllPosts: boolean;
   handleCommentRegist: (comment: any, postId: number) => void;
+  handleCommentDelete: (commentId: number) => void;
+  handlePostModify: (post: any) => void;
   handleAllPostDelete: (postId: number) => void;
   handlePostRegist?: (post: any) => void;
   handleFavoritePostRegist?: (post: any) => void;
@@ -163,14 +167,17 @@ export default function PostCard({
   isAllPosts,
   isManageClick,
   handleCommentRegist,
+  handleCommentDelete,
   handleAllPostDelete,
   handlePostRegist,
+  handlePostModify,
   handleFavoritePostRegist,
   handleFavoritePostDelete,
   handleFavoriteIsPostExists,
 }: PostCardType) {
   const [isPostShowOpen, setIsPostShowOpen] = useState(false);
   const [isModifyModalOpen, setIsModifyModalOpen] = useState<boolean>(false);
+  const { isDarkmode } = useContext(DarkModeContext);
   const { user, post: postItem } = post;
   const jwt = localStorage.getItem("jwt");
 
@@ -214,7 +221,7 @@ export default function PostCard({
   };
 
   return (
-    <Layout onClick={() => setIsPostShowOpen(true)}>
+    <Layout onClick={() => setIsPostShowOpen(true)} $isDarkmode={isDarkmode}>
       <Transition in={isManageClick} timeout={300} unmountOnExit mountOnEnter>
         {(state) =>
           isAllPosts ? (
@@ -248,6 +255,7 @@ export default function PostCard({
           setIsFormOpen={setIsPostShowOpen}
           setIsModifyOpen={setIsModifyModalOpen}
           handleCommentRegist={handleCommentRegist}
+          handleCommentDelete={handleCommentDelete}
           handleAllPostDelete={handleAllPostDelete}
         />
       </Modal>
@@ -255,6 +263,7 @@ export default function PostCard({
       <Modal isModalOpen={isModifyModalOpen} handleIsModalOpen={setIsModifyModalOpen}>
         <PostMake
           setIsFormOpen={setIsModifyModalOpen}
+          handlePostModify={handlePostModify}
           handlePostRegist={handlePostRegist ? handlePostRegist : () => {}}
           post={postItem}
         />

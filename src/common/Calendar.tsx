@@ -241,13 +241,12 @@ export default function Calendar({
         // 특정 날짜 클릭 시
         dateClick={(info) => {
           if (isEvents) {
-            // 현재 날짜, 클릭한 달력 날짜 비교 후 적을 경우 처리 X
-            const currentDate = new Date().getDate();
-            const clickedDate = new Date(info.date).getDate();
-            if (currentDate < clickedDate) return;
+            const data: EventType | undefined = datas
+              .slice()
+              .reverse()
+              .find((data) => data.start === info.dateStr);
 
             // 데이터가 있는 경우에만 함수 호출
-            const data: EventType | undefined = datas.find((event) => event.start === info.dateStr);
             if (data) {
               handleIsFormOpen(data);
             }
