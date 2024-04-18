@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { FaCheckCircle } from "react-icons/fa";
-import { FaCircleExclamation } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { useAgree } from "../../hooks/useAgree";
 import { useForm } from "../../hooks/useForm";
@@ -10,14 +8,12 @@ import TextInput from "../../common/TextInput";
 import CustomCheckbox from "../../common/CustomCheckbox";
 import HorizontalLineWithText from "../../common/HorizontalLineWithText";
 import { useNavigate } from "react-router-dom";
-
-const backgroundImageUrl =
-  "url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)";
+import backgroundImage from "../../assets/background-image.png";
 
 const Background = styled.div`
   min-width: 100vw;
   width: 100%;
-  background-image: ${backgroundImageUrl};
+  background-image: url(${backgroundImage});
   background-size: cover;
   display: flex;
   justify-content: center;
@@ -77,18 +73,6 @@ const IdChcekBtn = styled.button<{ disabled: boolean }>`
   border: none;
   background-color: ${({ disabled }) => (disabled ? " #c4c4c4" : "#ff7f50")};
   cursor: ${({ disabled }) => (disabled ? "cursor" : "pointer")};
-`;
-
-const InvalidMsg = styled.p`
-  margin-top: 4px;
-  color: #ff6228;
-  font-size: 12px;
-`;
-
-const ValidMsg = styled.p`
-  margin-top: 4px;
-  color: #03ca5f;
-  font-size: 12px;
 `;
 
 const AgreeAllCheckbox = styled.div`
@@ -176,7 +160,6 @@ export default function SignUp() {
     isValidId,
     isCheckingDuplicate,
     isNotDuplicate,
-    duplicateMessage,
     isValidPassword,
     isValidConfirmPassword,
     isValidName,
@@ -241,7 +224,9 @@ export default function SignUp() {
   };
 
   // 비밀번호 확인 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const confirmPasswordValue = e.target.value;
     setForm((prevForm) => ({
       ...prevForm,
@@ -302,13 +287,16 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://dev.risetconstruction.net/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+      const response = await fetch(
+        "https://dev.risetconstruction.net/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
       if (response.ok) {
         console.log("successful");
@@ -339,34 +327,20 @@ export default function SignUp() {
               onBlur={handleIdBlur}
               placeholder="아이디를 입력하세요"
               isValid={isValidId}
-              validMessage="아이디 중복 확인을 진행해 주세요"
+              validMessage={
+                isCheckingDuplicate ? "" : "아이디 중복 확인을 진행해 주세요"
+              }
               inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
               helperText="6~15자 영문 숫자 혼합"
             />
 
             <IdChcekBtn
-              type = "button"
+              type="button"
               disabled={!isValidId || isCheckingDuplicate}
               onClick={handleCheckDuplicateId}
             >
               아이디 중복 확인
             </IdChcekBtn>
-            {isNotDuplicate && duplicateMessage && (
-              <>
-                <span className="icon invalid">
-                  <FaCircleExclamation />
-                </span>
-                <InvalidMsg>{duplicateMessage}</InvalidMsg>
-              </>
-            )}
-            {!isNotDuplicate && duplicateMessage && (
-              <>
-                <span className="icon valid">
-                  <FaCheckCircle />
-                </span>
-                <ValidMsg>{duplicateMessage}</ValidMsg>
-              </>
-            )}
 
             <TextInput
               label="비밀번호"
@@ -418,7 +392,10 @@ export default function SignUp() {
 
             <AgreeAllCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreeAll} onChange={handleAgreeAllChange} />
+                <CustomCheckbox
+                  isChecked={agreeAll}
+                  onChange={handleAgreeAllChange}
+                />
                 <p>
                   전체 동의하기
                   <button>
@@ -430,7 +407,10 @@ export default function SignUp() {
 
             <AgreeCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreeAge} onChange={handleAgreeAgeChange} />
+                <CustomCheckbox
+                  isChecked={agreeAge}
+                  onChange={handleAgreeAgeChange}
+                />
                 <p>
                   [필수] 만 14세 이상입니다.
                   <button>
@@ -442,7 +422,10 @@ export default function SignUp() {
 
             <AgreeCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreeFinal} onChange={handleAgreeFinalChange} />
+                <CustomCheckbox
+                  isChecked={agreeFinal}
+                  onChange={handleAgreeFinalChange}
+                />
                 <p>
                   [필수] <span>최종이용자 이용약관</span>에 동의합니다.
                   <button>
@@ -453,7 +436,10 @@ export default function SignUp() {
             </AgreeCheckbox>
             <AgreeCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreePrivacy} onChange={handleAgreePrivacyChange} />
+                <CustomCheckbox
+                  isChecked={agreePrivacy}
+                  onChange={handleAgreePrivacyChange}
+                />
                 <p>
                   [필수] <span>개인정보 수집 및 이용</span>에 동의합니다.
                   <button>
@@ -462,7 +448,7 @@ export default function SignUp() {
                 </p>
               </label>
             </AgreeCheckbox>
-            <SignUpBtn type="submit" >가입하기</SignUpBtn>
+            <SignUpBtn type="submit">가입하기</SignUpBtn>
           </form>
           <SignUpQuestion>
             <p>
