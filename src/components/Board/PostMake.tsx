@@ -104,14 +104,16 @@ const ButtonSubmit = styled.button`
 
 interface PostMakeType {
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handlePostAdd: (post: any) => void;
+  handlePostRegist: (post: any) => void;
+  post?: any;
 }
 
-export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType) {
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+export default function PostMake({ setIsFormOpen, handlePostRegist, post }: PostMakeType) {
+  const [title, setTitle] = useState<string>(post ? post.title : "");
+  const [content, setContent] = useState<string>(post ? post.content : "");
   const [files, setFiles] = useState<File[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const jwt = localStorage.getItem("jwt");
 
   /* react-quill 설정 */
   const modules = {
@@ -144,7 +146,6 @@ export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType)
       content: content,
     };
 
-    const jwt = localStorage.getItem("jwt");
     const formData = new FormData();
     formData.append("dto", JSON.stringify(dto));
 
@@ -152,15 +153,25 @@ export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType)
       formData.append("file", files[i]);
     }
 
-    fetch("https://dev.risetconstruction.net/board", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => handlePostAdd(data));
+    if (post) {
+      fetch(`https://dev.risetconstruction.net/board/${post.id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: formData,
+      });
+    } else {
+      fetch("https://dev.risetconstruction.net/board", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => handlePostRegist(data));
+    }
 
     setIsFormOpen(false);
   };
@@ -168,7 +179,7 @@ export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType)
   return (
     <Layout onSubmit={handleSubmit}>
       <Header>
-        <HeaderTitle>게시물 작성</HeaderTitle>
+        <HeaderTitle>{post ? "게시물 수정" : "게시물 작성"}</HeaderTitle>
         <CloseIcon onClick={() => setIsFormOpen(false)} />
       </Header>
 
