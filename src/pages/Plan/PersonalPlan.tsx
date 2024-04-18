@@ -59,11 +59,14 @@ export default function PersonalPlan() {
   const jwt = localStorage.getItem("jwt");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [responseData, setResponseData] = useState<ResponseDataType[] | []>([]);
-  const [allPlanData, setAllPlanData] = useState<any>([]);
-  const [myPlan, setMyPlan] = useState<any>([]);
   const [searchWord, setSearchWord] = useState<string>("");
   const [searchResult, setSearchResult] = useState<ResponseDataType[]>([]);
   const [filterCategory, setFilterCategory] = useState<string>("이름");
+
+  const [userPlanData, setUserPlanData] = useState<any>({});
+  const [otherPlanData, setOtherPlanData] = useState<any>([]);
+
+  const [selectedMemberId, setSelectedMemberId] = useState<number>(0);
 
   /* 이름 검색 */
   const handleSearchWord: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -79,17 +82,11 @@ export default function PersonalPlan() {
       );
     }
   };
-
   useEffect(() => {
-    const setFitDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - 1,
-      currentDate.getDate() + 1
-    );
-    const requestDate = setFitDate.toISOString().slice(0, 10);
-    // console.log(requestDate);
     fetch(
-      "https://dev.risetconstruction.net/api/employees?employeeDate=2024-04-10",
+      `https://dev.risetconstruction.net/api/employees?employeeDate=${currentDate
+        .toISOString()
+        .slice(0, 10)}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -99,39 +96,63 @@ export default function PersonalPlan() {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("data");
-        console.log(data);
+        if (Array.isArray(data)) {
+          setResponseData(data);
+        }
       });
   }, [currentDate]);
 
-  console.log(jwt);
   /* 데이터 형식 변환 */
   useEffect(() => {
-    const modifiedData = responseData.map((data) => {
-      const unEditablePlan = [
-        ...data.annualLeaveDetail,
-        ...data.halfLeaveDetail,
-        data.commuteStartTime && {
-          startTime: data.commuteStartTime,
-          endTime: data.commuteEndTime,
-          title: data.commutePlace,
-        },
-      ];
+    if (responseData.length > 0) {
+      /* 본인 일정 */
+      setUserPlanData({
+        employeeId: responseData[0].employeeId,
+        name: responseData[0].name,
+        department: responseData[0].department,
+        position: responseData[0].position,
+        image: responseData[0].image,
+        planList: responseData[0].schedulesDetail,
+        unEditablePlan: [
+          ...responseData[0].annualLeaveDetail,
+          ...responseData[0].halfLeaveDetail,
+          responseData[0].commuteStartTime && {
+            startTime: responseData[0].commuteStartTime,
+            endTime: responseData[0].commuteEndTime,
+            title: responseData[0].commutePlace,
+          },
+        ],
+      });
+    }
+    if (responseData.length > 1) {
+      /* 타인 일정 */
+      const modifiedData = responseData.slice(1).map((data) => {
+        return {
+          employeeId: data.employeeId,
+          name: data.name,
+          department: data.department,
+          position: data.position,
+          image: data.image,
+          planList: [
+            ...[
+              ...data.annualLeaveDetail,
+              ...data.halfLeaveDetail,
+              data.commuteStartTime && {
+                startTime: data.commuteStartTime,
+                endTime: data.commuteEndTime,
+                title: data.commutePlace,
+              },
+            ],
+            ...data.schedulesDetail,
+          ],
+        };
+      });
+      setOtherPlanData(modifiedData);
+    }
+  }, [currentDate]);
 
-      return {
-        employeeId: data.employeeId,
-        name: data.name,
-        department: data.department,
-        position: data.position,
-        image: data.image,
-        editablePlan: data.schedulesDetail,
-        unEditablePlan: unEditablePlan,
-      };
-    });
-
-    // setMyPlan(modifiedData.filter((plan) => plan.employeeId === userId))
-    setAllPlanData(modifiedData);
-  }, [responseData]);
+  console.log("=============처음 진입시 날짜", currentDate);
+  const handleTest = (searchWord: string) => {};
 
   return (
     <Layout>
@@ -141,16 +162,20 @@ export default function PersonalPlan() {
           <DateSlider setCurrentDate={setCurrentDate} />
           <PlanSearch
             searchWord={searchWord}
-            // handleSearchWord={handleSearchWord}
+            handleSearchWord={handleTest}
             filterCategory={filterCategory}
             setFilterCategory={setFilterCategory}
           />
-          {allPlanData.length > 0 && (
-            <PlanList
-              allPlanData={allPlanData}
-              setAllPlanData={setAllPlanData}
-            />
-          )}
+
+          <PlanList
+            currentDate={currentDate}
+            userPlanData={userPlanData}
+            setUserPlanData={setUserPlanData}
+            otherPlanData={otherPlanData}
+            setOtherPlanData={setOtherPlanData}
+            selectedMemberId={selectedMemberId}
+            setSelectedMemberId={setSelectedMemberId}
+          />
         </MainContentLayout>
       </main>
     </Layout>
