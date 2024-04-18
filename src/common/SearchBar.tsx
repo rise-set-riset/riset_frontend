@@ -23,6 +23,8 @@ const Input = styled.input`
   text-indent: 10px;
   border: none;
   outline: none;
+  color: var(--color-black);
+  background-color: var(--color-white);
 `;
 
 interface SearchBarType extends React.InputHTMLAttributes<HTMLInputElement> {}

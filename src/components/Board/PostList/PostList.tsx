@@ -143,8 +143,16 @@ export default function PostList() {
   // 모바일, 태블릿 여부 판단
   const { isTablet, isMobile } = useContext(ResponsiveContext);
   // 전체 게시글
-  const { posts, hasMore, lastItemRef, setSearchWord, handleCommentRegist, handlePostDelete } =
-    usePosts("https://dev.risetconstruction.net/board");
+  const {
+    posts,
+    hasMore,
+    lastItemRef,
+    setSearchWord,
+    handlePostModify,
+    handleCommentRegist,
+    handleCommentDelete,
+    handlePostDelete,
+  } = usePosts("https://dev.risetconstruction.net/board");
   // 즐겨찾기 게시글
   const {
     posts: favoritePosts,
@@ -152,7 +160,9 @@ export default function PostList() {
     lastItemRef: favoriteLastItemRef,
     setPosts: setFavoritePosts,
     setSearchWord: setFavoriteSearchWord,
+    handlePostModify: handleFavoritePostModify,
     handleCommentRegist: handleFavoriteCommentRegist,
+    handleCommentDelete: handleFavoriteCommentDelete,
     handlePostRegist: handleFavoritePostRegist,
     handlePostDelete: handleFavoritePostDelete,
     handleIsPostExists: handleFavoriteIsPostExists,
@@ -258,6 +268,8 @@ export default function PostList() {
                       isAllPosts={false}
                       isManageClick={isFavoriteManageClick}
                       handleCommentRegist={handleFavoriteCommentRegist}
+                      handleCommentDelete={handleCommentDelete}
+                      handlePostModify={handleFavoritePostModify}
                       handleAllPostDelete={handleAllPostDelete}
                       handleFavoritePostDelete={handleFavoritePostDelete}
                     />
@@ -297,6 +309,8 @@ export default function PostList() {
                   isAllPosts={true}
                   isManageClick={isManageClick}
                   handleCommentRegist={handleCommentRegist}
+                  handleCommentDelete={handleFavoriteCommentDelete}
+                  handlePostModify={handlePostModify}
                   handleAllPostDelete={handleAllPostDelete}
                   handleFavoritePostRegist={handleFavoritePostRegist}
                   handleFavoriteIsPostExists={handleFavoriteIsPostExists}

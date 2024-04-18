@@ -11,9 +11,6 @@ import { ReactComponent as Profile } from "../../assets/header/profile.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import { useNavigate } from "react-router-dom";
-import Modal from "../../common/Modal";
-import PostMake from "./PostMake";
 
 const Layout = styled.div`
   width: 90%;
@@ -53,10 +50,6 @@ const Title = styled.h2`
 const EmojiIcon = styled(FcDocument)`
   font-size: 1.2rem;
   margin-right: 0.3rem;
-`;
-
-const UtilWrapper = styled.div`
-  position: relative;
 `;
 
 const CloseIcon = styled(IoClose)`
@@ -223,6 +216,7 @@ interface Post {
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsModifyOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleCommentRegist: (comment: any, postId: number) => void;
+  handleCommentDelete: (commentId: number) => void;
   handleAllPostDelete: (postId: number) => void;
 }
 
@@ -230,6 +224,7 @@ export default function PostShow({
   post,
   setIsFormOpen,
   handleCommentRegist,
+  handleCommentDelete,
   handleAllPostDelete,
   setIsModifyOpen,
 }: Post) {
@@ -237,6 +232,7 @@ export default function PostShow({
   const [isPrevCommentOpen, setIsPrevCommentOpen] = useState(false);
   const [myInfo, setMyInfo] = useState<any>({});
   const [isModify, setIsModify] = useState<boolean>(false);
+  const [isModifyComment, setIsModifyComment] = useState<boolean[]>([]);
   const { user, post: postItem } = post;
   const userId = localStorage.getItem("userId");
   const jwt = localStorage.getItem("jwt");
@@ -282,6 +278,23 @@ export default function PostShow({
     }
   };
 
+  /* 댓글 삭제 */
+  const handleCommentDel = (commentId: number) => {
+    fetch(`https://dev.risetconstruction.net/reply/deleted/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
+    handleCommentDelete(commentId);
+  };
+
+  /* 댓글 수정,삭제 열기/닫기 */
+  const handleIsModifyComment = (idx: number) => {
+    setIsModifyComment((prev) => prev.map((value, index) => (index === idx ? !value : value)));
+  };
+
   /* 내 정보 가져오기 */
   useEffect(() => {
     fetch("https://dev.risetconstruction.net/preset", {
@@ -294,6 +307,12 @@ export default function PostShow({
       .then((data) => setMyInfo(data));
   }, []);
 
+  /* 댓글 관련 */
+  useEffect(() => {
+    // 댓글 수 만큼 배열 생성
+    setIsModifyComment(Array.from({ length: postItem.comment.length }, () => false));
+  }, [postItem.comment]);
+
   return (
     <Layout>
       <PostWrapper>
@@ -302,7 +321,7 @@ export default function PostShow({
             <EmojiIcon />
             {postItem.title}
           </Title>
-          <UtilWrapper>
+          <div>
             {Number(userId) === user.employeeNo && (
               <ModifyIcon onClick={() => setIsModify(!isModify)} />
             )}
@@ -313,7 +332,7 @@ export default function PostShow({
                 <p onClick={() => handleDelete(postItem.id)}>삭제</p>
               </ModDel>
             )}
-          </UtilWrapper>
+          </div>
         </Header>
         <Date>{postItem.date.split("T")[0]}</Date>
         <Member>
@@ -356,7 +375,7 @@ export default function PostShow({
         )}
         <CommentScroll $isPrevCommentOpen={isPrevCommentOpen}>
           {postItem.comment.length > 0 &&
-            postItem.comment.map((com: any) => (
+            postItem.comment.map((com: any, idx: number) => (
               <UserComment key={com.id}>
                 <CommentDetail>
                   {JSON.parse(com.employee.myImage) ? (
@@ -372,7 +391,17 @@ export default function PostShow({
                     <p>{com.content}</p>
                   </div>
                 </CommentDetail>
-                <ModifyIcon />
+                {Number(userId) === com.employee.employeeNo && (
+                  <div>
+                    <ModifyIcon onClick={() => handleIsModifyComment(idx)} />
+                    {isModifyComment[idx] && (
+                      <ModDel>
+                        <p>수정</p>
+                        <p onClick={() => handleCommentDel(com.id)}>삭제</p>
+                      </ModDel>
+                    )}
+                  </div>
+                )}
               </UserComment>
             ))}
         </CommentScroll>
