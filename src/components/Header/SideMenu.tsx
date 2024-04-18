@@ -8,7 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
 
-const Layout = styled.div<{ $isSideMenuOpen: boolean; $sideMenuPosition: number }>`
+const Layout = styled.div<{
+  $isSideMenuOpen: boolean;
+  $sideMenuPosition: number;
+}>`
   position: fixed;
   left: ${(props) => props.$sideMenuPosition}px;
   top: 60px;
@@ -99,7 +102,9 @@ export default function SideMenu() {
   const pathname = location.pathname;
   const { isMobile } = useContext(ResponsiveContext);
   const dispatch = useDispatch<AppDispatch>();
-  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
+  const isSideMenuOpen = useSelector(
+    (state: RootState) => state.sideMenu.isSideMenuOpen
+  );
 
   // 현재 보고있는 메뉴만 열리게하기
   const handleIsMenuOpen = (idx: number) => {
@@ -111,7 +116,9 @@ export default function SideMenu() {
   useEffect(() => {
     setIsMenuOpen(
       Array.from({ length: sideMenus?.menus.length! }, (_, idx) => {
-        return sideMenus?.menus[idx].link.split("/")[1] === pathname.split("/")[1];
+        return (
+          sideMenus?.menus[idx].link.split("/")[1] === pathname.split("/")[1]
+        );
       })
     );
   }, [sideMenus, pathname]);
@@ -152,13 +159,17 @@ export default function SideMenu() {
   }, []);
 
   return (
-    <Layout $isSideMenuOpen={isSideMenuOpen} $sideMenuPosition={sideMenuPosition}>
+    <Layout
+      $isSideMenuOpen={isSideMenuOpen}
+      $sideMenuPosition={sideMenuPosition}
+    >
       <UserProfile>
         <CustomLink to="/mypage">
           {sideMenus && (
             <>
               <Profile>
-                {<UserImg src={sideMenus.user.icon} alt="profile" /> || sideMenuIcon["profile"]()}
+                {<UserImg src={sideMenus.user.icon} alt="profile" /> ||
+                  sideMenuIcon["profile"]()}
                 <UserInfo>
                   <p>{sideMenus.user.name}</p>
                   <p>{sideMenus.user.rank}</p>

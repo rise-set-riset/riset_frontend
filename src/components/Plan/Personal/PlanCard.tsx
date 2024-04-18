@@ -5,6 +5,7 @@ import { FiMoreVertical } from "react-icons/fi";
 /* 전체 레이아웃 */
 const Layout = styled.div<{ $isFixed: boolean }>`
   width: 100%;
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,7 +16,8 @@ const Layout = styled.div<{ $isFixed: boolean }>`
   input {
     font-size: 18px;
     font-weight: bold;
-    color: ${(props) => (props.$isFixed ? "var(--color-black)" : "var(--color-brand-lightgray)")};
+    color: ${(props) =>
+      props.$isFixed ? "var(--color-black)" : "var(--color-brand-lightgray)"};
     border: none;
 
     &::placeholder {
@@ -76,6 +78,7 @@ const MenuButton = styled.div<{ $isFixed: boolean }>`
   height: 100%;
   display: flex;
   justify-content: ${(props) => (props.$isFixed ? "flex-end" : "center")};
+  justify-content: center;
   align-items: center;
   border-radius: 0 16px 16px 0;
   background-color: ${(props) =>
@@ -84,7 +87,9 @@ const MenuButton = styled.div<{ $isFixed: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.$isFixed ? "var(--color-brand-lightgray)" : "var(--color-brand-orange)"};
+      props.$isFixed
+        ? "var(--color-brand-lightgray)"
+        : "var(--color-brand-orange)"};
   }
 `;
 
@@ -92,14 +97,19 @@ const MenuButton = styled.div<{ $isFixed: boolean }>`
 const Moremenu = styled.div`
   position: relative;
   margin-right: 12px;
+  height: 100%;
   font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 /* 수정, 삭제 드롭다운 메뉴 */
 const DropdownMenu = styled.ul`
-  z-index: 5;
+  height: 100%;
+  z-index: 10;
   position: absolute;
-  right: 0;
+  right: 1.5rem;
   width: 4rem;
   padding: 0.5rem 0;
   display: flex;
@@ -124,6 +134,10 @@ const DropdownMenu = styled.ul`
 const SaveMenu = styled.div`
   font-size: 1rem;
   font-weight: bold;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 /* 일정 객체 형식 */
@@ -142,9 +156,19 @@ interface PlanCardProps {
   clickToAdd: boolean;
   isEditable: boolean;
   planContent: DayPlanType;
+  setUserPlanData?: React.Dispatch<React.SetStateAction<any>>;
+  currentDate?: Date;
+  setMyPlanList?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function PlanCard({ clickToAdd, isEditable, planContent }: PlanCardProps) {
+export default function PlanCard({
+  clickToAdd,
+  isEditable,
+  planContent,
+  setUserPlanData,
+  currentDate,
+  setMyPlanList,
+}: PlanCardProps) {
   /* 
   isFixed: 고정 여부
   dayPlan: 일정 내용
@@ -165,72 +189,94 @@ export default function PlanCard({ clickToAdd, isEditable, planContent }: PlanCa
     });
   };
 
+  console.log("planCard", currentDate);
+
+  const handleSavePlan = (savePlanForm: any) => {
+    /* 추가 기능일 때 */
+    fetch(`https://dev.risetconstruction.net/api/employees/addEmployees`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify(savePlanForm),
+    }).then((res) => {
+      res.json();
+    });
+    // .then((data) => console.log("값", data));
+    // .then((data) => {
+    //   console.log("iddata", data);
+    // setUserPlanData(prev => {
+    //   if (prev) {
+    //     return {
+    //   ...prev,
+    //   planList: [...prev.planList, savePlanForm]
+    //     }}})
+    // });
+  };
+
   /* Vertical Icon 또는 저장 메뉴 */
   const handlePlanMenu = () => {
     if (isFixed) {
-      /* Vertical Icon일 땐 드롭다운 메뉴 표시 설정 */
+      /* isFixed=true일 땐 Vertical Icon => 드롭다운 메뉴 표시 설정 */
       setIsMenuOpen(!isMenuOpen);
     } else {
-      /* 저장 버튼일 때*/
-      setIsFixed(true);
-
-      const savePlanForm = {
-        startTime: dayPlan.startTime || "",
-        endTime: dayPlan.endTime || "",
-        title: dayPlan.title || "",
-      };
-      if (clickToAdd) {
-        /* 추가 기능일 때 */
-        // fetch("", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         Authorization: `Bearer ${jwt}`,
-        //     },
-        //     body: JSON.stringify(savePlanForm),
-        // }).then((res) => {
-        //     if (res.ok) {
-        //         console.log("ok");
-        //     } else {
-        //         throw new Error("일정 추가 실패");
-        //     }
-        // });
-      } else {
-        /* 수정 기능일 때 */
-        // fetch("", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         Authorization: `Bearer ${jwt}`,
-        //     },
-        //     body: JSON.stringify(savePlanForm),
-        // }).then((res) => {
-        //     if (res.ok) {
-        //         console.log("ok");
-        //     } else {
-        //         throw new Error("일정 수정 실패");
-        //     }
-        // });
+      if (dayPlan.startTime && dayPlan.endTime && dayPlan.title) {
+        const savePlanForm = {
+          startTime:
+            currentDate?.toISOString().slice(0, 11) + dayPlan.startTime,
+          endTime: currentDate?.toISOString().slice(0, 11) + dayPlan.endTime,
+          title: dayPlan.title,
+        };
+        // console.log(savePlanForm);
+        if (clickToAdd) {
+          handleSavePlan(savePlanForm);
+        } else {
+          handleUpdatePlan(savePlanForm);
+        }
+        setIsFixed(true);
       }
     }
+  };
+
+  const handleUpdatePlan = (savePlanForm: any) => {
+    /* 수정 기능일 때 */
+    fetch(`https://dev.risetconstruction.net/api/employees/updateSchedule`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        ...savePlanForm,
+        ScheduleId: planContent.id,
+      }),
+    }).then((res) => {
+      if (res.ok) {
+        console.log("ok");
+      }
+    });
   };
 
   /* 일정 삭제 */
   const handlRemovePlan = () => {
     // 삭제요청
-    // fetch(`/${planContent.id}`, {
-    //     method: "DELETE",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${jwt}`,
-    //     }
-    // }).then((res) => {
-    //     if (res.ok) {
-    //         console.log("ok");
-    //     } else {
-    //         throw new Error("일정 수정 실패");
-    //     }
-    // });
+    fetch(
+      `https://dev.risetconstruction.net/api/employees/deleteSchedule?id=${planContent.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    ).then((res) => {
+      // if (res.ok) {
+      // setMyPlanList((prev: any) =>
+      //   prev.filter((plan: any) => plan.id !== planContent.id)
+      // );
+      // }
+    });
   };
 
   return (

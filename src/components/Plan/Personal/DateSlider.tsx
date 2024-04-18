@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -174,6 +174,30 @@ export default function DateSlider({ setCurrentDate }: DateSliderProps) {
     }
   };
 
+  useEffect(() => {
+    if (calendarRef.current) {
+      calendarRef.current
+        .getApi()
+        .gotoDate(
+          new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            new Date().getDate() - 2
+          )
+        );
+    }
+  }, []);
+
+  const handleDateSet = (date: any) => {
+    setCurrentDate(
+      new Date(
+        date.start.getFullYear(),
+        date.start.getMonth(),
+        date.start.getDate() + 2
+      )
+    );
+  };
+
   /* 이전 월로 이동 */
   const prevMonth = () => {
     if (calendarRef.current) {
@@ -264,21 +288,16 @@ export default function DateSlider({ setCurrentDate }: DateSliderProps) {
           const startDate = new Date(date.start.marker);
           const centerDay = new Date(startDate);
           centerDay.setDate(startDate.getDate() + 2);
+          centerDay.setDate(startDate.getDate() + 2);
           setMonth((centerDay.getMonth() + 1).toString());
           return `${centerDay.getFullYear()}`;
         }}
         dayHeaderFormat={{ day: "numeric" }}
         datesSet={(date) => {
-          setCurrentDate(
-            new Date(
-              date.start.getFullYear(),
-              date.start.getMonth() + 1,
-              date.start.getDate() + 2
-            )
-          );
+          handleDateSet(date);
         }}
         navLinks={true}
-        navLinkDayClick={(date, jsEvent) => {
+        navLinkDayClick={(date) => {
           handleDateClick(date);
         }}
       />

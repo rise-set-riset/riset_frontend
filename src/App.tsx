@@ -19,12 +19,13 @@ import CurrentDayoff from "./pages/Dayoff/CurrentDayoff";
 import Salary from "./pages/Salary/Salary";
 import GroupChart from "./pages/Group/GroupChart";
 import GroupMember from "./pages/Group/GroupMember";
-import Setting from "./pages/Setting/Setting";
 import { ResponsiveProvider } from "./contexts/ResponsiveContext";
 import DarkmodeProvider from "./contexts/DarkmodeContext";
 import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
-import ProfileSetting from "./pages/Setting/ProfileSetting";
+import SettingInvite from "./pages/Setting/SettingInvite";
+import SettingProfile from "./pages/Setting/SettingProfile";
+import SettingBranch from "./pages/Setting/SettingBranch";
 
 const router = createBrowserRouter([
   {
@@ -69,8 +70,9 @@ const router = createBrowserRouter([
       { path: "/group/member", element: <GroupMember /> },
 
       // Setting
-      { path: "/setting", element: <Setting /> },
-      { path: "/setting/profile", element: <ProfileSetting /> },
+      { path: "/setting/invite", element: <SettingInvite /> },
+      { path: "/setting/branch", element: <SettingBranch /> },
+      { path: "/setting/profile", element: <SettingProfile /> },
     ],
   },
 ]);
