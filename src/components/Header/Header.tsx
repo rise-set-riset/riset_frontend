@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import logoUrl from "../../assets/logo.png";
+import logoDarkmodeUrl from "../../assets/logo-darkmode.png";
 import { ReactComponent as Hamburger } from "../../assets/header/hamburger.svg";
 import { ReactComponent as Moon } from "../../assets/header/moon.svg";
 import { ReactComponent as Alert } from "../../assets/header/alert.svg";
@@ -47,6 +48,8 @@ const LogoImg = styled.img`
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 110px;
+  height: 35px;
   transform: translate(-50%, -50%);
   cursor: pointer;
   @media screen and (max-width: 600px) {
@@ -145,6 +148,7 @@ export default function Header() {
   const jwt = localStorage.getItem("jwt");
   const [userName, setUserName] = useState<string>("");
   const [userImg, setUserImg] = useState<string>("");
+  const { isDarkmode } = useContext(DarkModeContext);
 
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -170,20 +174,14 @@ export default function Header() {
     <>
       <Layout>
         <Nav>
-          {!isMobile && (
-            <HamburgerMenu
-              onClick={() => dispatch(sideMenuAction.toggleSideMenu())}
-            />
-          )}
+          {!isMobile && <HamburgerMenu onClick={() => dispatch(sideMenuAction.toggleSideMenu())} />}
           <Link to="/home">
-            <LogoImg src={logoUrl} alt="riset" />
+            <LogoImg src={isDarkmode ? logoDarkmodeUrl : logoUrl} alt="riset" />
           </Link>
           <Utils>
             <Moon onClick={handleDarkmode} />
             <Alert />
-            <ProfileMenu
-              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            >
+            <ProfileMenu onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
               {userImg ? <img src={userImg} alt="user" /> : <Profile />}
             </ProfileMenu>
             {isProfileMenuOpen && (
