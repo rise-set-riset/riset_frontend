@@ -3,7 +3,6 @@ import styled from "styled-components";
 import SearchBar from "../../../common/SearchBar";
 import { GoPlusCircle } from "react-icons/go";
 import usePosts from "../../../hooks/usePosts";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Modal from "../../../common/Modal";
 import PostMake from "../PostMake";
 import PostCard from "../PostCard";
@@ -63,8 +62,16 @@ const Loading = styled.div`
 
 export default function MyPost() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord, handleComment } =
-    usePosts("https://dev.risetconstruction.net/board/mine");
+  const {
+    posts,
+    hasMore,
+    lastItemRef,
+    searchWord,
+    setPosts,
+    setSearchWord,
+    handleComment,
+    handlePost,
+  } = usePosts("https://dev.risetconstruction.net/board/mine");
 
   /* 내 게시글 등록 시 화면 업데이트 */
   const handlePostAdd = (post: any) => {
@@ -98,13 +105,10 @@ export default function MyPost() {
                   isAllPosts={false}
                   handleIconClick={() => {}}
                   handleComment={handleComment}
+                  handlePost={handlePost}
                 />
               ))}
-            {hasMore && (
-              <Loading ref={lastItemRef}>
-                <AiOutlineLoading3Quarters />
-              </Loading>
-            )}
+            {hasMore && <Loading ref={lastItemRef} />}
           </Posts>
         </MyPosts>
         <Modal isModalOpen={isModalOpen} handleIsModalOpen={setIsModalOpen}>

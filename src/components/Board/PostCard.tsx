@@ -7,6 +7,7 @@ import { FiPaperclip } from "react-icons/fi";
 import { TiStarFullOutline } from "react-icons/ti";
 import { LuMinus } from "react-icons/lu";
 import { FcDocument } from "react-icons/fc";
+import PostMake from "./PostMake";
 
 const Layout = styled.div`
   position: relative;
@@ -151,6 +152,7 @@ interface PostCardType {
   isAllPosts: boolean;
   handleIconClick: (e: React.MouseEvent<SVGElement>, postId: number) => void;
   handleComment: (comment: any, postId: number) => void;
+  handlePost: (postId: number) => void;
 }
 
 export default function PostCard({
@@ -159,8 +161,10 @@ export default function PostCard({
   isAllPosts,
   handleIconClick,
   handleComment,
+  handlePost,
 }: PostCardType) {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isModifyModalOpen, setIsModifyModalOpen] = useState<boolean>(false);
   const { user, post: postItem } = post;
 
   return (
@@ -190,7 +194,16 @@ export default function PostCard({
         </FileWrapper>
       )}
       <Modal isModalOpen={isFormOpen} handleIsModalOpen={setIsFormOpen}>
-        <PostShow post={post} setIsFormOpen={setIsFormOpen} handleComment={handleComment} />
+        <PostShow
+          post={post}
+          setIsFormOpen={setIsFormOpen}
+          setIsModifyOpen={setIsModifyModalOpen}
+          handleComment={handleComment}
+          handlePost={handlePost}
+        />
+      </Modal>
+      <Modal isModalOpen={isModifyModalOpen} handleIsModalOpen={setIsModifyModalOpen}>
+        <PostMake setIsFormOpen={setIsModifyModalOpen} handlePostAdd={handlePost} post={postItem} />
       </Modal>
     </Layout>
   );

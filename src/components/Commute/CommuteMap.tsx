@@ -114,7 +114,7 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
       const distance = R * c; // 두 지점 간의 거리 (단위: m)
 
       // 100m 안으로 진입 여부 판단
-      if (distance <= 100) {
+      if (distance <= 200) {
         return true;
       } else {
         return false;
@@ -131,8 +131,6 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     }
   }, [position, maps, setAddress, setIsInRange]);
 
-  console.log(maps);
-
   return (
     <Layout>
       <Map
@@ -148,7 +146,7 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
                   lat: map.latitude,
                   lng: map.longitude,
                 }}
-                radius={100}
+                radius={200}
                 strokeWeight={4} // 선(두께)
                 strokeColor={"var(--color-brand-main)"} // 선(색)
                 strokeOpacity={1} // 선(불투명도 0~1)

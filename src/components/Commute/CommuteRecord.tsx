@@ -84,6 +84,7 @@ export default function CommuteRecord() {
   const [workStatus, setWorkStatus] = useState<string>("");
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [form, setForm] = useState<EventType>({});
+  const jwt = localStorage.getItem("jwt");
 
   /* 근무, 재택, 외근 여부 */
   const handleFormWay = (way: string) => {
@@ -112,10 +113,8 @@ export default function CommuteRecord() {
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
     const commuteTime = `${hours}:${minutes}`;
-    // jwt
-    const jwt = localStorage.getItem("jwt");
 
-    if (workStatus === "") {
+    if (!workStatus) {
       // 출근 데이터
       await fetch("https://dev.risetconstruction.net/commute/register-commute", {
         method: "POST",
@@ -156,8 +155,6 @@ export default function CommuteRecord() {
 
   /* 버튼(+) 클릭해서 Form 열기 */
   const handleAddFormBtn = async () => {
-    const jwt = localStorage.getItem("jwt");
-
     await fetch("https://dev.risetconstruction.net/commute/record", {
       method: "GET",
       headers: {
@@ -171,8 +168,6 @@ export default function CommuteRecord() {
 
   /* 새로고침, 재접속 시 출근, 퇴근 버튼 클릭 여부 판단하기 */
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-
     fetch("https://dev.risetconstruction.net/commute/get-status", {
       method: "GET",
       headers: {
@@ -180,7 +175,13 @@ export default function CommuteRecord() {
       },
     })
       .then((res) => res.json())
-      .then((data) => setWorkStatus(data.status))
+      .then((data) => {
+        if (data) {
+          setWorkStatus(data.status);
+        } else {
+          setWorkStatus(data);
+        }
+      })
       .catch((err) => console.error(err));
   }, []);
 
@@ -199,7 +200,7 @@ export default function CommuteRecord() {
         <CommuteButtons>
           <Button
             type="button"
-            active={workStatus === "" && isInRange}
+            active={!workStatus && isInRange}
             title="출근"
             handleBtnClick={handleSubmit}
             disabled={!isInRange}

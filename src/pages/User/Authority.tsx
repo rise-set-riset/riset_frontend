@@ -55,15 +55,13 @@ const AuthorityButton = styled.button<{ $isDisabled: boolean }>`
   color: white;
   border: none;
   cursor: pointer;
-  background-color: ${({ $isDisabled }) =>
-    $isDisabled ? "#ff7f50" : "#c4c4c4"};
+  background-color: ${({ $isDisabled }) => ($isDisabled ? "#ff7f50" : "#c4c4c4")};
 `;
 
 const AdminInfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
   width: 384px;
   margin: auto;
-  display: ${({ $btnClicked, $isAdmin }) =>
-    $btnClicked && $isAdmin ? "block" : "none"};
+  display: ${({ $btnClicked, $isAdmin }) => ($btnClicked && $isAdmin ? "block" : "none")};
 `;
 
 const EmployeeInfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
@@ -71,7 +69,6 @@ const EmployeeInfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean
   margin: auto;
   display: ${({ $btnClicked, $isAdmin }) => ($btnClicked && $isAdmin ? "block" : "none")};
 `;
-
 
 const CompanyNameWrapper = styled.div`
   input:first-child {
@@ -85,7 +82,7 @@ const ModalWrapper = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); 
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -184,30 +181,25 @@ export default function Authority() {
   };
 
   // 입력된 인풋값을 companyAddress에 업데이트
-  const handleCompanyAddressChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleCompanyAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCompanyAddress(e.target.value);
   };
 
   // 인풋의 값을 authorityCode에 업데이트, 코드가 비어있는지 여부에 따라 CodeBtnIsDisabled 상태 업데이트
-  const handleAuthorityCodeChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAuthorityCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAuthorityCode(e.target.value);
     setCodeBtnIsDisabled(e.target.value === "");
   };
-
 
   // 모달 여는 함수
   const handleOpenModal = () => {
     setIsPopupOpen(true);
   };
 
- // 모달 바깥의 배경을 클릭한 경우에만 모달을 닫음
-  const handleModalWrapperClick = (event :any) => {
+  // 모달 바깥의 배경을 클릭한 경우에만 모달을 닫음
+  const handleModalWrapperClick = (event: any) => {
     if (event.target === event.currentTarget) {
-      console.log(1,event.currentTarget)
+      console.log(1, event.currentTarget);
       setIsPopupOpen(false);
     }
   };
@@ -276,16 +268,13 @@ export default function Authority() {
     setIsValidatingCode(true);
 
     console.log(authorityCode);
-    fetch(
-      `https://dev.risetconstruction.net/preset/employee?code=${authorityCode}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    )
+    fetch(`https://dev.risetconstruction.net/preset/employee?code=${authorityCode}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error("서버 응답이 실패했습니다.");
@@ -357,19 +346,15 @@ export default function Authority() {
           />
           <button onClick={handleOpenModal}>검색</button>
           {isPopupOpen && (
-        <ModalWrapper onClick={handleModalWrapperClick}>
-          <ModalContent>
-            <DaumPostcodeEmbed onComplete={handleComplete} />
-          </ModalContent>
-        </ModalWrapper>
-      )}
+            <ModalWrapper onClick={handleModalWrapperClick}>
+              <ModalContent>
+                <DaumPostcodeEmbed onComplete={handleComplete} />
+              </ModalContent>
+            </ModalWrapper>
+          )}
         </CompanyAddressWrapper>
 
-        <CompleteBtn
-          type="submit"
-          $disabled={isDisabled}
-          onClick={sendCompanyInfoToServer}
-        >
+        <CompleteBtn type="submit" $disabled={isDisabled} onClick={sendCompanyInfoToServer}>
           완료
         </CompleteBtn>
       </AdminInfoWrapper>
@@ -397,11 +382,7 @@ export default function Authority() {
             inValidMessage="코드 번호를 확인해 주세요"
           />
         </AuthorityCodeWrapper>
-        <CompleteBtn
-          type="submit"
-          $disabled={CodeBtnIsDisabled}
-          onClick={validateCode}
-        >
+        <CompleteBtn type="submit" $disabled={CodeBtnIsDisabled} onClick={validateCode}>
           완료
         </CompleteBtn>
       </EmployeeInfoWrapper>

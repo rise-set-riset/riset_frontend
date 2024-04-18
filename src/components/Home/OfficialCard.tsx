@@ -16,6 +16,11 @@ const Layout = styled.div`
   }
 `;
 
-export default function OfficialCard() {
-  return <Layout>OfficialCard</Layout>;
+interface OfficialCardType {
+  title: string;
+  color: string;
+}
+
+export default function OfficialCard({ title, color }: OfficialCardType) {
+  return <Layout style={{ backgroundColor: color }}>{title}</Layout>;
 }

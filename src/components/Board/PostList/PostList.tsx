@@ -3,7 +3,6 @@ import SearchBar from "../../../common/SearchBar";
 import { ChangeEvent, useContext, useState } from "react";
 import PostCard from "../PostCard";
 import { Reorder } from "framer-motion";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import usePosts from "../../../hooks/usePosts";
 import { ResponsiveContext } from "../../../contexts/ResponsiveContext";
 
@@ -136,8 +135,7 @@ const Loading = styled.div`
 
 export default function PostList() {
   const [searchTitle, setSearchTitle] = useState<string>("");
-  const [isFavoriteManageClick, setIsFavoriteManageClick] =
-    useState<boolean>(false);
+  const [isFavoriteManageClick, setIsFavoriteManageClick] = useState<boolean>(false);
   const [isManageClick, setIsManageClick] = useState<boolean>(false);
   const [isMenuClick, setIsMenuClick] = useState<boolean>(false);
   const [isChangeMenu, setIsChangeMenu] = useState<boolean>(false);
@@ -145,8 +143,9 @@ export default function PostList() {
   const { isTablet, isMobile } = useContext(ResponsiveContext);
 
   // Hook 사용
-  const { posts, hasMore, lastItemRef, setSearchWord, handleComment } =
-    usePosts("https://dev.risetconstruction.net/board");
+  const { posts, hasMore, lastItemRef, setSearchWord, handleComment, handlePost } = usePosts(
+    "https://dev.risetconstruction.net/board"
+  );
   const {
     posts: favoritePosts,
     hasMore: hasFavoriteMore,
@@ -154,13 +153,12 @@ export default function PostList() {
     setPosts: setFavoritePosts,
     setSearchWord: setFavoriteSearchWord,
     handleComment: handleFavoriteComment,
+    handlePost: handleFavoritePost,
   } = usePosts("https://dev.risetconstruction.net/board/favorite");
 
   // 즐겨찾기, 게시물 열리는 조건
-  const isFavoriteOpen =
-    ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
-  const isAllOpen =
-    ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
+  const isFavoriteOpen = ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
+  const isAllOpen = ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
 
   // jwt
   const jwt = localStorage.getItem("jwt");
@@ -173,21 +171,20 @@ export default function PostList() {
     setFavoriteSearchWord(value);
   };
 
+  const handleDeletePost = (postId: number) => {
+    handleFavoritePost(postId);
+    handlePost(postId);
+  };
+
   /* 즐겨찾기 삭제 */
-  const handleRemoveFavorite = async (
-    e: React.MouseEvent<SVGElement>,
-    postId: number
-  ) => {
+  const handleRemoveFavorite = async (e: React.MouseEvent<SVGElement>, postId: number) => {
     e.stopPropagation();
-    await fetch(
-      `https://dev.risetconstruction.net/board/favorite/delete/${postId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    )
+    await fetch(`https://dev.risetconstruction.net/board/favorite/delete/${postId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setFavoritePosts(data));
   };
@@ -196,19 +193,14 @@ export default function PostList() {
   const handleAddFavorite = (e: React.MouseEvent<SVGElement>, post: any) => {
     e.stopPropagation();
 
-    const isValid = favoritePosts.find(
-      (posts) => posts.post.id === post.post.id
-    );
+    const isValid = favoritePosts.find((posts) => posts.post.id === post.post.id);
     if (!isValid) {
-      fetch(
-        `https://dev.risetconstruction.net/board/favorite/${post.post.id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      )
+      fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
         .then((res) => res.json())
         .then((data) => setFavoritePosts(data));
     }
@@ -235,17 +227,14 @@ export default function PostList() {
       const beforePostIdx = favoritePosts[idx - 1].indexNumber;
       const movedPostId = favoritePosts[idx].post.id;
 
-      fetch(
-        `https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(beforePostIdx),
-        }
-      );
+      fetch(`https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(beforePostIdx),
+      });
     }
   };
 
@@ -267,13 +256,9 @@ export default function PostList() {
             <HeaderWrapper>
               {isTablet || isMobile ? (
                 <>
-                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>
-                    즐겨찾기
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
                   <HeaderLine />
-                  <HeaderTitle onClick={() => handleMenuClick("posts")}>
-                    게시물
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
                 </>
               ) : (
                 <HeaderTitle>즐겨찾기</HeaderTitle>
@@ -299,18 +284,15 @@ export default function PostList() {
                     <PostCard
                       post={post}
                       isManageClick={isFavoriteManageClick}
-                      handleIconClick={handleRemoveFavorite}
                       isAllPosts={false}
+                      handleIconClick={handleRemoveFavorite}
                       handleComment={handleFavoriteComment}
+                      handlePost={handleDeletePost}
                     />
                   </Reorder.Item>
                 ))}
             </Reorder.Group>
-            {hasFavoriteMore && (
-              <Loading ref={lastFavoriteItemRef}>
-                <AiOutlineLoading3Quarters />
-              </Loading>
-            )}
+            {hasFavoriteMore && <Loading ref={lastFavoriteItemRef} />}
           </Favorites>
         </ContentFavorite>
 
@@ -321,22 +303,15 @@ export default function PostList() {
             <HeaderWrapper>
               {isTablet || isMobile ? (
                 <>
-                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>
-                    즐겨찾기
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
                   <HeaderLine />
-                  <HeaderTitle onClick={() => handleMenuClick("posts")}>
-                    게시물
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
                 </>
               ) : (
                 <HeaderTitle>게시물</HeaderTitle>
               )}
             </HeaderWrapper>
-            <ManageBtn
-              type="button"
-              onClick={() => setIsManageClick(!isManageClick)}
-            >
+            <ManageBtn type="button" onClick={() => setIsManageClick(!isManageClick)}>
               관리
             </ManageBtn>
           </ContentHeader>
@@ -347,16 +322,13 @@ export default function PostList() {
                   key={post.post.id}
                   post={post}
                   isManageClick={isManageClick}
-                  handleIconClick={handleAddFavorite}
                   isAllPosts={true}
+                  handleIconClick={handleAddFavorite}
                   handleComment={handleComment}
+                  handlePost={handleDeletePost}
                 />
               ))}
-            {hasMore && (
-              <Loading ref={lastItemRef}>
-                <AiOutlineLoading3Quarters />
-              </Loading>
-            )}
+            {hasMore && <Loading ref={lastItemRef} />}
           </Posts>
         </ContentAll>
       </Contents>

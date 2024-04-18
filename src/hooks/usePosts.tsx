@@ -6,12 +6,12 @@ export default function usePosts(url: string) {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [skip, setSkip] = useState<number>(0);
   const [searchWord, setSearchWord] = useState<string>("");
-  const lastItemRef = useRef<HTMLDivElement | null>(null);
   const { isTablet, isMobile } = useContext(ResponsiveContext);
+  const lastItemRef = useRef<HTMLDivElement | null>(null);
   const jwt = localStorage.getItem("jwt");
 
+  /* 게시글 조회 + 무한 스크롤 */
   useEffect(() => {
-    /* 게시글 조회 */
     const fetchMorePosts = async () => {
       const fullUrl = `${url}?size=5&page=${skip}${searchWord ? `&title=${searchWord}` : ""}`;
 
@@ -44,7 +44,7 @@ export default function usePosts(url: string) {
     };
   }, [skip, hasMore, isTablet, isMobile]);
 
-  /* 댓글 등록 시 처리 함수 */
+  /* 댓글 등록 */
   const handleComment = (comment: any, postId: number) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
@@ -63,6 +63,11 @@ export default function usePosts(url: string) {
     );
   };
 
+  /* 게시글 삭제 */
+  const handlePost = (postId: number) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post.post.id !== postId));
+  };
+
   /* 검색 시 초기화 */
   useEffect(() => {
     setHasMore(true);
@@ -70,5 +75,14 @@ export default function usePosts(url: string) {
     setPosts([]);
   }, [searchWord]);
 
-  return { posts, hasMore, lastItemRef, searchWord, setPosts, setSearchWord, handleComment };
+  return {
+    posts,
+    hasMore,
+    lastItemRef,
+    searchWord,
+    setPosts,
+    setSearchWord,
+    handleComment,
+    handlePost,
+  };
 }

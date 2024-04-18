@@ -105,11 +105,12 @@ const ButtonSubmit = styled.button`
 interface PostMakeType {
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handlePostAdd: (post: any) => void;
+  post?: any;
 }
 
-export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType) {
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+export default function PostMake({ setIsFormOpen, handlePostAdd, post }: PostMakeType) {
+  const [title, setTitle] = useState<string>(post ? post.title : "");
+  const [content, setContent] = useState<string>(post ? post.content : "");
   const [files, setFiles] = useState<File[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -168,7 +169,7 @@ export default function PostMake({ setIsFormOpen, handlePostAdd }: PostMakeType)
   return (
     <Layout onSubmit={handleSubmit}>
       <Header>
-        <HeaderTitle>게시물 작성</HeaderTitle>
+        <HeaderTitle>{post ? "게시물 수정" : "게시물 작성"}</HeaderTitle>
         <CloseIcon onClick={() => setIsFormOpen(false)} />
       </Header>
 
