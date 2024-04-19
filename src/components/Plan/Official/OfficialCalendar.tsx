@@ -121,6 +121,7 @@ const CalendarCustomStyle = styled.div<{ $month: string }>`
     border: none;
     border-radius: 12px;
     background-color: #ffbfa7;
+    color: var(--color-black);
 
     &:hover {
       background-color: var(--color-brand-main) !important;
@@ -278,6 +279,7 @@ export default function OfficialCalendar() {
       end: eventEnd,
     }));
 
+    setIsEditorForm(false);
     setIsFormOpen(true);
 
     /* 이벤트 추가 */
@@ -326,7 +328,6 @@ export default function OfficialCalendar() {
           ? eventForm.end
           : `${eventForm.end}T24:00`,
     };
-
     /* 추가시 */
     if (!isEditorForm) {
       /* 서버에 데이터 전송 */
@@ -347,7 +348,6 @@ export default function OfficialCalendar() {
           }
         });
     } else {
-      console.log(eventFormList);
       /* 수정시 */
       fetch("https://dev.risetconstruction.net/api/update", {
         method: "PATCH",
@@ -355,18 +355,17 @@ export default function OfficialCalendar() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
         },
-        body: JSON.stringify({ ...finalForm, scheduleNo: selectedScheduleNo }),
+        body: JSON.stringify({ ...eventForm, scheduleNo: selectedScheduleNo }),
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           setEventFormList((prevList: any) => {
             const filterdata = prevList.filter(
               (plan: any) => Number(plan.scheduleNo) !== selectedScheduleNo
             );
             return [
               ...filterdata,
-              { ...finalForm, scheduleNo: selectedScheduleNo },
+              { ...eventForm, scheduleNo: selectedScheduleNo },
             ];
           });
         });
@@ -478,8 +477,7 @@ export default function OfficialCalendar() {
       .then((data) => {
         setEventFormList(data);
       });
-  }, []);
-  console.log(eventFormList);
+  }, [year, month]);
 
   return (
     <Layout>
@@ -558,7 +556,6 @@ export default function OfficialCalendar() {
           aspectRatio={isMobile ? 0.8 : 1.2}
           displayEventTime={false}
           editable={false}
-          // eventDrop={(info) => console.log(info)}
         />
       </CalendarCustomStyle>
 

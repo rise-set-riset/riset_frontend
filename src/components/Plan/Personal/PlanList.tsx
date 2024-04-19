@@ -52,7 +52,8 @@ const MemberCardStyle = styled.div<{ $isSelected: boolean }>`
   }
 
   border-radius: 16px;
-  outline: ${(props) => (props.$isSelected ? "4px solid var(--color-brand-main);" : "none")};
+  outline: ${(props) =>
+    props.$isSelected ? "4px solid var(--color-brand-main);" : "none"};
 `;
 
 /* 일정 리스트 */
@@ -171,7 +172,9 @@ export default function PlanList({
       setSelectedMemberPlan(userPlanData);
     } else {
       setSelectedMemberPlan(
-        otherPlanData.filter((data: any) => data.employeeId === selectedMemberId)[0]
+        otherPlanData.filter(
+          (data: any) => data.employeeId === selectedMemberId
+        )[0]
       );
     }
   }, [selectedMemberId]);

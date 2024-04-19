@@ -146,6 +146,7 @@ export default function PersonalPlan() {
   }, [currentDate]);
 
   // console.log(responseData);
+  console.log(currentDate);
   const handleTest = (searchWord: string) => {};
 
   return (
