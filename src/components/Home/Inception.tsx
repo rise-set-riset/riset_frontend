@@ -36,7 +36,8 @@ const TotalCntAbbr = styled.div<{ $isDarkmode: boolean }>`
   align-items: center;
   justify-content: space-evenly;
   border-radius: 1rem;
-  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
+  border: ${(props) =>
+    props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none"};
   padding: 0.5rem;
   font-weight: bold;
   overflow: hidden;
@@ -84,7 +85,8 @@ const OfficialPlanAbbr = styled.div<{ $isDarkmode: boolean }>`
   display: flex;
   align-items: center;
   border-radius: 1rem;
-  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
+  border: ${(props) =>
+    props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none"};
   background-color: var(--color-white);
   overflow: hidden;
 
@@ -104,6 +106,7 @@ const OfficialTitle = styled.div`
   color: var(--color-white);
   text-align: center;
   background-color: var(--color-brand-main);
+  padding: 0.5rem 0;
 
   span:first-child {
     font-weight: bold;
@@ -164,12 +167,16 @@ const ThirdSection = styled.section<{ $isDarkmode: boolean }>`
   height: 164px;
   padding: 1rem;
   border-radius: 1rem;
-  border: ${(props) => props.$isDarkmode && "1px solid var(--color-brand-lightgray)"};
-  background-color: ${(props) => (props.$isDarkmode ? "transparent" : "var(--color-brand-yellow)")};
+  border: ${(props) =>
+    props.$isDarkmode && "1px solid var(--color-brand-lightgray)"};
+  background-color: ${(props) =>
+    props.$isDarkmode ? "transparent" : "var(--color-brand-yellow)"};
 
   input {
     background-color: ${(props) =>
-      props.$isDarkmode ? "var(--color-brand-darkgray) !important" : "var(--color-white)"};
+      props.$isDarkmode
+        ? "var(--color-brand-darkgray) !important"
+        : "var(--color-white)"};
   }
 `;
 
@@ -199,7 +206,8 @@ const SectionTitle = styled.div`
 const FourthSection = styled.section<{ $isDarkmode: boolean }>`
   padding: 1rem;
   border-radius: 1rem;
-  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
+  border: ${(props) =>
+    props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none"};
 `;
 
 const Posts = styled.div`
@@ -244,12 +252,15 @@ export default function Inception() {
       .then((data) => setDays(data));
 
     // 게시글 3개 가져오기
-    fetch("https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
+    fetch(
+      "https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => setPosts(data));
 
@@ -270,13 +281,10 @@ export default function Inception() {
       .then((data) => setOfficialPlan(data));
 
     // 근무 일정 가져오기 (일별)
-    const currentDate = new Date();
-    currentDate.setHours(currentDate.getHours() + 9);
-
     fetch(
-      `https://dev.risetconstruction.net/api/employees?employeeDate=${
-        currentDate.toISOString().split("T")[0]
-      }`,
+      `https://dev.risetconstruction.net/api/employees?employeeDate=${new Date()
+        .toISOString()
+        .slice(0, 10)}`,
       {
         method: "GET",
         headers: {
@@ -285,7 +293,20 @@ export default function Inception() {
       }
     )
       .then((res) => res.json())
-      .then((data) => setPersonalPlan(data));
+      .then((data) => {
+        if (data.length > 0) {
+          setPersonalPlan([
+            {
+              id: 0,
+              startTime: data[0].commuteStartTime,
+              endTime: data[0].commuteEndTime,
+              title: data[0].commutePlace,
+            },
+            ...data[0].halfLeaveDetail,
+            ...data[0].schedulesDetail,
+          ]);
+        }
+      });
   }, []);
 
   /* 댓글 등록 */
@@ -310,13 +331,17 @@ export default function Inception() {
   /* 댓글 삭제 */
   const handleCommentDelete = (commentId: number) => {
     setPosts((prevPosts: any) =>
-      prevPosts.map((post: any) => post.post.comment.filter((com: any) => com.id !== commentId))
+      prevPosts.map((post: any) =>
+        post.post.comment.filter((com: any) => com.id !== commentId)
+      )
     );
   };
 
   /* 게시글 삭제 */
   const handlePostDelete = (postId: number) => {
-    setPosts((prevPosts: any) => prevPosts.filter((post: any) => post.post.id !== postId));
+    setPosts((prevPosts: any) =>
+      prevPosts.filter((post: any) => post.post.id !== postId)
+    );
   };
 
   /* 게시글 수정 */
@@ -357,7 +382,11 @@ export default function Inception() {
           <OfficialInfo>
             {officialPlan.length > 0 &&
               officialPlan.map((plan) => (
-                <OfficialCard key={plan.scheduleNo} title={plan.title} color={plan.color} />
+                <OfficialCard
+                  key={plan.scheduleNo}
+                  title={plan.title}
+                  color={plan.color}
+                />
               ))}
           </OfficialInfo>
         </OfficialPlanAbbr>
@@ -381,17 +410,26 @@ export default function Inception() {
           spaceBetween={20}
           slidesPerView={1}
           pagination={{ clickable: true }}
-          breakpoints={{ 600: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
+          breakpoints={{
+            600: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
         >
-          {Array.from({ length: 5 }, (_, idx) => (
-            <SwiperSlide key={idx}>
-              <PlanCard
-                clickToAdd={false}
-                isEditable={false}
-                planContent={{ id: idx, startTime: "10:00", endTime: "12:00", title: "테스트" }}
-              />
-            </SwiperSlide>
-          ))}
+          {personalPlan.length !== 0 &&
+            personalPlan.map((plan: any) => (
+              <SwiperSlide key={plan.id}>
+                <PlanCard
+                  clickToAdd={false}
+                  isEditable={false}
+                  planContent={{
+                    id: plan.id,
+                    startTime: plan.starTime,
+                    endTime: plan.endTime,
+                    title: plan.title,
+                  }}
+                />
+              </SwiperSlide>
+            ))}
         </SwiperCustom>
       </ThirdSection>
 
