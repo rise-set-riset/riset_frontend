@@ -62,22 +62,18 @@ export default function SettingInvite() {
   const jwt = localStorage.getItem("jwt");
   const [employeeName, setEmployeeName] = useState<string>("");
   const [employeeEmail, setEmployeeEmail] = useState<string>("");
+  const [isSend, setIsSend] = useState<boolean>(false);
 
   /* 초대코드 이메일 발송 */
   const handleSendEmail = () => {
-    fetch(
-      "https://dev.risetconstruction.net/preset/mail?email=jinsung8782@naver.com",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    ).then((res) => {
-      if (res.ok) {
-        console.log("ok");
-      }
+    fetch(`https://dev.risetconstruction.net/preset/mail?email=${employeeEmail}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
     });
+
+    setIsSend(false);
   };
 
   return (
@@ -91,6 +87,7 @@ export default function SettingInvite() {
               <label htmlFor="employee-name">직원 이름</label>
               <input
                 type="text"
+                id="employee-name"
                 name="employee-name"
                 placeholder="이름을 입력하세요"
                 value={employeeName}
@@ -101,6 +98,7 @@ export default function SettingInvite() {
               <label htmlFor="employee-email">이메일</label>
               <input
                 type="email"
+                id="employee-email"
                 name="employee-email"
                 placeholder="이메일을 입력하세요"
                 value={employeeEmail}
@@ -108,7 +106,9 @@ export default function SettingInvite() {
               />
             </InputLayout>
           </MainInputBox>
-          <SendButton onClick={handleSendEmail}>발송하기</SendButton>
+          <SendButton onClick={handleSendEmail} disabled={isSend}>
+            발송하기
+          </SendButton>
         </MainContentLayout>
       </main>
     </Layout>

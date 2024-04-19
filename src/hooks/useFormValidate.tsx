@@ -94,18 +94,17 @@ export const useFormValidate = (
         },
         body: JSON.stringify({ id: form.id }),
       })
-      .then(res => res.json())
-      .then(data => { 
+        .then((res) => res.json())
+        .then((data) => {
           if (data) {
             setIsNotDuplicate(false);
             setDuplicateMessage("이미 사용 중인 아이디입니다");
           } else {
             setIsNotDuplicate(true);
             setDuplicateMessage("사용 가능한 아이디입니다");
-          } 
+          }
           setIsCheckingDuplicate(true);
-      })
-  
+        });
     } catch (error) {
       console.error("Error checking duplicate id:", error);
     }
@@ -132,6 +131,6 @@ export const useFormValidate = (
     handleNameBlur,
     handlePhoneNumberBlur,
     handleCheckDuplicateId,
-    duplicateMessage, 
+    duplicateMessage,
   };
 };

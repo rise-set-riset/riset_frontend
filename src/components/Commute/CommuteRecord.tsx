@@ -173,6 +173,7 @@ export default function CommuteRecord() {
     )
       .then((res) => res.json())
       .then((data) => setForm(data[data.length - 1]));
+
     setIsFormOpen(true);
   };
 

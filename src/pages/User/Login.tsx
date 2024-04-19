@@ -13,6 +13,8 @@ import backgroundImage from "../../assets/background-image.png";
 const Background = styled.div`
   min-width: 100vw;
   width: 100%;
+  height: 100vh;
+  min-height: 100vh;
   background-image: url(${backgroundImage});
   background-size: cover;
   display: flex;
@@ -189,7 +191,6 @@ export default function Login() {
       .then((data) => {
         localStorage.setItem("jwt", data.access_token);
         localStorage.setItem("userId", data.userId);
-        console.log("data", data);
 
         if (data.isAuth === "true") {
           navigate("/home");
@@ -246,9 +247,7 @@ export default function Login() {
                 onChange={handlePasswordChange}
                 placeholder="비밀번호를 입력하세요"
               />
-              <FindIdButton onClick={handleFindPassword}>
-                비밀번호 찾기
-              </FindIdButton>
+              <FindIdButton onClick={handleFindPassword}>비밀번호 찾기</FindIdButton>
             </TextInputWrapper>
 
             <RememberIdWrapper>

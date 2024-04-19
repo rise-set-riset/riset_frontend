@@ -17,6 +17,7 @@ interface TextInputProps {
   inValidMessage?: string;
   isNotDuplicate?: boolean;
   duplicateMessage?: string;
+  isReadonly?: boolean;
 }
 
 const Input = styled.div`
@@ -99,13 +100,10 @@ export default function TextInput({
   validMessage,
   inValidMessage,
   helperText,
-  isNotDuplicate,
-  duplicateMessage,
+  isReadonly,
 }: TextInputProps) {
   const [isFirstBlur, setIsFirstBlur] = useState<boolean>(true);
   const [isHelperTextVisible, setIsHelperTextVisible] = useState<boolean>(true);
-  const [isDuplicateChecking, setIsDuplicateChecking] =
-    useState<boolean>(false);
 
   // 부모 컴포넌트에서 전달된 onBlur 이벤트 핸들러를 호출하고, 입력 필드가 포커스를 잃었음을 나타내는 상태를 업데이트하여 helperText를 숨기는 역할
   const handleBlur = () => {
@@ -122,11 +120,6 @@ export default function TextInput({
     }
   };
 
-  // 아이디 입력값이 변경되었을 때, 아이디 유효성 검사를 수행하고 중복 확인 상태를 초기화합니다.
-  useEffect(() => {
-    setIsDuplicateChecking(false);
-  }, [value]);
-
   return (
     <Input>
       <label>{label}</label>
@@ -138,11 +131,10 @@ export default function TextInput({
           onBlur={onBlur ? handleBlur : undefined}
           placeholder={placeholder}
           className={!isValid && !isFirstBlur ? "invalid" : ""}
+          readOnly={isReadonly}
         />
 
-        {isHelperTextVisible && helperText && (
-          <HelperText>{helperText}</HelperText>
-        )}
+        {isHelperTextVisible && helperText && <HelperText>{helperText}</HelperText>}
 
         {isValid && value && label === "아이디" && !isHelperTextVisible && (
           <>
@@ -185,30 +177,12 @@ export default function TextInput({
           </>
         )}
 
-        {!isValid && !isFirstBlur && (
-          <>
-            <span className="icon invalid">
-              <FaCircleExclamation />
-            </span>
-            <InvalidMsg>{inValidMessage}</InvalidMsg>
-          </>
-        )}
-
         {!isValid && value && label === "코드" && isValidatingCode && (
           <>
             <span className="icon valid">
               <FaCheckCircle />
             </span>
             <ValidMsg>{validMessage}</ValidMsg>
-          </>
-        )}
-
-        {isValid && value && label === "코드" && isValidatingCode && (
-          <>
-            <span className="icon invalid">
-              <FaCircleExclamation />
-            </span>
-            <InvalidMsg>{inValidMessage}</InvalidMsg>
           </>
         )}
       </div>

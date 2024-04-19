@@ -153,10 +153,7 @@ export default function SettingProfile() {
   };
 
   /* 데이터 변경 */
-  const handleChageInput = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    selectedId: number
-  ) => {
+  const handleChageInput = (e: React.ChangeEvent<HTMLInputElement>, selectedId: number) => {
     const newArray = responseData.map((data) => {
       if (data.employeeNum === selectedId) {
         return {
@@ -181,9 +178,7 @@ export default function SettingProfile() {
           ...data,
           depart: {
             departmentName: value,
-            departmentId: departIdList.filter(
-              (dep: any) => dep.departName === value
-            )[0].departId,
+            departmentId: departIdList.filter((dep: any) => dep.departName === value)[0].departId,
           },
         };
       } else {
@@ -201,8 +196,7 @@ export default function SettingProfile() {
         return {
           ...data,
           jobGrade: {
-            grade: rankIdList.filter((dep: any) => dep.gradeNo === value)[0]
-              .grade,
+            grade: rankIdList.filter((dep: any) => dep.gradeNo === value)[0].grade,
             jobGradeId: value,
           },
         };
@@ -234,20 +228,13 @@ export default function SettingProfile() {
         }
       }
 
-      fetch(
-        `https://dev.risetconstruction.net/preset/profiles/${userData.employeeNum}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwt}`,
-          },
-          body: JSON.stringify(dataToSend),
-        }
-      ).then((res) => {
-        if (res.ok) {
-          console.log("ok");
-        }
+      fetch(`https://dev.risetconstruction.net/preset/profiles/${userData.employeeNum}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(dataToSend),
       });
     });
   };

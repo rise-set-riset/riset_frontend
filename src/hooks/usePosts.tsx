@@ -86,7 +86,6 @@ export default function usePosts(url: string) {
 
   /* 게시글 수정 */
   const handlePostModify = (post: any) => {
-    console.log("test");
     setPosts((prevPosts) =>
       prevPosts.map((info) => {
         if (info.post.id === post.post.id) {

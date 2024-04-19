@@ -26,6 +26,17 @@ const ProfileImg = styled.div`
   }
 `;
 
+const ImageUploadInput = styled.input`
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  right: -10px;
+  cursor: pointer;
+`;
+
 const CustomCiCirclePlus = styled(CiCirclePlus)`
   width: 24px;
   height: 24px;
@@ -105,6 +116,7 @@ const SaveBtn = styled.button`
 
 export default function Mypage() {
   const jwt = localStorage.getItem("jwt");
+
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
@@ -126,6 +138,7 @@ export default function Mypage() {
     fetchData();
   }, []);
 
+  // 회원 정보 가져오는 함수
   const fetchData = () => {
     fetch("https://dev.risetconstruction.net/api/myPage/get", {
       method: "GET",
@@ -136,7 +149,6 @@ export default function Mypage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
         setUserData(data);
       })
       .catch((error) => {
@@ -146,33 +158,40 @@ export default function Mypage() {
 
   // 회원 탈퇴 버튼을 클릭했을 때 실행될 함수
   const handleDeleteAccount = () => {
-    // 회원 탈퇴를 위한 API 엔드포인트 URL
-    const deleteEndpoint =
-      "https://dev.risetconstruction.net/api/myPage/deleteUser";
+    const deleteEndpoint = "https://dev.risetconstruction.net/api/myPage/deleteUser";
 
-    // fetch API를 사용하여 DELETE 요청을 보냄
     fetch(deleteEndpoint, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
-      // 필요한 경우 요청 바디에 데이터를 추가할 수 있습니다.
-      // body: JSON.stringify({ /* 요청 바디 데이터 */ }),
     })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to delete account");
         }
-        // 성공적으로 회원 탈퇴가 완료되면 여기에 추가적인 작업을 수행할 수 있습니다.
-        // 예를 들어 로그아웃 등의 작업을 수행할 수 있습니다.
-        console.log("Account deleted successfully");
         navigate("/");
       })
       .catch((error) => {
         console.error("Error deleting account:", error);
-        // 실패한 경우 오류 처리를 수행할 수 있습니다.
       });
+  };
+
+  const userProfileImage = userData.image;
+  const [uploadedImage, setUploadedImage] = useState(userProfileImage);
+
+  // 프로필 이미지 업로드하는 함수
+  const handleImageUpload = (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setUploadedImage(result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -182,9 +201,12 @@ export default function Mypage() {
         <ProfileImg>
           {userData.image ? (
             <img src={userData.image} alt="" />
+          ) : uploadedImage ? (
+            <img src={uploadedImage} alt="Uploaded Profile" />
           ) : (
             <img src={ProfileImgage} alt="" />
           )}
+          <ImageUploadInput type="file" accept="image/*" onChange={handleImageUpload} />
           <CustomCiCirclePlus />
         </ProfileImg>
         <NameandPositionWrapper>
@@ -194,9 +216,7 @@ export default function Mypage() {
         <MypageContainer>
           <Table userData={userData} />
           <BtnWrapper>
-            <DeleteAccountBtn onClick={handleDeleteAccount}>
-              회원탈퇴
-            </DeleteAccountBtn>
+            <DeleteAccountBtn onClick={handleDeleteAccount}>회원탈퇴</DeleteAccountBtn>
             <SaveBtn>저장</SaveBtn>
           </BtnWrapper>
         </MypageContainer>

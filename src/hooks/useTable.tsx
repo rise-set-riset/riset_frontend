@@ -39,8 +39,7 @@ const StyledTd = styled.td<{ hasBottomBorder: boolean }>`
   letter-spacing: 0.1px;
   border-left: none;
   border-right: none;
-  border-bottom: ${({ hasBottomBorder }) =>
-    hasBottomBorder ? "1px solid #c4c4c4" : "none"};
+  border-bottom: ${({ hasBottomBorder }) => (hasBottomBorder ? "1px solid #c4c4c4" : "none")};
 
   &:first-child {
     width: 180px;
@@ -123,9 +122,7 @@ const Table: React.FC<Props> = ({ userData }) => {
     setNewPassword(e.target.value);
   };
 
-  const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmNewPassword(e.target.value);
   };
 
@@ -164,7 +161,6 @@ const Table: React.FC<Props> = ({ userData }) => {
   // 모달 바깥의 배경을 클릭한 경우에만 모달을 닫음
   const handleModalWrapperClick = (event: any) => {
     if (event.target === event.currentTarget) {
-      console.log(1, event.currentTarget);
       setIsPopupOpen(false);
     }
   };
@@ -349,8 +345,7 @@ const Table: React.FC<Props> = ({ userData }) => {
                   {...cell.getCellProps()}
                   key={index}
                   hasBottomBorder={
-                    cell.row.original.col1 !== "비밀번호" &&
-                    cell.row.original.col1 !== "주소"
+                    cell.row.original.col1 !== "비밀번호" && cell.row.original.col1 !== "주소"
                   }
                 >
                   {cell.render("Cell")}
