@@ -168,7 +168,8 @@ const ThirdSection = styled.section<{ $isDarkmode: boolean }>`
   background-color: ${(props) => (props.$isDarkmode ? "transparent" : "var(--color-brand-yellow)")};
 
   input {
-    background-color: var(--color-brand-darkgray) !important;
+    background-color: ${(props) =>
+      props.$isDarkmode ? "var(--color-brand-darkgray) !important" : "var(--color-white)"};
   }
 `;
 
