@@ -13,12 +13,12 @@ export const useFormValidate = (
 ): {
   isValidId: boolean;
   isCheckingDuplicate: boolean;
-  duplicateMessage: string;
   isNotDuplicate: boolean;
   isValidPassword: boolean;
   isValidConfirmPassword: boolean;
   isValidName: boolean;
   isValidPhoneNumber: boolean;
+  duplicateMessage: string;
   handleIdBlur: () => void;
   handlePasswordBlur: () => void;
   handleConfirmPasswordBlur: () => void;
@@ -103,6 +103,7 @@ export const useFormValidate = (
             setIsNotDuplicate(true);
             setDuplicateMessage("사용 가능한 아이디입니다");
           } 
+          setIsCheckingDuplicate(true);
       })
   
     } catch (error) {
@@ -120,7 +121,6 @@ export const useFormValidate = (
   return {
     isValidId,
     isCheckingDuplicate,
-    duplicateMessage,
     isNotDuplicate,
     isValidPassword,
     isValidConfirmPassword,
@@ -132,5 +132,6 @@ export const useFormValidate = (
     handleNameBlur,
     handlePhoneNumberBlur,
     handleCheckDuplicateId,
+    duplicateMessage, 
   };
 };

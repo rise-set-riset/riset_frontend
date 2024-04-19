@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FiMoreVertical } from "react-icons/fi";
 
 /* 전체 레이아웃 */
-const Layout = styled.div<{ $isFixed: boolean }>`
+const Layout = styled.div<{ $isFixed: boolean; $stateColor: string }>`
   width: 100%;
   height: 100%;
   display: flex;
@@ -11,7 +11,7 @@ const Layout = styled.div<{ $isFixed: boolean }>`
   align-items: center;
   border-radius: 16px;
   overflow: hidden;
-  background-color: var(--color-brand-main);
+  background-color: ${(props) => props.$stateColor};
 
   input {
     font-size: 18px;
@@ -143,8 +143,8 @@ const SaveMenu = styled.div`
 /* 일정 객체 형식 */
 interface DayPlanType {
   id?: number;
-  startTime?: string;
-  endTime?: string;
+  startTime: string;
+  endTime: string;
   title?: string;
 }
 
@@ -178,6 +178,41 @@ export default function PlanCard({
   const [isFixed, setIsFixed] = useState<boolean>(!clickToAdd);
   const [dayPlan, setDayPlan] = useState<DayPlanType>(planContent);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [stateColor, setStateColor] = useState<string>("");
+  const [planStartTime, setPlanStartTime] = useState<string>("");
+  const [planEndTime, setPlanEndTime] = useState<string>("");
+
+  useEffect(() => {
+    // 시작시간과 종료시간이 둘다 있는지 검증
+    const timePattern = /^(0[0-9]|1[0-2]):[0-5][0-9]$/;
+    if (
+      timePattern.test(planContent.startTime) &&
+      timePattern.test(planContent.endTime)
+    ) {
+      const currentHour = new Date().getHours();
+      const currentMinute = new Date().getMinutes();
+
+      // 시간 비교
+      if (currentHour > Number(planContent.endTime.split(":")[0])) {
+        setStateColor("#C5DAFF"); // 진행완료
+      } else if (currentHour < Number(planContent.startTime.split(":")[0])) {
+        setStateColor("#FFBFA7"); // 진행전
+      } else {
+        // 분 비교
+        if (currentMinute > Number(planContent.endTime.split(":")[1])) {
+          setStateColor("#C5DAFF"); // 진행완료
+        } else if (
+          currentMinute < Number(planContent.startTime.split(":")[1])
+        ) {
+          setStateColor("#FFBFA7"); // 진행전
+        } else {
+          setStateColor("#FFE7A7"); // 진행중
+        }
+      }
+    } else {
+      setStateColor("var(--color-brand-main)");
+    }
+  }, [planStartTime, planEndTime]);
 
   /* 일정 상태값 변경 */
   const handleChangePlan = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,9 +222,12 @@ export default function PlanCard({
         [e.target.name]: e.target.value,
       };
     });
+    if (e.target.name === "startTime") {
+      setPlanStartTime(e.target.value);
+    } else {
+      setPlanEndTime(e.target.value);
+    }
   };
-
-  console.log("planCard", currentDate);
 
   const handleSavePlan = (savePlanForm: any) => {
     /* 추가 기능일 때 */
@@ -200,10 +238,11 @@ export default function PlanCard({
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify(savePlanForm),
-    }).then((res) => {
-      res.json();
-    });
-    // .then((data) => console.log("값", data));
+    })
+      .then((res) => {
+        res.json();
+      })
+      .then((data) => console.log("값", data));
     // .then((data) => {
     //   console.log("iddata", data);
     // setUserPlanData(prev => {
@@ -280,7 +319,7 @@ export default function PlanCard({
   };
 
   return (
-    <Layout $isFixed={isFixed}>
+    <Layout $isFixed={isFixed} $stateColor={stateColor}>
       {/* 일정 내용 */}
       <PlanInfoBox>
         <TimeInputBox>

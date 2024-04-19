@@ -29,6 +29,7 @@ const GroupImage = styled.div`
   width: 100%;
   max-width: 800px;
   height: 800px;
+  /* height: 600px; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,7 +47,7 @@ const GroupImage = styled.div`
 const ImagePreview = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 `;
 
 const PlusIcon = styled(CiCirclePlus)`

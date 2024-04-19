@@ -8,14 +8,12 @@ import naverLogo from "../../assets/naver-logo.png";
 import kakaoLogo from "../../assets/kakao-logo.png";
 import googleLogo from "../../assets/google-logo.png";
 import { useNavigate } from "react-router-dom";
-
-const backgroundImageUrl =
-  "url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)";
+import backgroundImage from "../../assets/background-image.png";
 
 const Background = styled.div`
   min-width: 100vw;
   width: 100%;
-  background-image: ${backgroundImageUrl};
+  background-image: url(${backgroundImage});
   background-size: cover;
   display: flex;
   justify-content: center;
@@ -149,8 +147,6 @@ const LoginQuestion = styled.div`
 export default function Login() {
   const [id, setId] = useState<string>("");
   const [password, setPasswrd] = useState<string>("");
-  const [isIdNotFound, setIsIdNotFound] = useState(false);
-  const [isPasswordMismatch, setIsPasswordMismatch] = useState(false);
   const navigate = useNavigate();
 
   // 입력 필드의 값이 변경되면 해당값을 id에 반영
@@ -193,8 +189,9 @@ export default function Login() {
       .then((data) => {
         localStorage.setItem("jwt", data.access_token);
         localStorage.setItem("userId", data.userId);
+        console.log("data", data);
 
-        if (JSON.parse(data.isAuth)) {
+        if (data.isAuth === "true") {
           navigate("/home");
         } else {
           navigate("/authority");
@@ -207,17 +204,19 @@ export default function Login() {
 
   // 네이버 로그인 버튼 클릭 이벤트 핸들러
   const handleNaverLogin = () => {
-    window.location.href = "네이버 로그인 URL";
+    const url = "https://dev.risetconstruction.net/oauth2/authorization/naver";
+    window.open(url);
   };
 
   // 카카오 로그인 버튼 클릭 이벤트 핸들러
   const handleKakaoLogin = () => {
-    window.location.href = "카카오 로그인 URL";
+    const url = "https://dev.risetconstruction.net/oauth2/authorization/kakao";
+    window.open(url);
   };
 
   // 구글 로그인 버튼 클릭 이벤트 핸들러
   const handleGoogleLogin = () => {
-    window.location.href = "구글 로그인 URL";
+    "https://dev.risetconstruction.net/oauth2/authorization/google";
   };
 
   return (
