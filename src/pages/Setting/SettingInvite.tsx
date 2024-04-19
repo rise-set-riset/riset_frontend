@@ -40,6 +40,7 @@ const InputLayout = styled.div`
     padding: 0.8rem 1.2rem;
     border-radius: 0.5rem;
     border: 1px solid var(--color-brand-lightgray);
+    font-size: 1rem;
     &:focus {
       outline: 1px solid var(--color-brand-main);
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../../common/SearchBar";
 import ChatRoomCard from "./ChatRoomCard";
@@ -6,10 +6,15 @@ import { CgClose } from "react-icons/cg";
 import { FiPlusCircle } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   padding: 1.5rem;
   height: 100%;
+
+  h2 {
+    color: var(--color-black);
+  }
   @media screen and (max-width: 500px) {
     padding: 1rem;
   }
@@ -32,6 +37,7 @@ const TitleBox = styled.header`
 `;
 
 const SearchBox = styled.div`
+  color: var(--color-black);
   input {
     font-size: 1.2rem;
   }
@@ -48,18 +54,23 @@ const SearchBox = styled.div`
 
 const CloseIcon = styled(CgClose)`
   font-size: 1.2rem;
+  color: var(--color-black);
   cursor: pointer;
 `;
 
 const ArrowBackIcon = styled(IoIosArrowBack)`
   font-size: 1.5rem;
+  color: var(--color-black);
   cursor: pointer;
 `;
 
-const ChatRoomCardList = styled.main`
-  margin-top: 0.5rem;
+const ChatRoomCardList = styled.main<{ $isDarkmode: boolean }>`
+  margin-top: 1rem;
   height: calc(100% - 150px);
   overflow-y: auto;
+  background-color: ${(props) =>
+    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-white)"};
+  border-radius: 16px;
 `;
 
 const ChatRoomCardBox = styled.div`
@@ -126,6 +137,7 @@ const ChatSide = styled.div`
 const VerticalIcon = styled(FiMoreVertical)`
   font-size: 1.5rem;
   position: relative;
+  color: var(--color-black);
   &:hover {
     color: var(--color-brand-main);
   }
@@ -192,6 +204,7 @@ export default function ChatRoomList({
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [searchWord, setSearchWord] = useState<string>("");
   const [searchResult, setSearchResult] = useState<ChatRoomDataType[]>([]);
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 채팅방 클릭시 */
   const handleRoomClick = (roomId: number, members: any) => {
@@ -279,7 +292,7 @@ export default function ChatRoomList({
         />
       </SearchBox>
 
-      <ChatRoomCardList>
+      <ChatRoomCardList $isDarkmode={isDarkmode}>
         {searchResult.map((roomData) => (
           <ChatRoomCardBox key={roomData.chatRoomId}>
             <ChatRoomContent
