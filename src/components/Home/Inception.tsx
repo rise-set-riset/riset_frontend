@@ -164,8 +164,13 @@ const ThirdSection = styled.section<{ $isDarkmode: boolean }>`
   height: 164px;
   padding: 1rem;
   border-radius: 1rem;
-  background-color: ${(props) =>
-    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-brand-yellow)"};
+  border: ${(props) => props.$isDarkmode && "1px solid var(--color-brand-lightgray)"};
+  background-color: ${(props) => (props.$isDarkmode ? "transparent" : "var(--color-brand-yellow)")};
+
+  input {
+    background-color: ${(props) =>
+      props.$isDarkmode ? "var(--color-brand-darkgray) !important" : "var(--color-white)"};
+  }
 `;
 
 const SectionTitle = styled.div`
