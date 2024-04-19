@@ -1,37 +1,32 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { FaCheckCircle } from "react-icons/fa";
-import { FaCircleExclamation } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { useAgree } from "../../hooks/useAgree";
 import { useForm } from "../../hooks/useForm";
 import { useFormValidate } from "../../hooks/useFormValidate";
 import TextInput from "../../common/TextInput";
-
-interface CheckboxProps {
-  checked: boolean;
-};
-
-const backgroundImageUrl = 'url(https://img.freepik.com/free-vector/hand-drawn-tropical-sunset-background_23-2150681585.jpg?w=996&t=st=1712473475~exp=1712474075~hmac=d3dcf0e06d62027cb03eeb3a6a7c0ca87245777567f926b2a09b7c954f523ad2)';
+import CustomCheckbox from "../../common/CustomCheckbox";
+import HorizontalLineWithText from "../../common/HorizontalLineWithText";
+import { useNavigate } from "react-router-dom";
+import backgroundImage from "../../assets/background-image.png";
 
 const Background = styled.div`
   min-width: 100vw;
   width: 100%;
-  background-image: ${backgroundImageUrl};
-  background-size: cover; /* 화면에 꽉 차도록 배경 이미지 크기 조정 */
+  background-image: url(${backgroundImage});
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const SignUpContainer = styled.div`
-  width: 85%;
+  width: 90%;
   max-width: 519px;
   max-height: 1036px;
-  margin: 70px auto; 
-  padding-top : 40px;
-  padding-bottom : 40px;
-  background-color: #FFFFFF;
+  margin: 70px auto;
+  padding: 40px 20px;
+  background-color: #ffffff;
   opacity: 0.8;
   border-radius: 10px;
   display: flex;
@@ -41,35 +36,27 @@ const SignUpContainer = styled.div`
 `;
 
 const SignupHeader = styled.div`
-  h2 {
+  p:first-child {
     text-align: center;
     font-size: 32px;
-    font-family: Pretendard Medium;
+    font-family: Pretendard;
+    font-weight: bold;
     margin-bottom: 8px;
     letter-spacing: 0.5px;
   }
 
-p:first-child{  
-  text-align: center;
-  font-size: 32px;
-  font-family : Pretendard;
-  font-weight: bold;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
-}
-
-p:last-child{
-  font-size: 16px;
-  text-align: center;
-  margin-bottom: 50px;
-  letter-spacing: 0.5px;
-}
-`
+  p:last-child {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 50px;
+    letter-spacing: 0.5px;
+  }
+`;
 const SignUpForm = styled.div`
   width: 100%;
   max-width: 381px;
   max-height: 908px;
-  font-color: #353535;
+  color: #353535;
 
   div {
     display: flex;
@@ -79,65 +66,20 @@ const SignUpForm = styled.div`
 
 const IdChcekBtn = styled.button<{ disabled: boolean }>`
   width: 100%;
-  padding : 13px 20px;
-  margin-bottom : 16px;
-  border-radius: 10px;
+  padding: 13px 20px;
+  margin-bottom: 16px;
+  border-radius: 8px;
   color: white;
   border: none;
-  background-color: ${({ disabled }) => (disabled ? ' #c4c4c4' : '#ff7f50')};
-  cursor: ${({ disabled }) => (disabled ? 'cursor' : 'pointer')};
-`;
-
-const InvalidMsg = styled.p`
-  margin-top: 4px;
-  color: #ff6228;
-  font-size: 12px;
-`;
-
-const ValidMsg = styled.p`
-  margin-top: 4px;
-  color: #03ca5f; 
-  font-size : 12px;
-`
-
-const HorizontalLineWithText = styled.div`
-  display: flex;
-  align-items: center;
-  color: #c4c4c4;
-  font-size: 14px;
-  height: 20px;
-
-  position: relative;
-
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    width: calc(50% - 20px);
-    height: 1px;
-    background-color: #c4c4c4;
-  }
-
-  &:before {
-    left: 0;
-    width: 40%;
-    top: 50%;
-    margin-right: 10px;
-  }
-
-  &:after {
-    right: 0;
-    width: 40%;
-    top: 50%;
-    margin-left: 10px;
-  }
+  background-color: ${({ disabled }) => (disabled ? " #c4c4c4" : "#ff7f50")};
+  cursor: ${({ disabled }) => (disabled ? "cursor" : "pointer")};
 `;
 
 const AgreeAllCheckbox = styled.div`
   position: relative;
-  font-family : Pretendard;
+  font-family: Pretendard;
   font-weight: bold;
-  height: 48px; 
+  height: 48px;
   justify-content: center;
   border-bottom: 1.5px solid #9b9b9b;
   color: #353535;
@@ -156,13 +98,12 @@ const AgreeAllCheckbox = styled.div`
     border: none;
     background: transparent;
     color: #353535;
-    cursor : pointer;
-   }
-
+    cursor: pointer;
+  }
 `;
 
 const AgreeCheckbox = styled.div`
-  font-family : Pretendard;
+  font-family: Pretendard;
   height: 48px;
   color: #353535;
   justify-content: center;
@@ -173,7 +114,7 @@ const AgreeCheckbox = styled.div`
     align-items: center;
   }
 
-  span{
+  span {
     color: #ff7f50;
     margin-left: 2px;
   }
@@ -187,31 +128,11 @@ const AgreeCheckbox = styled.div`
     border: none;
     background: transparent;
     color: #353535;
-    cursor : pointer;
-   }
+    cursor: pointer;
+  }
 `;
 
-const CustomCheckbox = styled.input.attrs({ type: 'checkbox' })<CheckboxProps>`
-width: 20px;
-height: 20px;
-border-radius: 50%;
-border: 1px solid #353535;
-appearance: none;
-cursor: pointer;
-transition: background 0.2s;
-margin: 0px 5px 0px 0px;
-
-&:checked {
-  border-color: transparent;
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
-  background-size: 100% 100%;
-  background-position: 50%;
-  background-repeat: no-repeat;
-  background-color: #ff7f50;
-}
-`;
-
-const SignUpBtn = styled.button<{ disabled: boolean }>`
+const SignUpBtn = styled.button`
   width: 100%;
   padding: 13px 20px;
   margin-top: 16px;
@@ -219,28 +140,26 @@ const SignUpBtn = styled.button<{ disabled: boolean }>`
   border-radius: 8px;
   color: white;
   border: none;
-  background-color: ${({ disabled }) => (disabled ? '#c4c4c4' : '#ff7f50')};
-  cursor: ${({ disabled }) => (disabled ? 'cursor' : 'pointer')};
+  background-color: ${({ disabled }) => (disabled ? "#c4c4c4" : "#ff7f50")};
+  cursor: ${({ disabled }) => (disabled ? "cursor" : "pointer")};
 `;
 
 const SignUpQuestion = styled.div`
- color: #545454;
- text-align: center;
+  color: #545454;
+  text-align: center;
 
-
- a{
-  margin-left : 10px;
-  color: #ff7f50;
- }
-`
-export default function SignUp (){
-const [form, setForm] = useForm();
+  a {
+    margin-left: 10px;
+    color: #ff7f50;
+  }
+`;
+export default function SignUp() {
+  const [form, setForm] = useForm();
 
   const {
     isValidId,
     isCheckingDuplicate,
     isNotDuplicate,
-    duplicateMessage,
     isValidPassword,
     isValidConfirmPassword,
     isValidName,
@@ -250,46 +169,81 @@ const [form, setForm] = useForm();
     handleConfirmPasswordBlur,
     handleNameBlur,
     handlePhoneNumberBlur,
-    handleCheckDuplicateId
+    handleCheckDuplicateId,
   } = useFormValidate(form);
 
-  const [agreeAll, agreeAge, agreeFinal, agreePrivacy, setAgree, setAgreeAll, setAgreeAge, setAgreeFinal, setAgreePrivacy] = useAgree();
+  const [
+    agreeAll,
+    agreeAge,
+    agreeFinal,
+    agreePrivacy,
+    setAgree,
+    setAgreeAll,
+    setAgreeAge,
+    setAgreeFinal,
+    setAgreePrivacy,
+  ] = useAgree();
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const isAllAgreed = agreeAge && agreeFinal && agreePrivacy;
     setAgree(isAllAgreed);
-    setIsDisabled(!isAllAgreed || !isValidId || !isNotDuplicate || !isValidPassword || form.password !== form.confirmPassword || !isValidName );
-  }, [agreeAge, agreeFinal, agreePrivacy, isValidId, isNotDuplicate, isValidPassword, form.password, form.confirmPassword, isValidName]);
+    setIsDisabled(
+      !isAllAgreed ||
+        !isValidId ||
+        !isNotDuplicate ||
+        !isValidPassword ||
+        form.password !== form.confirmPassword ||
+        !isValidName
+    );
+  }, [
+    agreeAge,
+    agreeFinal,
+    agreePrivacy,
+    setAgree,
+    isValidId,
+    isNotDuplicate,
+    isValidPassword,
+    form.password,
+    form.confirmPassword,
+    isValidName,
+  ]);
 
   // 아이디 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
-   const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const idValue = e.target.value;
-    setForm(prevForm => ({ ...prevForm, id: idValue }));
+    setForm((prevForm) => ({ ...prevForm, id: idValue }));
   };
 
   // 비밀번호 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
-    setForm(prevForm => ({ ...prevForm, password: passwordValue }));
+    setForm((prevForm) => ({ ...prevForm, password: passwordValue }));
   };
 
   // 비밀번호 확인 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
-  const handleConfirmPasswordChange= (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const confirmPasswordValue = e.target.value;
-    setForm(prevForm => ({ ...prevForm, confirmPassword: confirmPasswordValue }));
+    setForm((prevForm) => ({
+      ...prevForm,
+      confirmPassword: confirmPasswordValue,
+    }));
   };
 
   // 이름 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nameValue = e.target.value;
-    setForm(prevForm => ({ ...prevForm, name: nameValue }));
+    setForm((prevForm) => ({ ...prevForm, name: nameValue }));
   };
-  
+
   // 전화번호 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phoneNumberValue = e.target.value;
-    setForm(prevForm => ({ ...prevForm, phoneNumber: phoneNumberValue }));
+    setForm((prevForm) => ({ ...prevForm, phoneNumber: phoneNumberValue }));
   };
 
   // 전체 동의하기 체크박스의 상태 변화를 처리. 체크박스가 선택되거나 해제될 때 호출되며, 해당 상태를 상태 변수에 반영
@@ -301,17 +255,16 @@ const [form, setForm] = useForm();
     setAgreePrivacy(isChecked);
   };
 
-
-//만 14세 이상 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
+  //만 14세 이상 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
   const handleAgreeAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const isChecked = e.target.checked;
+    const isChecked = e.target.checked;
     setAgreeAge(isChecked);
     if (!isChecked) {
       setAgreeAll(false);
     }
   };
 
-//만 최종이용자 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
+  //만 최종이용자 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
   const handleAgreeFinalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
     setAgreeFinal(isChecked);
@@ -320,27 +273,30 @@ const [form, setForm] = useForm();
     }
   };
 
-//만 개인정보수집 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
+  //만 개인정보수집 동의 체크박스의 변경 이벤트를 처리. 체크박스의 상태에 따라 동의 상태를 설정하고, 만약 체크박스가 해제되면 전체 동의 상태를 해제
   const handleAgreePrivacyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
-     setAgreePrivacy(isChecked);
+    setAgreePrivacy(isChecked);
     if (!isChecked) {
-    setAgreeAll(false);
-  }
-};
+      setAgreeAll(false);
+    }
+  };
 
-// 폼의 기본 동작을 막고, 사용자가 입력한 데이터를 서버에 전송하여 회원가입을 시도
+  // 폼의 기본 동작을 막고, 사용자가 입력한 데이터를 서버에 전송하여 회원가입을 시도
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+      const response = await fetch(
+        "https://dev.risetconstruction.net/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
       if (response.ok) {
         console.log("successful");
@@ -350,132 +306,157 @@ const [form, setForm] = useForm();
     } catch (error: any) {
       console.error("Failed to sign up:", error.message);
     }
+
+    navigate("/");
   };
 
   return (
     <Background>
-    <SignUpContainer>
-     <SignupHeader>
-        <p>환영합니다</p>
-        <p>Riset로 통합 인력관리, 지금 시작해보세요</p>
-    </SignupHeader>
-    <SignUpForm>
-      <form onSubmit={handleSubmit}>
-          <TextInput
-            label="아이디"
-            type="text"
-            value={form.id}
-            onChange={handleIdChange}
-            onBlur={handleIdBlur}
-            placeholder="아이디를 입력하세요"
-            isValid={isValidId}
-            validMessage="아이디 중복 확인을 진행해 주세요"
-            inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
-            helperText="6~15자 영문 숫자 혼합"
-          />
-
-         <IdChcekBtn disabled={!isValidId || isCheckingDuplicate} onClick={handleCheckDuplicateId}>아이디 중복 확인</IdChcekBtn>
-          {isNotDuplicate && duplicateMessage && 
-           <>
-           <span className="icon invalid"><FaCircleExclamation /></span>
-          <InvalidMsg>{duplicateMessage}</InvalidMsg>
-           </>
-          }
-         {!isNotDuplicate && duplicateMessage && 
-          <>
-         <span className="icon valid"><FaCheckCircle /></span>
-          <ValidMsg>{duplicateMessage}</ValidMsg>
-         </>}
-
-          <TextInput
-            label="비밀번호"
-            type="password"
-            value={form.password}
-            onChange={handlePasswordChange}
-            onBlur={handlePasswordBlur}
-            placeholder="비밀번호를 입력하세요"
-            isValid={isValidPassword}
-            validMessage=""
-            inValidMessage="8~12자의 영문/숫자/특수문자 조합만 사용 가능합니다."
-            helperText="8~12자 영문, 숫자, 특수문자 조합"
+      <SignUpContainer>
+        <SignupHeader>
+          <p>환영합니다</p>
+          <p>Riset로 통합 인력관리, 지금 시작해보세요</p>
+        </SignupHeader>
+        <SignUpForm>
+          <form onSubmit={handleSubmit}>
+            <TextInput
+              label="아이디"
+              type="text"
+              value={form.id}
+              onChange={handleIdChange}
+              onBlur={handleIdBlur}
+              placeholder="아이디를 입력하세요"
+              isValid={isValidId}
+              validMessage={
+                isCheckingDuplicate ? "" : "아이디 중복 확인을 진행해 주세요"
+              }
+              inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
+              helperText="6~15자 영문 숫자 혼합"
             />
 
-          <TextInput
-            label="비밀번호 확인"
-            type="password"
-            value={form.confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            onBlur={handleConfirmPasswordBlur}
-            placeholder="비밀번호를 입력하세요"
-            isValid={isValidConfirmPassword}
-            validMessage="비밀번호가 일치합니다"
-            inValidMessage="비밀번호가 일치하지 않습니다"
-            helperText=""
-            />      
+            <IdChcekBtn
+              type="button"
+              disabled={!isValidId || isCheckingDuplicate}
+              onClick={handleCheckDuplicateId}
+            >
+              아이디 중복 확인
+            </IdChcekBtn>
 
-        <TextInput
-            label="이름"
-            type="text"
-            value={form.name}
-            onChange={handleNameChange}
-            onBlur={handleNameBlur}
-            placeholder="이름을 입력하세요"
-            isValid={isValidName}
-            validMessage=""
-            inValidMessage ="올바른 이름을 입력하세요"
-            helperText=""
-            />     
-          
-          
-          <HorizontalLineWithText>선택 사항</HorizontalLineWithText>
-  
-          
-          <TextInput
-            label="전화번호"
-            type="text"
-            value={form.phoneNumber}
-            onChange={handlePhoneNumberChange}
-            onBlur={handlePhoneNumberBlur}
-            placeholder="전화번호를 입력하세요"
-            isValid={isValidPhoneNumber}
-            validMessage=""
-            inValidMessage ="올바른 잔화번호를 입력하세요"
-            helperText=""
-            />    
+            <TextInput
+              label="비밀번호"
+              type="password"
+              value={form.password}
+              onChange={handlePasswordChange}
+              onBlur={handlePasswordBlur}
+              placeholder="비밀번호를 입력하세요"
+              isValid={isValidPassword}
+              inValidMessage="8~12자의 영문/숫자/특수문자 조합만 사용 가능합니다."
+              helperText="8~12자 영문, 숫자, 특수문자 조합"
+            />
 
-        <AgreeAllCheckbox>
-          <label>
-            <CustomCheckbox checked={agreeAll} onChange={handleAgreeAllChange} /><p>
-            전체 동의하기<button><IoIosArrowForward /></button></p>
-          </label>
-        </AgreeAllCheckbox>
+            <TextInput
+              label="비밀번호 확인"
+              type="password"
+              value={form.confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              onBlur={handleConfirmPasswordBlur}
+              placeholder="비밀번호를 입력하세요"
+              isValid={isValidConfirmPassword}
+              validMessage="비밀번호가 일치합니다"
+              inValidMessage="비밀번호가 일치하지 않습니다"
+            />
 
-        <AgreeCheckbox>
-          <label>
-            <CustomCheckbox checked={agreeAge} onChange={handleAgreeAgeChange}  /><p>
-            [필수] 만 14세 이상입니다.<button><IoIosArrowForward /></button></p>
-          </label>
-        </AgreeCheckbox>
+            <TextInput
+              label="이름"
+              type="text"
+              value={form.name}
+              onChange={handleNameChange}
+              onBlur={handleNameBlur}
+              placeholder="이름을 입력하세요"
+              isValid={isValidName}
+              inValidMessage="올바른 이름을 입력하세요"
+            />
 
-        <AgreeCheckbox>
-          <label>
-            <CustomCheckbox checked={agreeFinal} onChange={handleAgreeFinalChange} />
-            <p>[필수] <span>최종이용자 이용약관</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
-          </label>
-        </AgreeCheckbox>
-        <AgreeCheckbox>
-          <label>
-            <CustomCheckbox checked={agreePrivacy} onChange={handleAgreePrivacyChange} />
-            <p>[필수] <span>개인정보 수집 및 이용</span>에 동의합니다.<button><IoIosArrowForward /></button></p>
-          </label>
-        </AgreeCheckbox>
-        <SignUpBtn type="submit" disabled={isDisabled}>가입하기</SignUpBtn>
-      </form>
-      <SignUpQuestion>
-      <p>이미 계정이 있으신가요?<a href="/login">로그인</a></p>
-      </SignUpQuestion>
-      </SignUpForm>
-       </SignUpContainer>
-       </Background>
+            <HorizontalLineWithText>선택 사항</HorizontalLineWithText>
+
+            <TextInput
+              label="전화번호"
+              type="text"
+              value={form.phoneNumber}
+              onChange={handlePhoneNumberChange}
+              onBlur={handlePhoneNumberBlur}
+              placeholder="전화번호를 입력하세요"
+              isValid={isValidPhoneNumber}
+              inValidMessage="올바른 잔화번호를 입력하세요"
+            />
+
+            <AgreeAllCheckbox>
+              <label>
+                <CustomCheckbox
+                  isChecked={agreeAll}
+                  onChange={handleAgreeAllChange}
+                />
+                <p>
+                  전체 동의하기
+                  <button>
+                    <IoIosArrowForward />
+                  </button>
+                </p>
+              </label>
+            </AgreeAllCheckbox>
+
+            <AgreeCheckbox>
+              <label>
+                <CustomCheckbox
+                  isChecked={agreeAge}
+                  onChange={handleAgreeAgeChange}
+                />
+                <p>
+                  [필수] 만 14세 이상입니다.
+                  <button>
+                    <IoIosArrowForward />
+                  </button>
+                </p>
+              </label>
+            </AgreeCheckbox>
+
+            <AgreeCheckbox>
+              <label>
+                <CustomCheckbox
+                  isChecked={agreeFinal}
+                  onChange={handleAgreeFinalChange}
+                />
+                <p>
+                  [필수] <span>최종이용자 이용약관</span>에 동의합니다.
+                  <button>
+                    <IoIosArrowForward />
+                  </button>
+                </p>
+              </label>
+            </AgreeCheckbox>
+            <AgreeCheckbox>
+              <label>
+                <CustomCheckbox
+                  isChecked={agreePrivacy}
+                  onChange={handleAgreePrivacyChange}
+                />
+                <p>
+                  [필수] <span>개인정보 수집 및 이용</span>에 동의합니다.
+                  <button>
+                    <IoIosArrowForward />
+                  </button>
+                </p>
+              </label>
+            </AgreeCheckbox>
+            <SignUpBtn type="submit">가입하기</SignUpBtn>
+          </form>
+          <SignUpQuestion>
+            <p>
+              이미 계정이 있으신가요?<a href="/">로그인</a>
+            </p>
+          </SignUpQuestion>
+        </SignUpForm>
+      </SignUpContainer>
+    </Background>
   );
-};
+}

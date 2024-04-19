@@ -1,0 +1,18 @@
+[
+  { "id": 1, "companyName": "본점", "latitude": 37.5950656, "longitude": 127.0808576 },
+  { "id": 2, "companyName": "중랑구 상봉 지점", "latitude": 37.5930656, "longitude": 127.0808576 },
+  { "id": 3, "companyName": "테스트", "latitude": 37.5455744, "longitude": 127.0611968 },
+  { "id": 4, "companyName": "진성이 집", "latitude": 37.35200812, "longitude": 126.744300723175 },
+  {
+    "id": 5,
+    "companyName": "정왕 6공원",
+    "latitude": 37.35268168446307,
+    "longitude": 126.7456600776126
+  },
+  {
+    "id": 6,
+    "companyName": "테스트",
+    "latitude": 37.585270347,
+    "longitude": 127.07107414997
+  }
+]

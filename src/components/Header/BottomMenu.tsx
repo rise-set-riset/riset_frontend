@@ -4,7 +4,10 @@ import { ReactComponent as Board } from "../../assets/bottomMenu/bottom-board.sv
 import { ReactComponent as Home } from "../../assets/bottomMenu/bottom-home.svg";
 import { ReactComponent as Commute } from "../../assets/bottomMenu/bottom-commute.svg";
 import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg";
-import React from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store/store";
+import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
+import { useNavigate } from "react-router-dom";
 
 const List = styled.ul`
   position: fixed;
@@ -22,40 +25,34 @@ const List = styled.ul`
 const Item = styled.li`
   padding: 10px;
   cursor: pointer;
-
-  svg {
-    transition: all 0.5s;
-  }
-
-  &:hover > svg {
-    transform: scale(1.2);
-  }
-
   path {
     stroke: var(--color-white);
   }
 `;
 
-interface SideMenuOpen {
-  setIsSideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+interface BottomMenuProps {
+  handleChatOpen: () => void;
 }
 
-export default function BottomMenu({ setIsSideMenuOpen }: SideMenuOpen) {
+export default function BottomMenu({ handleChatOpen }: BottomMenuProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
   return (
     <List>
       <Item>
-        <Hamburger onClick={() => setIsSideMenuOpen((prev) => !prev)} />
+        <Hamburger onClick={() => dispatch(sideMenuAction.toggleSideMenu())} />
       </Item>
-      <Item>
+      <Item onClick={() => navigate("/board/postlist")}>
         <Board />
       </Item>
-      <Item>
+      <Item onClick={() => navigate("/home")}>
         <Home />
       </Item>
-      <Item>
+      <Item onClick={() => navigate("/commute")}>
         <Commute />
       </Item>
-      <Item>
+      <Item onClick={handleChatOpen}>
         <Chat />
       </Item>
     </List>
