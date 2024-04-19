@@ -277,9 +277,18 @@ export default function PlanList({
         </Layout>
       ) : (
         <MobileAreaBox>
-          <MobilePlanCard whos="my" memberPlanData={userPlanData} />
+          <MobilePlanCard
+            whos="my"
+            memberPlanData={userPlanData}
+            currentDate={currentDate}
+          />
           {otherPlanData.map((otherPlan) => (
-            <MobilePlanCard whos="others" memberPlanData={otherPlan} />
+            <MobilePlanCard
+              key={otherPlan.employeeId}
+              whos="others"
+              memberPlanData={otherPlan}
+              currentDate={currentDate}
+            />
           ))}
         </MobileAreaBox>
       )}
