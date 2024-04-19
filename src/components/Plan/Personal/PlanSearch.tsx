@@ -31,6 +31,7 @@ const SearchFilter = styled.button`
   gap: 0.5rem;
   font-size: 1rem;
   font-weight: bold;
+  color: var(--color-black);
   border-radius: 20px;
   border: 1px solid var(--color-brand-lightgray);
   background-color: var(--color-white);
@@ -59,6 +60,7 @@ const DropMenu = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  color: var(--color-black);
   border-radius: 16px;
   background-color: var(--color-white);
   box-shadow: 0px 0px 10px 0px var(--color-brand-lightgray);
@@ -106,14 +108,9 @@ export default function PlanSearch({
   return (
     <Layout>
       {/* 검색 기준 필터 */}
-      <SearchFilter
-        type="button"
-        onClick={() => setIsFilterOpen(!isFilterOpen)}
-      >
+      <SearchFilter type="button" onClick={() => setIsFilterOpen(!isFilterOpen)}>
         <div>{filterCategory}</div>
-        <ArrowIcon>
-          {isFilterOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-        </ArrowIcon>
+        <ArrowIcon>{isFilterOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}</ArrowIcon>
 
         {/* 검색 기준 선택 드롭다운 메뉴 */}
         {isFilterOpen && (
