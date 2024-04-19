@@ -19,6 +19,10 @@ const Layout = styled.div`
     -webkit-appearance: none;
     margin: 0;
   }
+
+  input {
+    background-color: transparent;
+  }
 `;
 
 const TitleBox = styled.div`

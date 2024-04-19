@@ -41,7 +41,9 @@ const MemberCardList = styled.div`
     outline: 4px solid var(--color-brand-main);
   }
 
-  > div:nth-child(1) {
+  > div:hover {
+    border-radius: 16px;
+    outline: 4px solid var(--color-brand-main);
   }
 `;
 
@@ -50,6 +52,8 @@ const MemberCardStyle = styled.div<{ $isSelected: boolean }>`
     border-radius: 16px;
     padding: 1.7rem 1.5rem;
   }
+
+  background-color: var(--color-brand-main);
 
   border-radius: 16px;
   outline: ${(props) =>

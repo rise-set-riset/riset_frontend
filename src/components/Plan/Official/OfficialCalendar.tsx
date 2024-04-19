@@ -115,13 +115,17 @@ const CalendarCustomStyle = styled.div<{ $month: string }>`
     background-color: var(--color-brand-yellow);
   }
 
+  div.fc-event-main {
+    /* color: var(--color-white); */
+    color: var(--color-black);
+  }
+
   /* 이벤트 스타일 */
   a.fc-h-event {
     padding-left: 0.5rem;
     border: none;
     border-radius: 12px;
     background-color: #ffbfa7;
-    color: var(--color-black);
 
     &:hover {
       background-color: var(--color-brand-main) !important;

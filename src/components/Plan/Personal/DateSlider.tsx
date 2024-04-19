@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { DarkModeContext } from "../../../contexts/DarkmodeContext";
 
-const Layout = styled.div<{ $month: string }>`
+const Layout = styled.div<{ $month: string; $isDarkmode: boolean }>`
   width: 320px;
 
   div.fc-media-screen.fc-direction-ltr.fc-theme-standard {
@@ -51,7 +52,10 @@ const Layout = styled.div<{ $month: string }>`
       border: none;
       border-radius: 50%;
       box-shadow: none !important;
-      background-color: rgba(255, 255, 255, 0.5);
+      background-color: ${(props) =>
+        props.$isDarkmode
+          ? "rgba(255, 255, 255, 0.3)"
+          : "rgba(255, 255, 255, 0.5)"};
       cursor: pointer;
 
       span {
@@ -117,8 +121,13 @@ const Layout = styled.div<{ $month: string }>`
               justify-content: center;
               align-items: center;
               font-size: 1rem;
+
               color: var(--color-brand-lightgray);
-              background-color: var(--color-white);
+              color: ${(props) =>
+                props.$isDarkmode ? "white" : "var(--color-brand-lightgray)"};
+              background-color: ${(props) =>
+                props.$isDarkmode ? "#a3a3a3" : "var(--color-white)"};
+
               border-radius: 50%;
 
               &:active {
@@ -161,6 +170,7 @@ export default function DateSlider({ setCurrentDate }: DateSliderProps) {
   */
   const [month, setMonth] = useState<string>("");
   const calendarRef = useRef<any>(null);
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 날짜 클릭시 현재 날짜로 설정 */
   const handleDateClick = (date: any) => {
@@ -242,7 +252,7 @@ export default function DateSlider({ setCurrentDate }: DateSliderProps) {
   };
 
   return (
-    <Layout $month={month}>
+    <Layout $month={month} $isDarkmode={isDarkmode}>
       <FullCalendar
         /* 
         ref: 달력 api 접근용
