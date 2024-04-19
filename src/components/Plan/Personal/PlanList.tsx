@@ -41,7 +41,9 @@ const MemberCardList = styled.div`
     outline: 4px solid var(--color-brand-main);
   }
 
-  > div:nth-child(1) {
+  > div:hover {
+    border-radius: 16px;
+    outline: 4px solid var(--color-brand-main);
   }
 `;
 
@@ -51,8 +53,11 @@ const MemberCardStyle = styled.div<{ $isSelected: boolean }>`
     padding: 1.7rem 1.5rem;
   }
 
+  background-color: var(--color-brand-main);
+
   border-radius: 16px;
-  outline: ${(props) => (props.$isSelected ? "4px solid var(--color-brand-main);" : "none")};
+  outline: ${(props) =>
+    props.$isSelected ? "4px solid var(--color-brand-main);" : "none"};
 `;
 
 /* 일정 리스트 */
@@ -171,7 +176,9 @@ export default function PlanList({
       setSelectedMemberPlan(userPlanData);
     } else {
       setSelectedMemberPlan(
-        otherPlanData.filter((data: any) => data.employeeId === selectedMemberId)[0]
+        otherPlanData.filter(
+          (data: any) => data.employeeId === selectedMemberId
+        )[0]
       );
     }
   }, [selectedMemberId]);

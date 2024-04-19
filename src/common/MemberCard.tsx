@@ -1,14 +1,17 @@
 import styled from "styled-components";
 import { ReactComponent as Profile } from "../assets/header/profile.svg";
+import { useContext } from "react";
+import { DarkModeContext } from "../contexts/DarkmodeContext";
 
-const Layout = styled.div`
+const Layout = styled.div<{ $isDarkmode: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   gap: 1rem;
-  background-color: var(--color-white);
   cursor: pointer;
+  background-color: ${(props) =>
+    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-white)"};
 `;
 
 const ImageBox = styled.div`
@@ -32,7 +35,7 @@ const MemberName = styled.div`
   gap: 4.5px;
   font-size: 1.3rem;
   font-weight: bold;
-
+  color: var(--color-black);
   span {
     font-size: 0.8rem;
     color: var(--color-brand-main);
@@ -56,8 +59,9 @@ interface MemberCardProps {
 }
 
 export default function MemberCard({ memberInfo }: MemberCardProps) {
+  const { isDarkmode } = useContext(DarkModeContext);
   return (
-    <Layout>
+    <Layout $isDarkmode={isDarkmode}>
       <ImageBox>
         {JSON.parse(memberInfo.image) ? (
           <img src={memberInfo.image} alt={memberInfo.alt} />

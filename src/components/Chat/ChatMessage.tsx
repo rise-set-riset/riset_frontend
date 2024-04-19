@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
@@ -13,9 +13,14 @@ import { v4 as uuidv4 } from "uuid";
 import { IoSearch } from "react-icons/io5";
 import FileCard from "../Board/FileCard";
 import { ReactComponent as Profile } from "../../assets/header/profile.svg";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   height: 100%;
+
+  h2 {
+    color: var(--color-black);
+  }
 `;
 
 const TitleBox = styled.header`
@@ -42,6 +47,7 @@ const TitleBox = styled.header`
 const SearchIcon = styled(IoSearch)`
   font-size: 1.2rem;
   cursor: pointer;
+  color: var(--color-black);
   &:hover {
     color: var(--color-brand-main);
   }
@@ -51,6 +57,7 @@ const VerticalIcon = styled(FiMoreVertical)`
   font-size: 1.5rem;
   position: relative;
   cursor: pointer;
+  color: var(--color-black);
   &:hover {
     color: var(--color-brand-main);
   }
@@ -58,6 +65,7 @@ const VerticalIcon = styled(FiMoreVertical)`
 
 /* 채팅방 삭제 및 이름 수정 드롭다운 메뉴 */
 const DropdownMenu = styled.ul`
+  color: var(--color-black);
   z-index: 5000;
   position: absolute;
   top: 4rem;
@@ -84,6 +92,7 @@ const DropdownMenu = styled.ul`
 `;
 
 const SearchNavBox = styled.form`
+  color: var(--color-black);
   height: 5.5rem;
   display: flex;
   justify-content: space-between;
@@ -135,27 +144,34 @@ const ArrowIconStyle = styled.div`
 
 const ArrowBackIcon = styled(IoIosArrowBack)`
   font-size: 1.5rem;
+  color: var(--color-black);
   cursor: pointer;
 `;
 
 const CloseIcon = styled(CgClose)`
   font-size: 1.3rem;
-  cursor: pointer;
+  color: var(--color-black);
   cursor: pointer;
   &:hover {
     color: var(--color-brand-main);
   }
 `;
 
-const DialogueBox = styled.main<{ $isSearchBarOpen: boolean }>`
+const DialogueBox = styled.main<{
+  $isSearchBarOpen: boolean;
+  $isDarkmode: boolean;
+}>`
   position: relative;
-  margin-top: 1.2rem;
-  height: ${(props) => (props.$isSearchBarOpen ? "calc(100% - 295px)" : "calc(100% - 205px)")};
+  height: ${(props) =>
+    props.$isSearchBarOpen ? "calc(100% - 245px)" : "calc(100% - 175px)"};
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 0 1.5rem;
+  padding: 1.5rem 1.5rem;
+  margin-top: ${(props) => (props.$isSearchBarOpen ? "0px" : "1.2rem")};
+  background-color: ${(props) =>
+    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-white)"};
   @media screen and (max-width: 500px) {
     padding: 0 1rem;
   }
@@ -182,6 +198,7 @@ const PartnerMessage = styled.div`
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
+  color: var(--color-black);
 
   > div:nth-child(1) {
     padding: 0.8rem 1rem;
@@ -278,9 +295,11 @@ const SendInputBox = styled.div`
   border-radius: 0.5rem;
   border: 2px solid var(--color-brand-main);
   input {
+    color: var(--color-black);
     width: 100%;
     border: none;
     font-size: 1.2rem;
+    background-color: transparent;
     &:focus {
       outline: none;
     }
@@ -352,7 +371,9 @@ export default function ChatMain({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sendText, setSendText] = useState<string>("");
   const [searchWord, setSearchWord] = useState<string>("");
-  const [responseMessage, setResponseMessage] = useState<ResponseDataType[]>([]);
+  const [responseMessage, setResponseMessage] = useState<ResponseDataType[]>(
+    []
+  );
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(true);
   const [base64String, setBase64String] = useState<any>("");
@@ -360,6 +381,7 @@ export default function ChatMain({
   const [selectedFileName, setSelectedFileName] = useState<string>("");
   const [searchResult, setSearchResult] = useState<ResponseDataType[]>();
   const [searchShowIndex, setSearchShowIndex] = useState<number>(0);
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 시간 변환 */
   const timeFormat = (date: string) => {
@@ -393,12 +415,18 @@ export default function ChatMain({
     /* 채팅방 구독 */
     client.current.activate();
     client.current.onConnect = function () {
-      client.current?.subscribe(`/sub/chat/message/${currentRoomId}`, (frame) => {
-        if (frame.body) {
-          let parsedMessage = JSON.parse(frame.body);
-          setResponseMessage((prevMessages) => [...prevMessages, parsedMessage]);
+      client.current?.subscribe(
+        `/sub/chat/message/${currentRoomId}`,
+        (frame) => {
+          if (frame.body) {
+            let parsedMessage = JSON.parse(frame.body);
+            setResponseMessage((prevMessages) => [
+              ...prevMessages,
+              parsedMessage,
+            ]);
+          }
         }
-      });
+      );
     };
 
     return () => {
@@ -464,7 +492,9 @@ export default function ChatMain({
 
   useEffect(() => {
     /* 검색 결과로 이동 */
-    const targetElement = document.getElementById(`msg-${searchResult?.[searchShowIndex]?.chatId}`);
+    const targetElement = document.getElementById(
+      `msg-${searchResult?.[searchShowIndex]?.chatId}`
+    );
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
       targetElement.style.backgroundColor = "var(--color-brand-main)";
@@ -474,11 +504,15 @@ export default function ChatMain({
 
   const handleSearchIndex = (name: string) => {
     if (name === "up") {
-      setSearchShowIndex(searchShowIndex - 1 < 0 ? searchShowIndex : searchShowIndex - 1);
+      setSearchShowIndex(
+        searchShowIndex - 1 < 0 ? searchShowIndex : searchShowIndex - 1
+      );
     } else {
       if (searchResult) {
         setSearchShowIndex(
-          searchResult.length - 1 === searchShowIndex ? searchShowIndex : searchShowIndex + 1
+          searchResult.length - 1 === searchShowIndex
+            ? searchShowIndex
+            : searchShowIndex + 1
         );
       }
     }
@@ -582,7 +616,11 @@ export default function ChatMain({
 
       {isSearchBarOpen && (
         <SearchNavBox onSubmit={handleSubmitSearch}>
-          <SearchBar placeholder="내용 검색" value={searchWord} onChange={handleSearchMessage} />
+          <SearchBar
+            placeholder="내용 검색"
+            value={searchWord}
+            onChange={handleSearchMessage}
+          />
           <ArrowIconStyle onClick={() => handleSearchIndex("down")}>
             <IoIosArrowDown />
           </ArrowIconStyle>
@@ -592,7 +630,11 @@ export default function ChatMain({
         </SearchNavBox>
       )}
 
-      <DialogueBox ref={messagesEndRef} $isSearchBarOpen={isSearchBarOpen}>
+      <DialogueBox
+        ref={messagesEndRef}
+        $isSearchBarOpen={isSearchBarOpen}
+        $isDarkmode={isDarkmode}
+      >
         {Array.isArray(responseMessage) &&
           responseMessage.map((data, index) => {
             const prevMsg =
@@ -606,13 +648,18 @@ export default function ChatMain({
                     {data.msg !== "" && (
                       <MyMessage>
                         <div id={`msg-${data.chatId}`}>{data.msg}</div>
-                        {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
+                        {(index === 0 ||
+                          data.date.slice(0, 16) !== prevMsg) && (
                           <div>{timeFormat(data.date)}</div>
                         )}
                       </MyMessage>
                     )}
                     {data.fileNames !== "null" && (
-                      <MyMessage onClick={() => handleDownload(data.fileNames, data.fileNames)}>
+                      <MyMessage
+                        onClick={() =>
+                          handleDownload(data.fileNames, data.fileNames)
+                        }
+                      >
                         <div>
                           <MyFileIcon>
                             <FiPaperclip />
@@ -622,7 +669,8 @@ export default function ChatMain({
                             {data.fileNames.length > 20 ? "..." : ""}
                           </span>
                         </div>
-                        {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
+                        {(index === 0 ||
+                          data.date.slice(0, 16) !== prevMsg) && (
                           <div>{timeFormat(data.date)}</div>
                         )}
                       </MyMessage>
@@ -644,14 +692,17 @@ export default function ChatMain({
                       {data.msg !== "" && (
                         <PartnerMessage>
                           <div id={`msg-${data.chatId}`}>{data.msg}</div>
-                          {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
+                          {(index === 0 ||
+                            data.date.slice(0, 16) !== prevMsg) && (
                             <div>{timeFormat(data.date)}</div>
                           )}
                         </PartnerMessage>
                       )}
                       {data.fileNames !== "null" && (
                         <PartnerMessage
-                          onClick={() => handleDownload(data.fileNames, data.fileNames)}
+                          onClick={() =>
+                            handleDownload(data.fileNames, data.fileNames)
+                          }
                         >
                           <div>
                             <PartnerFileIcon>
@@ -662,7 +713,8 @@ export default function ChatMain({
                               {data.fileNames.length > 20 ? "..." : ""}
                             </span>
                           </div>
-                          {(index === 0 || data.date.slice(0, 16) !== prevMsg) && (
+                          {(index === 0 ||
+                            data.date.slice(0, 16) !== prevMsg) && (
                             <div>{timeFormat(data.date)}</div>
                           )}
                         </PartnerMessage>
@@ -686,7 +738,12 @@ export default function ChatMain({
         )}
         <FileAdd>
           <FileIcon onClick={handleFileClick} />
-          <FileInput type="file" ref={fileRef} onChange={handleFileInputChange} multiple />
+          <FileInput
+            type="file"
+            ref={fileRef}
+            onChange={handleFileInputChange}
+            multiple
+          />
         </FileAdd>
 
         <SendInputBox>

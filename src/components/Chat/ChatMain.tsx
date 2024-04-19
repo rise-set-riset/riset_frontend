@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { CgClose } from "react-icons/cg";
 import SearchBar from "../../common/SearchBar";
@@ -6,6 +6,7 @@ import MemberCard from "../../common/MemberCard";
 import { FiPlusCircle } from "react-icons/fi";
 import CustomCheckbox from "../../common/CustomCheckbox";
 import { ReactComponent as Chat } from "../../assets/bottomMenu/bottom-chat.svg";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   padding: 1.5rem;
@@ -13,6 +14,10 @@ const Layout = styled.div`
 
   @media screen and (max-width: 500px) {
     padding: 1rem;
+  }
+
+  h2 {
+    color: var(--color-black);
   }
 `;
 
@@ -26,12 +31,16 @@ const TitleBox = styled.header`
 const CloseIcon = styled(CgClose)`
   font-size: 1.2rem;
   cursor: pointer;
+  color: var(--color-black);
 `;
 
-const MemberCardList = styled.main`
+const MemberCardList = styled.main<{ $isDarkmode: boolean }>`
   margin-top: 1rem;
   height: calc(100% - 180px);
   overflow-y: auto;
+  border-radius: 16px;
+  background-color: ${(props) =>
+    props.$isDarkmode ? "var(--color-brand-darkgray)" : "var(--color-white)"};
 `;
 
 const MemberCardBox = styled.div`
@@ -40,6 +49,7 @@ const MemberCardBox = styled.div`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--color-brand-lightgray);
+
   cursor: pointer;
 
   @media screen and (max-width: 500px) {
@@ -60,6 +70,7 @@ const SearchBox = styled.div`
   input {
     font-size: 1.2rem;
   }
+  color: var(--color-black);
   @media screen and (max-width: 500px) {
     div {
       height: 2.2rem;
@@ -174,6 +185,7 @@ export default function ChatMain({
   const [responseData, setResponseData] = useState<AllMemberDataType[]>([]);
   const [searchResult, setSearchResult] = useState<AllMemberDataType[]>([]);
   const [memberState, setMemberState] = useState<SelectedMemberType>({});
+  const { isDarkmode } = useContext(DarkModeContext);
 
   /* 이름 검색 */
   const handleSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -262,7 +274,7 @@ export default function ChatMain({
         />
       </SearchBox>
 
-      <MemberCardList>
+      <MemberCardList $isDarkmode={isDarkmode}>
         {searchResult.length !== 0 &&
           searchResult?.map((member) => (
             <MemberCardBox

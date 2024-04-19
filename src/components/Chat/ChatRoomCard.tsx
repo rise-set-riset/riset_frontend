@@ -7,7 +7,6 @@ const Layout = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  background-color: var(--color-white);
   cursor: pointer;
 `;
 
@@ -47,6 +46,7 @@ const ChatName = styled.div`
   gap: 4.5px;
   font-size: 1.3rem;
   font-weight: bold;
+  color: var(--color-black);
 
   span {
     font-size: 0.8rem;

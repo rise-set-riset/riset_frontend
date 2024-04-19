@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div`
   width: 100%;
@@ -7,19 +8,19 @@ const Layout = styled.div`
   /* position: relative; */
 `;
 
-const DropDownButton = styled.button<{ $value: number | string }>`
+const DropDownButton = styled.button<{
+  $value: number | string;
+  $isDarkmode: boolean;
+  $rankColor: string;
+}>`
   width: 100%;
   height: 80%;
   border-radius: 8px;
   border: 1px solid
     ${(props) =>
-      props.$value === 1
-        ? "var(--color-black)"
-        : props.$value === 2
-        ? "var(--color-brand-main)"
-        : props.$value === 3
-        ? "var(--color-brand-yellow)"
-        : "var(--color-brand-lightgray)"};
+      typeof props.$value === "number"
+        ? props.$rankColor
+        : "var(--color-white)"};
 
   text-align: center;
   font-size: 1rem;
@@ -27,18 +28,10 @@ const DropDownButton = styled.button<{ $value: number | string }>`
   cursor: pointer;
 
   color: ${(props) =>
-    props.$value === 1 || props.$value === 2 || props.$value === 3
-      ? "var(--color-white)"
-      : "var(--color-black)"};
+    typeof props.$value === "number" ? "white" : "var(--color-black)"};
 
   background-color: ${(props) =>
-    props.$value === 1
-      ? "var(--color-black)"
-      : props.$value === 2
-      ? "var(--color-brand-main)"
-      : props.$value === 3
-      ? "var(--color-brand-yellow)"
-      : "var(--color-white)"};
+    typeof props.$value === "number" ? props.$rankColor : "var(--color-white)"};
 
   &:focus {
     outline: 1px solid var(--color-brand-main);
@@ -84,6 +77,8 @@ export default function DropDown({
 }: DropDownProps) {
   const [value, setValue] = useState<string | number>(main);
   const [isOpenDepart, setIsOpenDepart] = useState<boolean>(false);
+  const { isDarkmode } = useContext(DarkModeContext);
+  const [rankColor, setRankColor] = useState<string>("var(--color-white)");
 
   const handleChageDepart = (name: string | number) => {
     setValue(name);
@@ -91,11 +86,25 @@ export default function DropDown({
     handleSyncData(name);
   };
 
+  useEffect(() => {
+    if (typeof value === "number") {
+      if (value === 1) {
+        setRankColor("var(--color-black)");
+      } else if (value === 2) {
+        setRankColor("var(--color-brand-main");
+      } else {
+        setRankColor("var(--color-brand-yellow");
+      }
+    }
+  }, [value]);
+
   return (
     <Layout>
       <DropDownButton
         onClick={() => setIsOpenDepart(!isOpenDepart)}
         $value={value}
+        $isDarkmode={isDarkmode}
+        $rankColor={rankColor}
       >
         {value}
       </DropDownButton>
