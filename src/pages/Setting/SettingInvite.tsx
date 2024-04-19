@@ -62,6 +62,7 @@ export default function SettingInvite() {
   const jwt = localStorage.getItem("jwt");
   const [employeeName, setEmployeeName] = useState<string>("");
   const [employeeEmail, setEmployeeEmail] = useState<string>("");
+  const [isSend, setIsSend] = useState<boolean>(false);
 
   /* 초대코드 이메일 발송 */
   const handleSendEmail = () => {
@@ -71,6 +72,8 @@ export default function SettingInvite() {
         Authorization: `Bearer ${jwt}`,
       },
     });
+
+    setIsSend(false);
   };
 
   return (
@@ -103,7 +106,9 @@ export default function SettingInvite() {
               />
             </InputLayout>
           </MainInputBox>
-          <SendButton onClick={handleSendEmail}>발송하기</SendButton>
+          <SendButton onClick={handleSendEmail} disabled={isSend}>
+            발송하기
+          </SendButton>
         </MainContentLayout>
       </main>
     </Layout>

@@ -283,6 +283,8 @@ export default function Authority() {
       }
       return response.json();
     });
+
+    navigate("/home");
   };
 
   return (

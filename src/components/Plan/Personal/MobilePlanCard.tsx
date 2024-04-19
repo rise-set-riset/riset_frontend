@@ -11,8 +11,7 @@ const Layout = styled.div<{ $isPlanOpen: boolean }>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  border: ${(props) =>
-    props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none"};
+  border: ${(props) => (props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none")};
   border-radius: 16px;
   padding-bottom: 1rem;
 `;
@@ -65,11 +64,9 @@ const ArrowButton = styled.div<{ $isPlanOpen: boolean }>`
   font-size: 1.5rem;
 
   outline: 4px solid
-    ${(props) =>
-      props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none"};
+    ${(props) => (props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none")};
   border-right: 4px solid
-    ${(props) =>
-      props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none"};
+    ${(props) => (props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none")};
 `;
 
 /* 일정 추가 버튼 */
@@ -87,11 +84,7 @@ interface MobilePlanCard {
   memberPlanData: any;
   currentDate: Date;
 }
-export default function MobilePlanCard({
-  memberPlanData,
-  whos,
-  currentDate,
-}: MobilePlanCard) {
+export default function MobilePlanCard({ memberPlanData, whos, currentDate }: MobilePlanCard) {
   const [isPlanOpen, setIsPlanOpen] = useState<boolean>(false);
   const [planComponents, setPlanComponents] = useState<JSX.Element[]>([]);
   const [allPlanLen, setAllPlanLen] = useState<number>(0);
@@ -99,9 +92,7 @@ export default function MobilePlanCard({
   useEffect(() => {
     if (Array.isArray(memberPlanData?.planList)) {
       if (memberPlanData?.unEditablePlan) {
-        setAllPlanLen(
-          memberPlanData.planList.length + memberPlanData.unEditablePlan.length
-        );
+        setAllPlanLen(memberPlanData.planList.length + memberPlanData.unEditablePlan.length);
       } else {
         setAllPlanLen(memberPlanData.planList.length);
       }
