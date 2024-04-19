@@ -7,6 +7,7 @@ import { ResponsiveContext } from "../../contexts/ResponsiveContext";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { sideMenuAction } from "../../redux/slice/sideMenuSlice";
+import { DarkModeContext } from "../../contexts/DarkmodeContext";
 
 const Layout = styled.div<{
   $isSideMenuOpen: boolean;
