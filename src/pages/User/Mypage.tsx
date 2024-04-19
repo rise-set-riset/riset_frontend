@@ -149,7 +149,6 @@ export default function Mypage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
         setUserData(data);
       })
       .catch((error) => {
@@ -159,8 +158,7 @@ export default function Mypage() {
 
   // 회원 탈퇴 버튼을 클릭했을 때 실행될 함수
   const handleDeleteAccount = () => {
-    const deleteEndpoint =
-      "https://dev.risetconstruction.net/api/myPage/deleteUser";
+    const deleteEndpoint = "https://dev.risetconstruction.net/api/myPage/deleteUser";
 
     fetch(deleteEndpoint, {
       method: "DELETE",
@@ -173,7 +171,6 @@ export default function Mypage() {
         if (!response.ok) {
           throw new Error("Failed to delete account");
         }
-        console.log("Account deleted successfully");
         navigate("/");
       })
       .catch((error) => {
@@ -209,11 +206,7 @@ export default function Mypage() {
           ) : (
             <img src={ProfileImgage} alt="" />
           )}
-          <ImageUploadInput
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-          />
+          <ImageUploadInput type="file" accept="image/*" onChange={handleImageUpload} />
           <CustomCiCirclePlus />
         </ProfileImg>
         <NameandPositionWrapper>
@@ -223,9 +216,7 @@ export default function Mypage() {
         <MypageContainer>
           <Table userData={userData} />
           <BtnWrapper>
-            <DeleteAccountBtn onClick={handleDeleteAccount}>
-              회원탈퇴
-            </DeleteAccountBtn>
+            <DeleteAccountBtn onClick={handleDeleteAccount}>회원탈퇴</DeleteAccountBtn>
             <SaveBtn>저장</SaveBtn>
           </BtnWrapper>
         </MypageContainer>

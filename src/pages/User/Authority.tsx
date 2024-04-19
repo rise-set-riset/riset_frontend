@@ -10,10 +10,18 @@ interface InfoWrapperProps {
   isAdmin: boolean;
 }
 
+const Layout = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+`;
+
 const AuthorityContainer = styled.div`
   width: 90%;
   max-width: 418px;
   margin-top: 100px;
+  margin: auto;
+  margin-top: 150px;
 `;
 
 const AuthorityHeaderWrapper = styled.div`
@@ -199,7 +207,6 @@ export default function Authority() {
   // 모달 바깥의 배경을 클릭한 경우에만 모달을 닫음
   const handleModalWrapperClick = (event: any) => {
     if (event.target === event.currentTarget) {
-      console.log(1, event.currentTarget);
       setIsPopupOpen(false);
     }
   };
@@ -251,9 +258,6 @@ export default function Authority() {
         }
         return response.json();
       })
-      .then((data) => {
-        console.log("코드 전송 완료:", data);
-      })
       .catch((error) => {
         console.error("코드 전송 오류:", error);
         alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -267,125 +271,123 @@ export default function Authority() {
     // 코드 유효성을 확인하는 중이라는 상태로 설정
     setIsValidatingCode(true);
 
-    console.log(authorityCode);
     fetch(`https://dev.risetconstruction.net/preset/employee?code=${authorityCode}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("서버 응답이 실패했습니다.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("코드 전송 완료:", data);
-      });
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("서버 응답이 실패했습니다.");
+      }
+      return response.json();
+    });
   };
 
   return (
-    <AuthorityContainer>
-      <AuthorityHeaderWrapper>
-        <p>시작 전, 사전설정이 필요합니다.</p>
-        <p>관리자, 직원 중 나에게 맞는 것을 선택하여 정보를 입력해 주세요</p>
-      </AuthorityHeaderWrapper>
+    <Layout>
+      <AuthorityContainer>
+        <AuthorityHeaderWrapper>
+          <p>시작 전, 사전설정이 필요합니다.</p>
+          <p>관리자, 직원 중 나에게 맞는 것을 선택하여 정보를 입력해 주세요</p>
+        </AuthorityHeaderWrapper>
 
-      <AuthorityBtnWrapper>
-        <AuthorityButton
-          $isDisabled={isAdmin}
-          onClick={() => {
-            setIsAdmin(true);
-            setBtnClicked(true);
-          }}
-          style={{ marginRight: "8px" }}
-        >
-          관리자
-        </AuthorityButton>
-        <AuthorityButton
-          $isDisabled={!isAdmin}
-          onClick={() => {
-            setIsAdmin(false);
-            setBtnClicked(true);
-          }}
-        >
-          직원
-        </AuthorityButton>
-      </AuthorityBtnWrapper>
+        <AuthorityBtnWrapper>
+          <AuthorityButton
+            $isDisabled={isAdmin}
+            onClick={() => {
+              setIsAdmin(true);
+              setBtnClicked(true);
+            }}
+            style={{ marginRight: "8px" }}
+          >
+            관리자
+          </AuthorityButton>
+          <AuthorityButton
+            $isDisabled={!isAdmin}
+            onClick={() => {
+              setIsAdmin(false);
+              setBtnClicked(true);
+            }}
+          >
+            직원
+          </AuthorityButton>
+        </AuthorityBtnWrapper>
 
-      <AdminInfoWrapper $btnClicked={!btnClicked || isAdmin} $isAdmin={true}>
-        <HorizontalLineWithText
-          style={{
-            marginTop: "40px",
-            marginBottom: "8px",
-            justifyContent: "center",
-          }}
-        >
-          정보 입력
-        </HorizontalLineWithText>
+        <AdminInfoWrapper $btnClicked={!btnClicked || isAdmin} $isAdmin={true}>
+          <HorizontalLineWithText
+            style={{
+              marginTop: "40px",
+              marginBottom: "8px",
+              justifyContent: "center",
+            }}
+          >
+            정보 입력
+          </HorizontalLineWithText>
 
-        <CompanyNameWrapper>
-          <TextInput
-            label="회사명"
-            type="text"
-            value={companyName}
-            onChange={handleCompanyNameChange}
-            placeholder="회사명을 입력하세요"
-          />
-        </CompanyNameWrapper>
+          <CompanyNameWrapper>
+            <TextInput
+              label="회사명"
+              type="text"
+              value={companyName}
+              onChange={handleCompanyNameChange}
+              placeholder="회사명을 입력하세요"
+            />
+          </CompanyNameWrapper>
 
-        <CompanyAddressWrapper>
-          <TextInput
-            label="회사 주소"
-            type="text"
-            value={companyAddress}
-            onChange={handleCompanyAddressChange}
-            placeholder="도로명, 지번, 건물명 검색"
-          />
-          <button onClick={handleOpenModal}>검색</button>
-          {isPopupOpen && (
-            <ModalWrapper onClick={handleModalWrapperClick}>
-              <ModalContent>
-                <DaumPostcodeEmbed onComplete={handleComplete} />
-              </ModalContent>
-            </ModalWrapper>
-          )}
-        </CompanyAddressWrapper>
+          <CompanyAddressWrapper>
+            <TextInput
+              label="회사 주소"
+              type="text"
+              value={companyAddress}
+              onChange={handleCompanyAddressChange}
+              placeholder="도로명, 지번, 건물명 검색"
+              isReadonly={true}
+            />
+            <button onClick={handleOpenModal}>검색</button>
+            {isPopupOpen && (
+              <ModalWrapper onClick={handleModalWrapperClick}>
+                <ModalContent>
+                  <DaumPostcodeEmbed onComplete={handleComplete} />
+                </ModalContent>
+              </ModalWrapper>
+            )}
+          </CompanyAddressWrapper>
 
-        <CompleteBtn type="submit" $disabled={isDisabled} onClick={sendCompanyInfoToServer}>
-          완료
-        </CompleteBtn>
-      </AdminInfoWrapper>
+          <CompleteBtn type="submit" $disabled={isDisabled} onClick={sendCompanyInfoToServer}>
+            완료
+          </CompleteBtn>
+        </AdminInfoWrapper>
 
-      <EmployeeInfoWrapper $btnClicked={btnClicked && !isAdmin} $isAdmin={!isAdmin}>
-        <HorizontalLineWithText
-          style={{
-            marginTop: "40px",
-            marginBottom: "8px",
-            justifyContent: "center",
-          }}
-        >
-          정보 입력
-        </HorizontalLineWithText>
-        <AuthorityCodeWrapper>
-          <TextInput
-            label="코드"
-            type="text"
-            value={authorityCode}
-            onChange={handleAuthorityCodeChange}
-            placeholder="코드번호 입력"
-            isValid={!isValidatingCode && isValidCode}
-            isValidatingCode={isValidatingCode}
-            validMessage="확인되었습니다"
-            inValidMessage="코드 번호를 확인해 주세요"
-          />
-        </AuthorityCodeWrapper>
-        <CompleteBtn type="submit" $disabled={CodeBtnIsDisabled} onClick={validateCode}>
-          완료
-        </CompleteBtn>
-      </EmployeeInfoWrapper>
-    </AuthorityContainer>
+        <EmployeeInfoWrapper $btnClicked={btnClicked && !isAdmin} $isAdmin={!isAdmin}>
+          <HorizontalLineWithText
+            style={{
+              marginTop: "40px",
+              marginBottom: "8px",
+              justifyContent: "center",
+            }}
+          >
+            정보 입력
+          </HorizontalLineWithText>
+          <AuthorityCodeWrapper>
+            <TextInput
+              label="코드"
+              type="text"
+              value={authorityCode}
+              onChange={handleAuthorityCodeChange}
+              placeholder="코드번호 입력"
+              isValid={!isValidatingCode && isValidCode}
+              isValidatingCode={isValidatingCode}
+              validMessage="확인되었습니다"
+              inValidMessage="코드 번호를 확인해 주세요"
+            />
+          </AuthorityCodeWrapper>
+          <CompleteBtn type="submit" $disabled={CodeBtnIsDisabled} onClick={validateCode}>
+            완료
+          </CompleteBtn>
+        </EmployeeInfoWrapper>
+      </AuthorityContainer>
+    </Layout>
   );
 }

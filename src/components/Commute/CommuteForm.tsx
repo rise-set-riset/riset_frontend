@@ -135,6 +135,8 @@ export default function CommuteForm({
   handleEndTime,
 }: CommuteModalProp) {
   const [isCurrentDate, setIsCurrentDate] = useState<boolean>(false);
+  const [currentDate, setCurrentDate] = useState<string>("");
+  const [myInfo, setMyInfo] = useState<any>({});
   const jwt = localStorage.getItem("jwt");
   const { isDarkmode } = useContext(DarkModeContext);
 
@@ -173,7 +175,18 @@ export default function CommuteForm({
   useEffect(() => {
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 9);
-    setIsCurrentDate(form.start === currentDate.toISOString().split("T")[0]);
+    setIsCurrentDate(form?.start === currentDate.toISOString().split("T")[0]);
+    setCurrentDate(currentDate.toISOString().split("T")[0]);
+
+    // 내 정보 받아오기 (없을 경우 후처리)
+    fetch("https://dev.risetconstruction.net/preset", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setMyInfo(data));
   }, []);
 
   return (
@@ -201,11 +214,11 @@ export default function CommuteForm({
         </RadioButtons>
         <User>
           <strong>직원 :&nbsp;&nbsp;</strong>
-          <span>{form?.name}</span>
+          <span>{form.name ? form.name : myInfo?.name}</span>
         </User>
         <DateWrapper>
           <DateIcon />
-          <DateText>{form && dateFormat(form?.start)}</DateText>
+          <DateText>{form ? dateFormat(form?.start) : dateFormat(currentDate)}</DateText>
         </DateWrapper>
         <Time>
           <TimeIcon />

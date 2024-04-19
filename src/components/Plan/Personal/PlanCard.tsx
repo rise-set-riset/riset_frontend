@@ -17,8 +17,7 @@ const Layout = styled.div<{ $isFixed: boolean; $stateColor: string }>`
   input {
     font-size: 18px;
     font-weight: bold;
-    color: ${(props) =>
-      props.$isFixed ? "var(--color-black)" : "var(--color-brand-lightgray)"};
+    color: ${(props) => (props.$isFixed ? "var(--color-black)" : "var(--color-brand-lightgray)")};
     border: none;
     background-color: transparent;
 
@@ -95,9 +94,7 @@ const MenuButton = styled.div<{ $isFixed: boolean; $isDarkmode: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.$isFixed
-        ? "var(--color-brand-lightgray)"
-        : "var(--color-brand-orange)"};
+      props.$isFixed ? "var(--color-brand-lightgray)" : "var(--color-brand-orange)"};
   }
 `;
 
@@ -195,10 +192,7 @@ export default function PlanCard({
   useEffect(() => {
     // 시작시간과 종료시간이 둘다 있는지 검증
     const timePattern = /^(0[0-9]|1[0-2]):[0-5][0-9]$/;
-    if (
-      timePattern.test(planContent.startTime) &&
-      timePattern.test(planContent.endTime)
-    ) {
+    if (timePattern.test(planContent.startTime) && timePattern.test(planContent.endTime)) {
       const currentHour = new Date().getHours();
       const currentMinute = new Date().getMinutes();
 
@@ -211,9 +205,7 @@ export default function PlanCard({
         // 분 비교
         if (currentMinute > Number(planContent.endTime.split(":")[1])) {
           setStateColor("#C5DAFF"); // 진행완료
-        } else if (
-          currentMinute < Number(planContent.startTime.split(":")[1])
-        ) {
+        } else if (currentMinute < Number(planContent.startTime.split(":")[1])) {
           setStateColor("#FFBFA7"); // 진행전
         } else {
           setStateColor("#FFE7A7"); // 진행중
@@ -248,11 +240,9 @@ export default function PlanCard({
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify(savePlanForm),
-    })
-      .then((res) => {
-        res.json();
-      })
-      .then((data) => console.log("값", data));
+    }).then((res) => {
+      res.json();
+    });
     // .then((data) => {
     //   console.log("iddata", data);
     // setUserPlanData(prev => {
@@ -272,8 +262,7 @@ export default function PlanCard({
     } else {
       if (dayPlan.startTime && dayPlan.endTime && dayPlan.title) {
         const savePlanForm = {
-          startTime:
-            currentDate?.toISOString().slice(0, 11) + dayPlan.startTime,
+          startTime: currentDate?.toISOString().slice(0, 11) + dayPlan.startTime,
           endTime: currentDate?.toISOString().slice(0, 11) + dayPlan.endTime,
           title: dayPlan.title,
         };
@@ -300,26 +289,19 @@ export default function PlanCard({
         ...savePlanForm,
         ScheduleId: planContent.id,
       }),
-    }).then((res) => {
-      if (res.ok) {
-        console.log("ok");
-      }
     });
   };
 
   /* 일정 삭제 */
   const handlRemovePlan = () => {
     // 삭제요청
-    fetch(
-      `https://dev.risetconstruction.net/api/employees/deleteSchedule?id=${planContent.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    ).then((res) => {
+    fetch(`https://dev.risetconstruction.net/api/employees/deleteSchedule?id=${planContent.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    }).then((res) => {
       // if (res.ok) {
       // setMyPlanList((prev: any) =>
       //   prev.filter((plan: any) => plan.id !== planContent.id)
@@ -364,11 +346,7 @@ export default function PlanCard({
 
       {/* 부가 메뉴 */}
       {isEditable && (
-        <MenuButton
-          $isFixed={isFixed}
-          $isDarkmode={isDarkmode}
-          onClick={handlePlanMenu}
-        >
+        <MenuButton $isFixed={isFixed} $isDarkmode={isDarkmode} onClick={handlePlanMenu}>
           {isFixed ? (
             /* Vertical Icon 메뉴*/
             <Moremenu>

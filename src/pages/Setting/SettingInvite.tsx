@@ -65,18 +65,11 @@ export default function SettingInvite() {
 
   /* 초대코드 이메일 발송 */
   const handleSendEmail = () => {
-    fetch(
-      "https://dev.risetconstruction.net/preset/mail?email=jinsung8782@naver.com",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    ).then((res) => {
-      if (res.ok) {
-        console.log("ok");
-      }
+    fetch("https://dev.risetconstruction.net/preset/mail?email=jinsung8782@naver.com", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
     });
   };
 
