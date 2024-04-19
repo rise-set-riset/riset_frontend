@@ -84,10 +84,12 @@ export default function PersonalPlan() {
   };
 
   useEffect(() => {
+    currentDate.setHours(currentDate.getHours() + 9);
+
     fetch(
-      `https://dev.risetconstruction.net/api/employees?employeeDate=${currentDate
-        .toISOString()
-        .slice(0, 10)}`,
+      `https://dev.risetconstruction.net/api/employees?employeeDate=${
+        currentDate.toISOString().split("T")[0]
+      }`,
       {
         headers: {
           "Content-Type": "application/json",

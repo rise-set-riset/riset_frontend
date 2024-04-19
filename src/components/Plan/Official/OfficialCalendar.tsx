@@ -242,12 +242,8 @@ export default function OfficialCalendar() {
   const formRef = useRef<any>(null);
   const todayRef = useRef<any>(null);
   const calendarRef = useRef<any>(null);
-  const [year, setYear] = useState<string>(
-    new Date().toISOString().slice(0, 4)
-  );
-  const [month, setMonth] = useState<string>(
-    new Date().toISOString().slice(5, 7)
-  );
+  const [year, setYear] = useState<string>(new Date().toISOString().slice(0, 4));
+  const [month, setMonth] = useState<string>(new Date().toISOString().slice(5, 7));
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
   const [eventForm, setEventForm] = useState<EventFormType>({
@@ -258,12 +254,10 @@ export default function OfficialCalendar() {
     writer: "",
     content: "",
   });
-  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>(
-    {
-      x: 0,
-      y: 0,
-    }
-  );
+  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>({
+    x: 0,
+    y: 0,
+  });
   const [isEditorForm, setIsEditorForm] = useState<boolean>(false);
   const [selectedScheduleNo, setSelectedScheduleNo] = useState<number>();
 
@@ -345,11 +339,9 @@ export default function OfficialCalendar() {
       })
         .then((res) => res.json())
         .then((data) => {
-          if (Array.isArray(data)) {
-            setEventFormList((prevList: any) => {
-              return [...prevList, data];
-            });
-          }
+          setEventFormList((prevList: any) => {
+            return [...prevList, data];
+          });
         });
     } else {
       /* 수정시 */
@@ -367,10 +359,7 @@ export default function OfficialCalendar() {
             const filterdata = prevList.filter(
               (plan: any) => Number(plan.scheduleNo) !== selectedScheduleNo
             );
-            return [
-              ...filterdata,
-              { ...eventForm, scheduleNo: selectedScheduleNo },
-            ];
+            return [...filterdata, { ...eventForm, scheduleNo: selectedScheduleNo }];
           });
         });
     }
@@ -399,9 +388,7 @@ export default function OfficialCalendar() {
 
     /* id에 해당하는 이벤트 찾기 */
     const findId = info.event._def.extendedProps.scheduleNo;
-    const selectedEvent = eventFormList.filter(
-      (form) => form.scheduleNo === findId
-    )[0];
+    const selectedEvent = eventFormList.filter((form) => form.scheduleNo === findId)[0];
     setSelectedScheduleNo(findId);
     setEventForm(selectedEvent);
     setIsEditorForm(true);
@@ -467,12 +454,15 @@ export default function OfficialCalendar() {
 
   /* 페이지 처음 진입시 일정 데이터 받아오기 */
   useEffect(() => {
+    const setDate = new Date();
+    setDate.setHours(setDate.getHours() + 9);
+    const todayDate = setDate.toISOString().slice(0, 7).replace("-", "");
+
     const current =
-      `${year}${month}` ===
-      new Date().toISOString().slice(0, 7).replace("-", "")
-        ? `${year}${month}`
-        : `${year}${month.padStart(2, "0")}`;
+      `${year}${month}` === todayDate ? todayDate : `${year}${month.padStart(2, "0")}`;
+
     fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
+      method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
       },

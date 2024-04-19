@@ -156,11 +156,7 @@ interface SelectedMemberType {
 }
 
 interface AllMemberDataType {
-  employeeId: number;
-  name: string;
-  profileId: any;
-  profileName: string;
-  profilePath: string;
+  [key: string]: any;
 }
 
 interface ChatMainProps {
@@ -213,9 +209,7 @@ export default function ChatMain({
   /* 채팅방 생성 */
   const handleCreateChatRoom = () => {
     /* 선택한 사람들의 ID 모은 배열 */
-    const finalSelectedMember = Object.keys(memberState).filter(
-      (id) => memberState[id]
-    );
+    const finalSelectedMember = Object.keys(memberState).filter((id) => memberState[id]);
     setCurrentMembersId([...finalSelectedMember, userId]);
 
     /* 서버 통신 - 채팅방 생성 */
@@ -240,22 +234,14 @@ export default function ChatMain({
   useEffect(() => {
     fetch("https://dev.risetconstruction.net/auth/userInfo")
       .then((res) => res.json())
-      .then((data) =>
-        setResponseData(
-          data.filter((member: any) => member.employeeId !== userId)
-        )
-      );
+      .then((data) => setResponseData(data.filter((member: any) => member.employeeId !== userId)));
   }, []);
 
   /* 직원 선택 상태값 담을 객체 생성 및 초기화 */
   useEffect(() => {
     setSearchResult(responseData);
     if (!selectToCreate) {
-      setMemberState(
-        Object.fromEntries(
-          responseData.map((member) => [member.employeeId, false])
-        )
-      );
+      setMemberState(Object.fromEntries(responseData.map((member) => [member.employeeId, false])));
     }
   }, [responseData, selectToCreate]);
 
@@ -267,11 +253,7 @@ export default function ChatMain({
       </TitleBox>
 
       <SearchBox>
-        <SearchBar
-          placeholder="이름 검색"
-          value={searchWord}
-          onChange={handleSearchName}
-        />
+        <SearchBar placeholder="이름 검색" value={searchWord} onChange={handleSearchName} />
       </SearchBox>
 
       <MemberCardList $isDarkmode={isDarkmode}>
@@ -294,9 +276,9 @@ export default function ChatMain({
                   image: member.profilePath ? member.profilePath : "false",
                   alt: `${member.name}-이미지`,
                   name: member.name ? member.name : "",
-                  rank: "직급",
-                  department: "부서",
-                  position: "직무",
+                  rank: member.jobGrade,
+                  department: member.depart,
+                  position: member.jobTitle,
                 }}
               />
               <ChatBubbleIcon />
