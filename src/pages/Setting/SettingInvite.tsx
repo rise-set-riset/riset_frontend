@@ -65,7 +65,7 @@ export default function SettingInvite() {
 
   /* 초대코드 이메일 발송 */
   const handleSendEmail = () => {
-    fetch("https://dev.risetconstruction.net/preset/mail?email=jinsung8782@naver.com", {
+    fetch(`https://dev.risetconstruction.net/preset/mail?email=${employeeEmail}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -84,6 +84,7 @@ export default function SettingInvite() {
               <label htmlFor="employee-name">직원 이름</label>
               <input
                 type="text"
+                id="employee-name"
                 name="employee-name"
                 placeholder="이름을 입력하세요"
                 value={employeeName}
@@ -94,6 +95,7 @@ export default function SettingInvite() {
               <label htmlFor="employee-email">이메일</label>
               <input
                 type="email"
+                id="employee-email"
                 name="employee-email"
                 placeholder="이메일을 입력하세요"
                 value={employeeEmail}
