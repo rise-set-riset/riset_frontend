@@ -10,6 +10,7 @@ const Layout = styled.div`
   border-radius: 1rem;
   padding: 1rem;
   background-color: var(--color-brand-yellow);
+  color: #000000;
 `;
 
 const FileInfo = styled.div`
@@ -75,9 +76,7 @@ export default function FileCard({ fileName, fileUrl }: FileType) {
         </File>
         <FileName>{fileName}</FileName>
       </FileInfo>
-      {fileUrl && (
-        <DownLoadIcon onClick={() => handleDownload(fileUrl, fileName)} />
-      )}
+      {fileUrl && <DownLoadIcon onClick={() => handleDownload(fileUrl, fileName)} />}
     </Layout>
   );
 }
