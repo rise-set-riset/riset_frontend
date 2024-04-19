@@ -17,6 +17,7 @@ interface TextInputProps {
   inValidMessage?: string;
   isNotDuplicate?: boolean;
   duplicateMessage?: string;
+  className?: string;
 }
 
 const Input = styled.div`
@@ -101,6 +102,7 @@ export default function TextInput({
   helperText,
   isNotDuplicate,
   duplicateMessage,
+  className,
 }: TextInputProps) {
   const [isFirstBlur, setIsFirstBlur] = useState<boolean>(true);
   const [isHelperTextVisible, setIsHelperTextVisible] = useState<boolean>(true);
@@ -127,6 +129,12 @@ export default function TextInput({
     setIsDuplicateChecking(false);
   }, [value]);
 
+  useEffect(() => {
+    // isNotDuplicate와 duplicateMessage 상태가 변경될 때마다 해당 상태를 확인하고 렌더링을 갱신합니다.
+    console.log("isNotDuplicate:", isNotDuplicate);
+    console.log("duplicateMessage:", duplicateMessage);
+  }, [isNotDuplicate, duplicateMessage]);
+
   return (
     <Input>
       <label>{label}</label>
@@ -147,32 +155,6 @@ export default function TextInput({
         {isValid && value && label === "아이디" && !isHelperTextVisible && (
           <>
             <ValidMsg style={{ color: "#ff6228" }}>{validMessage}</ValidMsg>
-          </>
-        )}
-
-        {/* {isNotDuplicate && duplicateMessage && (
-          <>
-            <span className="icon invalid">
-              <FaCircleExclamation />
-            </span>
-            <InvalidMsg>{duplicateMessage}</InvalidMsg>
-          </>
-        )}
-        {!isNotDuplicate && duplicateMessage && (
-          <>
-            <span className="icon valid">
-              <FaCheckCircle />
-            </span>
-            <ValidMsg>{duplicateMessage}</ValidMsg>
-          </>
-        )} */}
-
-        {!isValid && !isFirstBlur && (
-          <>
-            <span className="icon invalid">
-              <FaCircleExclamation />
-            </span>
-            <InvalidMsg>{inValidMessage}</InvalidMsg>
           </>
         )}
 

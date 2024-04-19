@@ -9,6 +9,8 @@ import CustomCheckbox from "../../common/CustomCheckbox";
 import HorizontalLineWithText from "../../common/HorizontalLineWithText";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../assets/background-image.png";
+import { FaCheckCircle } from "react-icons/fa";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 const Background = styled.div`
   min-width: 100vw;
@@ -153,13 +155,64 @@ const SignUpQuestion = styled.div`
     color: #ff7f50;
   }
 `;
+
+const InvalidMsg = styled.p`
+  margin-top: 4px;
+  color: #ff6228;
+  font-size: 12px;
+`;
+
+const ValidMsg = styled.p`
+  margin-top: 4px;
+  color: #03ca5f;
+  font-size: 12px;
+`;
+
+// const ValidIcon = styled.span`
+//   color: #03ca5f;
+//   width: 20px;
+//   height: 20px;
+// `;
+
+// const InvalidIcon = styled.span`
+//   color: #ff6228;
+//   width: 20px;
+//   height: 20px;
+// `;
+
+const IdTextInputWrapper = styled.div`
+  position: relative;
+
+  .icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+  }
+
+  .icon.valid {
+    color: #03ca5f;
+    width: 20px;
+    height: 20px;
+  }
+
+  .icon.invalid {
+    color: #ff6228;
+    width: 20px;
+    height: 20px;
+  }
+`;
+
 export default function SignUp() {
   const [form, setForm] = useForm();
+  const [isNotDuplicate, setIsNotDuplicate] = useState(false);
+  const [duplicateMessage, setDuplicateMessage] = useState("");
+  const [isCheckingDuplicate, setIsCheckingDuplicate] =
+    useState<boolean>(false);
 
   const {
     isValidId,
-    isCheckingDuplicate,
-    isNotDuplicate,
     isValidPassword,
     isValidConfirmPassword,
     isValidName,
@@ -169,7 +222,6 @@ export default function SignUp() {
     handleConfirmPasswordBlur,
     handleNameBlur,
     handlePhoneNumberBlur,
-    handleCheckDuplicateId,
   } = useFormValidate(form);
 
   const [
@@ -282,6 +334,38 @@ export default function SignUp() {
     }
   };
 
+  // 중복 확인 버튼을 클릭할 때 상태를 변경하는 함수
+  const handleCheckDuplicateId = async () => {
+    try {
+      const response = await fetch(
+        "https://dev.risetconstruction.net/auth/checkId",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: form.id }),
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setIsCheckingDuplicate(true);
+            setIsNotDuplicate(false);
+            setDuplicateMessage("이미 사용 중인 아이디입니다");
+            console.log("중복");
+          } else {
+            setIsCheckingDuplicate(true);
+            setIsNotDuplicate(true);
+            setDuplicateMessage("사용 가능한 아이디입니다");
+            console.log("중복아님");
+          }
+        });
+    } catch (error) {
+      console.error("Error checking duplicate id:", error);
+    }
+  };
+
   // 폼의 기본 동작을 막고, 사용자가 입력한 데이터를 서버에 전송하여 회원가입을 시도
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -319,24 +403,43 @@ export default function SignUp() {
         </SignupHeader>
         <SignUpForm>
           <form onSubmit={handleSubmit}>
-            <TextInput
-              label="아이디"
-              type="text"
-              value={form.id}
-              onChange={handleIdChange}
-              onBlur={handleIdBlur}
-              placeholder="아이디를 입력하세요"
-              isValid={isValidId}
-              validMessage={
-                isCheckingDuplicate ? "" : "아이디 중복 확인을 진행해 주세요"
-              }
-              inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
-              helperText="6~15자 영문 숫자 혼합"
-            />
+            <IdTextInputWrapper>
+              <TextInput
+                label="아이디"
+                type="text"
+                value={form.id}
+                onChange={handleIdChange}
+                onBlur={handleIdBlur}
+                placeholder="아이디를 입력하세요"
+                isValid={isValidId}
+                validMessage={
+                  isCheckingDuplicate ? "" : "아이디 중복 확인을 진행해 주세요"
+                }
+                inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
+                helperText="6~15자 영문 숫자 혼합"
+                className="custom-id-input"
+              />
 
+              {!isNotDuplicate && duplicateMessage && (
+                <>
+                  <span className="icon invalid">
+                    <FaCircleExclamation />
+                  </span>
+                  <InvalidMsg>{duplicateMessage}</InvalidMsg>
+                </>
+              )}
+              {isNotDuplicate && duplicateMessage && (
+                <>
+                  <span className="icon valid">
+                    <FaCheckCircle />
+                  </span>
+                  <ValidMsg>{duplicateMessage}</ValidMsg>
+                </>
+              )}
+            </IdTextInputWrapper>
             <IdChcekBtn
               type="button"
-              disabled={!isValidId || isCheckingDuplicate}
+              disabled={!isValidId}
               onClick={handleCheckDuplicateId}
             >
               아이디 중복 확인
@@ -448,7 +551,9 @@ export default function SignUp() {
                 </p>
               </label>
             </AgreeCheckbox>
-            <SignUpBtn type="submit">가입하기</SignUpBtn>
+            <SignUpBtn type="submit" disabled={isDisabled}>
+              가입하기
+            </SignUpBtn>
           </form>
           <SignUpQuestion>
             <p>

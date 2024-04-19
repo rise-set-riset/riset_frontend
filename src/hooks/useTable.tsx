@@ -109,7 +109,7 @@ const ModalContent = styled.div`
   padding: 20px;
 `;
 
-const Table: React.FC<Props> = ({ userData }) => {
+export default function Table({ userData }: Props) {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -362,6 +362,4 @@ const Table: React.FC<Props> = ({ userData }) => {
       </tbody>
     </StyledTable>
   );
-};
-
-export default Table;
+}
