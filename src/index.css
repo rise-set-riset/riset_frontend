@@ -18,6 +18,7 @@
   --color-gray-1: #f5f5f5;
   --color-gray-2: #eeeeee;
   --color-drakmode-white: #ffffff;
+  --color-white-darkgray: #ffffff;
 }
 
 html.darkmode {
@@ -27,6 +28,7 @@ html.darkmode {
   --color-svg-stroke: #ffdb7a;
   --color-gray-1: #353535;
   --color-drakmode-white: #000000;
+  --color-white-darkgray: #545454;
 }
 
 html {
