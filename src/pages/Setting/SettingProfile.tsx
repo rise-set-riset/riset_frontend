@@ -29,6 +29,7 @@ const TitleBox = styled.div`
   width: 400px;
   margin-left: auto;
   margin-right: 1rem;
+  padding-left: 0.5rem;
 `;
 
 const SaveButton = styled.button`

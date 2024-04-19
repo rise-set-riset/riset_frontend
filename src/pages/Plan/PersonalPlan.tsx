@@ -44,7 +44,7 @@ interface PlanDataType {
   position?: string;
   image: string;
   editablePlan: PlanDetailType[];
-  unEditablePlan: PlanDetailType[];
+  unEditablePlan?: PlanDetailType[];
 }
 
 interface PlanDetailType {
@@ -82,6 +82,7 @@ export default function PersonalPlan() {
       );
     }
   };
+
   useEffect(() => {
     fetch(
       `https://dev.risetconstruction.net/api/employees?employeeDate=${currentDate
@@ -98,60 +99,53 @@ export default function PersonalPlan() {
       .then((data) => {
         if (Array.isArray(data)) {
           setResponseData(data);
+          setUserPlanData({
+            employeeId: data[0].employeeId,
+            name: data[0].name,
+            department: data[0].department,
+            position: data[0].position,
+            image: data[0].image,
+            planList: data[0].schedulesDetail,
+            unEditablePlan: [
+              ...data[0].annualLeaveDetail,
+              ...data[0].halfLeaveDetail,
+              data[0].commuteStartTime && {
+                startTime: data[0].commuteStartTime,
+                endTime: data[0].commuteEndTime,
+                title: data[0].commutePlace,
+              },
+            ],
+          });
+          if (responseData.length > 1) {
+            /* 타인 일정 */
+            const modifiedData = responseData.slice(1).map((data) => {
+              return {
+                employeeId: data.employeeId,
+                name: data.name,
+                department: data.department,
+                position: data.position,
+                image: data.image,
+                planList: [
+                  ...[
+                    ...data.annualLeaveDetail,
+                    ...data.halfLeaveDetail,
+                    data.commuteStartTime && {
+                      startTime: data.commuteStartTime,
+                      endTime: data.commuteEndTime,
+                      title: data.commutePlace,
+                    },
+                  ],
+                  ...data.schedulesDetail,
+                ],
+              };
+            });
+            setOtherPlanData(modifiedData);
+          }
         }
       });
   }, [currentDate]);
 
-  /* 데이터 형식 변환 */
-  useEffect(() => {
-    if (responseData.length > 0) {
-      /* 본인 일정 */
-      setUserPlanData({
-        employeeId: responseData[0].employeeId,
-        name: responseData[0].name,
-        department: responseData[0].department,
-        position: responseData[0].position,
-        image: responseData[0].image,
-        planList: responseData[0].schedulesDetail,
-        unEditablePlan: [
-          ...responseData[0].annualLeaveDetail,
-          ...responseData[0].halfLeaveDetail,
-          responseData[0].commuteStartTime && {
-            startTime: responseData[0].commuteStartTime,
-            endTime: responseData[0].commuteEndTime,
-            title: responseData[0].commutePlace,
-          },
-        ],
-      });
-    }
-    if (responseData.length > 1) {
-      /* 타인 일정 */
-      const modifiedData = responseData.slice(1).map((data) => {
-        return {
-          employeeId: data.employeeId,
-          name: data.name,
-          department: data.department,
-          position: data.position,
-          image: data.image,
-          planList: [
-            ...[
-              ...data.annualLeaveDetail,
-              ...data.halfLeaveDetail,
-              data.commuteStartTime && {
-                startTime: data.commuteStartTime,
-                endTime: data.commuteEndTime,
-                title: data.commutePlace,
-              },
-            ],
-            ...data.schedulesDetail,
-          ],
-        };
-      });
-      setOtherPlanData(modifiedData);
-    }
-  }, [currentDate]);
-
-  console.log("=============처음 진입시 날짜", currentDate);
+  // console.log(responseData);
   const handleTest = (searchWord: string) => {};
 
   return (
