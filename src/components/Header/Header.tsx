@@ -154,7 +154,7 @@ export default function Header() {
   const handleLogout = () => {
     localStorage.removeItem("jwt");
     localStorage.removeItem("userId");
-    navigate("/login");
+    navigate("/");
   };
 
   useEffect(() => {
@@ -174,14 +174,20 @@ export default function Header() {
     <>
       <Layout>
         <Nav>
-          {!isMobile && <HamburgerMenu onClick={() => dispatch(sideMenuAction.toggleSideMenu())} />}
+          {!isMobile && (
+            <HamburgerMenu
+              onClick={() => dispatch(sideMenuAction.toggleSideMenu())}
+            />
+          )}
           <Link to="/home">
             <LogoImg src={isDarkmode ? logoDarkmodeUrl : logoUrl} alt="riset" />
           </Link>
           <Utils>
             <Moon onClick={handleDarkmode} />
             <Alert />
-            <ProfileMenu onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
+            <ProfileMenu
+              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            >
               {userImg ? <img src={userImg} alt="user" /> : <Profile />}
             </ProfileMenu>
             {isProfileMenuOpen && (
