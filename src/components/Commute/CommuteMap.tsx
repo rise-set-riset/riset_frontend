@@ -49,7 +49,8 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
 
-    fetch("https://dev.risetconstruction.net/commute/company-location", {
+    // fetch("https://dev.risetconstruction.net/commute/company-location", {
+    fetch("http://43.203.11.249:8080/commute/company-location", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -61,7 +62,10 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     // 현재 내 위치 데이터
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        setPosition({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+        setPosition({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
       },
       (error) => console.error(error),
       {
@@ -109,7 +113,10 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
       const dLon = toRadians(myLng - companyLng);
       const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(phi1) * Math.cos(phi2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        Math.cos(phi1) *
+          Math.cos(phi2) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const distance = R * c; // 두 지점 간의 거리 (단위: m)
 
@@ -124,7 +131,12 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     // 어떤 지점이라도 상관없이 반경 안에 들어왔을 경우
     if (maps.length > 0) {
       const isInRange = maps.some((map) =>
-        handleInRange(map.latitude, map.longitude, position.latitude, position.longitude)
+        handleInRange(
+          map.latitude,
+          map.longitude,
+          position.latitude,
+          position.longitude
+        )
       );
 
       setIsInRange(isInRange);
@@ -164,7 +176,10 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
                   },
                 }}
               />
-              <CustomOverlayMap position={{ lat: map.latitude, lng: map.longitude }} yAnchor={1}>
+              <CustomOverlayMap
+                position={{ lat: map.latitude, lng: map.longitude }}
+                yAnchor={1}
+              >
                 <CompanyName>{map.companyName}</CompanyName>
               </CustomOverlayMap>
             </div>

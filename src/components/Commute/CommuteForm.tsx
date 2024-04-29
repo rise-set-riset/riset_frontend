@@ -14,7 +14,8 @@ const Layout = styled.div<{ $isDarkmode: boolean }>`
   width: 373px;
   padding: 18px 16px;
   background-color: var(--color-white);
-  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
+  border: 1px solid
+    ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   border-radius: 8px;
   color: var(--color-black);
 `;
@@ -152,7 +153,8 @@ export default function CommuteForm({
       commuteStatus: "END",
     };
 
-    await fetch("https://dev.risetconstruction.net/commute/add-commute", {
+    // await fetch("https://dev.risetconstruction.net/commute/add-commute", {
+    await fetch("http://43.203.11.249:8080/commute/add-commute", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -179,7 +181,8 @@ export default function CommuteForm({
     setCurrentDate(currentDate.toISOString().split("T")[0]);
 
     // 내 정보 받아오기 (없을 경우 후처리)
-    fetch("https://dev.risetconstruction.net/preset", {
+    // fetch("https://dev.risetconstruction.net/preset", {
+    fetch("http://43.203.11.249:8080/preset", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -218,7 +221,9 @@ export default function CommuteForm({
         </User>
         <DateWrapper>
           <DateIcon />
-          <DateText>{form ? dateFormat(form?.start) : dateFormat(currentDate)}</DateText>
+          <DateText>
+            {form ? dateFormat(form?.start) : dateFormat(currentDate)}
+          </DateText>
         </DateWrapper>
         <Time>
           <TimeIcon />
@@ -247,7 +252,12 @@ export default function CommuteForm({
             title="취소"
             handleBtnClick={() => setIsFormOpen(false)}
           />
-          <Button type="submit" active={true} title="저장" disabled={!isCurrentDate} />
+          <Button
+            type="submit"
+            active={true}
+            title="저장"
+            disabled={!isCurrentDate}
+          />
         </Buttons>
       </Form>
     </Layout>

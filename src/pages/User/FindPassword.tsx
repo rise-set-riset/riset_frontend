@@ -69,13 +69,17 @@ export default function FindPassword() {
     };
 
     try {
-      const response = await fetch("https://dev.risetconstruction.net/auth/find-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      // const response = await fetch("https://dev.risetconstruction.net/auth/find-password", {
+      const response = await fetch(
+        "http://43.203.11.249:8080/auth/find-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("이메일 전송에 실패했습니다.");
