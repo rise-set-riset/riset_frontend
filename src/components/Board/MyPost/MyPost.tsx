@@ -73,7 +73,8 @@ export default function MyPost() {
     handlePostRegist,
     handlePostDelete,
     handlePostModify,
-  } = usePosts("https://dev.risetconstruction.net/board/mine");
+  } = usePosts("http://43.203.11.249:8080/board/mine");
+  // } = usePosts("https://dev.risetconstruction.net/board/mine");
 
   return (
     <Layout>

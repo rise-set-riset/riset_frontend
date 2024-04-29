@@ -224,7 +224,9 @@ export default function SignUp() {
   };
 
   // 비밀번호 확인 입력 필드의 값이 변경될 때 호출되며, 해당 입력 값으로 상태를 업데이트
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const confirmPasswordValue = e.target.value;
     setForm((prevForm) => ({
       ...prevForm,
@@ -285,7 +287,8 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://dev.risetconstruction.net/auth/signup", {
+      // const response = await fetch("https://dev.risetconstruction.net/auth/signup", {
+      const response = await fetch("http://43.203.11.249:8080/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -316,7 +319,9 @@ export default function SignUp() {
               onBlur={handleIdBlur}
               placeholder="아이디를 입력하세요"
               isValid={isValidId}
-              validMessage={isCheckingDuplicate ? "" : "아이디 중복 확인을 진행해 주세요"}
+              validMessage={
+                isCheckingDuplicate ? "" : "아이디 중복 확인을 진행해 주세요"
+              }
               inValidMessage="6~15자 이내 영문 소문자와 숫자 조합만 사용 가능합니다."
               helperText="6~15자 영문 숫자 혼합"
             />
@@ -379,7 +384,10 @@ export default function SignUp() {
 
             <AgreeAllCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreeAll} onChange={handleAgreeAllChange} />
+                <CustomCheckbox
+                  isChecked={agreeAll}
+                  onChange={handleAgreeAllChange}
+                />
                 <p>
                   전체 동의하기
                   <button>
@@ -391,7 +399,10 @@ export default function SignUp() {
 
             <AgreeCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreeAge} onChange={handleAgreeAgeChange} />
+                <CustomCheckbox
+                  isChecked={agreeAge}
+                  onChange={handleAgreeAgeChange}
+                />
                 <p>
                   [필수] 만 14세 이상입니다.
                   <button>
@@ -403,7 +414,10 @@ export default function SignUp() {
 
             <AgreeCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreeFinal} onChange={handleAgreeFinalChange} />
+                <CustomCheckbox
+                  isChecked={agreeFinal}
+                  onChange={handleAgreeFinalChange}
+                />
                 <p>
                   [필수] <span>최종이용자 이용약관</span>에 동의합니다.
                   <button>
@@ -414,7 +428,10 @@ export default function SignUp() {
             </AgreeCheckbox>
             <AgreeCheckbox>
               <label>
-                <CustomCheckbox isChecked={agreePrivacy} onChange={handleAgreePrivacyChange} />
+                <CustomCheckbox
+                  isChecked={agreePrivacy}
+                  onChange={handleAgreePrivacyChange}
+                />
                 <p>
                   [필수] <span>개인정보 수집 및 이용</span>에 동의합니다.
                   <button>

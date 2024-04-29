@@ -242,8 +242,12 @@ export default function OfficialCalendar() {
   const formRef = useRef<any>(null);
   const todayRef = useRef<any>(null);
   const calendarRef = useRef<any>(null);
-  const [year, setYear] = useState<string>(new Date().toISOString().slice(0, 4));
-  const [month, setMonth] = useState<string>(new Date().toISOString().slice(5, 7));
+  const [year, setYear] = useState<string>(
+    new Date().toISOString().slice(0, 4)
+  );
+  const [month, setMonth] = useState<string>(
+    new Date().toISOString().slice(5, 7)
+  );
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
   const [eventForm, setEventForm] = useState<EventFormType>({
@@ -254,10 +258,12 @@ export default function OfficialCalendar() {
     writer: "",
     content: "",
   });
-  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>({
-    x: 0,
-    y: 0,
-  });
+  const [dateClickPosition, setDateClickPosition] = useState<ClickPositionType>(
+    {
+      x: 0,
+      y: 0,
+    }
+  );
   const [isEditorForm, setIsEditorForm] = useState<boolean>(false);
   const [selectedScheduleNo, setSelectedScheduleNo] = useState<number>();
 
@@ -329,7 +335,8 @@ export default function OfficialCalendar() {
     /* 추가시 */
     if (!isEditorForm) {
       /* 서버에 데이터 전송 */
-      fetch("https://dev.risetconstruction.net/api/companySchedule", {
+      // fetch("https://dev.risetconstruction.net/api/companySchedule", {
+      fetch("http://43.203.11.249:8080/api/companySchedule", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -345,7 +352,8 @@ export default function OfficialCalendar() {
         });
     } else {
       /* 수정시 */
-      fetch("https://dev.risetconstruction.net/api/update", {
+      // fetch("https://dev.risetconstruction.net/api/update", {
+      fetch("http://43.203.11.249:8080/api/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -359,7 +367,10 @@ export default function OfficialCalendar() {
             const filterdata = prevList.filter(
               (plan: any) => Number(plan.scheduleNo) !== selectedScheduleNo
             );
-            return [...filterdata, { ...eventForm, scheduleNo: selectedScheduleNo }];
+            return [
+              ...filterdata,
+              { ...eventForm, scheduleNo: selectedScheduleNo },
+            ];
           });
         });
     }
@@ -388,7 +399,9 @@ export default function OfficialCalendar() {
 
     /* id에 해당하는 이벤트 찾기 */
     const findId = info.event._def.extendedProps.scheduleNo;
-    const selectedEvent = eventFormList.filter((form) => form.scheduleNo === findId)[0];
+    const selectedEvent = eventFormList.filter(
+      (form) => form.scheduleNo === findId
+    )[0];
     setSelectedScheduleNo(findId);
     setEventForm(selectedEvent);
     setIsEditorForm(true);
@@ -403,7 +416,8 @@ export default function OfficialCalendar() {
     });
 
     /* 서버에서 삭제 */
-    fetch(`https://dev.risetconstruction.net/api/delete?id=${findId}`, {
+    // fetch(`https://dev.risetconstruction.net/api/delete?id=${findId}`, {
+    fetch(`http://43.203.11.249:8080/api/delete?id=${findId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -459,9 +473,12 @@ export default function OfficialCalendar() {
     const todayDate = setDate.toISOString().slice(0, 7).replace("-", "");
 
     const current =
-      `${year}${month}` === todayDate ? todayDate : `${year}${month.padStart(2, "0")}`;
+      `${year}${month}` === todayDate
+        ? todayDate
+        : `${year}${month.padStart(2, "0")}`;
 
-    fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
+    // fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
+    fetch(`http://43.203.11.249:8080/api/get?currentMonth=${current}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,

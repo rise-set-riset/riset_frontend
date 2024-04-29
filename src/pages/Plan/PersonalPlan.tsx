@@ -87,7 +87,8 @@ export default function PersonalPlan() {
     currentDate.setHours(currentDate.getHours() + 9);
 
     fetch(
-      `https://dev.risetconstruction.net/api/employees?employeeDate=${
+      // `https://dev.risetconstruction.net/api/employees?employeeDate=${
+      `http://43.203.11.249:8080/api/employees?employeeDate=${
         currentDate.toISOString().split("T")[0]
       }`,
       {

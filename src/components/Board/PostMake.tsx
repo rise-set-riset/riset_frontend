@@ -14,7 +14,8 @@ const Layout = styled.form<{ $isDarkmode: boolean }>`
   width: 90%;
   max-width: 900px;
   border-radius: 1rem;
-  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
+  border: 1px solid
+    ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   padding: 1.5rem;
   overflow: hidden;
   background-color: var(--color-white);
@@ -92,7 +93,8 @@ const FileAdd = styled.div`
 const FileIcon = styled(FiPaperclip)<{ $isDarkmode: boolean }>`
   font-size: 1.5rem;
   path {
-    stroke: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
+    stroke: ${(props) =>
+      props.$isDarkmode ? "var(--color-black)" : "var(--color-white)"};
   }
 `;
 
@@ -107,7 +109,8 @@ const ButtonSubmit = styled.button<{ $isDarkmode: boolean }>`
   padding: 0 1rem;
   background-color: var(--color-brand-main);
   font-weight: bold;
-  color: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
+  color: ${(props) =>
+    props.$isDarkmode ? "var(--color-black)" : "var(--color-white)"};
   transition: transform 0.3s;
   cursor: pointer;
 
@@ -141,7 +144,12 @@ export default function PostMake({
     toolbar: [
       [{ header: [1, 2, false] }],
       ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
       ["link", "image"],
       ["clean"],
     ],
@@ -175,7 +183,8 @@ export default function PostMake({
     }
 
     if (post) {
-      fetch(`https://dev.risetconstruction.net/board/${post.id}`, {
+      // fetch(`https://dev.risetconstruction.net/board/${post.id}`, {
+      fetch(`http://43.203.11.249:8080/board/${post.id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -187,7 +196,8 @@ export default function PostMake({
           handlePostModify(data);
         });
     } else {
-      fetch("https://dev.risetconstruction.net/board", {
+      // fetch("https://dev.risetconstruction.net/board", {
+      fetch("http://43.203.11.249:8080/board", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -215,7 +225,12 @@ export default function PostMake({
         placeholder="제목을 입력하세요"
       />
 
-      <Wysiwyg modules={modules} theme="snow" value={content} onChange={setContent} />
+      <Wysiwyg
+        modules={modules}
+        theme="snow"
+        value={content}
+        onChange={setContent}
+      />
 
       <SwiperWrapper
         spaceBetween={20}
@@ -235,7 +250,12 @@ export default function PostMake({
       <FileAndSubmit>
         <FileAdd>
           <FileIcon onClick={handleFileClick} $isDarkmode={isDarkmode} />
-          <FileInput type="file" ref={fileRef} onChange={handleFileUpload} multiple />
+          <FileInput
+            type="file"
+            ref={fileRef}
+            onChange={handleFileUpload}
+            multiple
+          />
         </FileAdd>
         <ButtonSubmit type="submit" $isDarkmode={isDarkmode}>
           등록하기

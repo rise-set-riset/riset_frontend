@@ -30,7 +30,8 @@ const CommuteCard = styled.div<{ $isDarkmode: boolean }>`
   min-width: 460px;
   height: 570px;
   border-radius: 1rem;
-  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
+  border: ${(props) =>
+    props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none"};
   padding: 1rem;
   background-color: var(--color-white);
 
@@ -119,23 +120,28 @@ export default function CommuteRecord() {
 
     if (!workStatus) {
       // 출근 데이터
-      await fetch("https://dev.risetconstruction.net/commute/register-commute", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify({
-          commuteDate,
-          commuteStart: commuteTime,
-          commutePlace: "HEADQUARTERS",
-          commuteStatus: "START",
-        }),
-      });
+      await fetch(
+        // "https://dev.risetconstruction.net/commute/register-commute",
+        "http://43.203.11.249:8080/commute/register-commute",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwt}`,
+          },
+          body: JSON.stringify({
+            commuteDate,
+            commuteStart: commuteTime,
+            commutePlace: "HEADQUARTERS",
+            commuteStatus: "START",
+          }),
+        }
+      );
       setWorkStatus("START");
     } else if (workStatus === "START") {
       // 퇴근 데이터
-      await fetch("https://dev.risetconstruction.net/commute/get-off", {
+      // await fetch("https://dev.risetconstruction.net/commute/get-off", {
+      await fetch("http://43.203.11.249:8080/commute/get-off", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +169,8 @@ export default function CommuteRecord() {
     const month = date.getMonth() + 1;
 
     await fetch(
-      `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
+      // `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
+      `http://43.203.11.249:8080/commute/commute-history?year=${year}&month=${month}`,
       {
         method: "GET",
         headers: {
@@ -179,7 +186,8 @@ export default function CommuteRecord() {
 
   /* 새로고침, 재접속 시 출근, 퇴근 버튼 클릭 여부 판단하기 */
   useEffect(() => {
-    fetch("https://dev.risetconstruction.net/commute/get-status", {
+    // fetch("https://dev.risetconstruction.net/commute/get-status", {
+    fetch("http://43.203.11.249:8080/commute/get-status", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,

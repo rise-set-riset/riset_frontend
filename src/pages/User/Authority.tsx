@@ -63,19 +63,28 @@ const AuthorityButton = styled.button<{ $isDisabled: boolean }>`
   color: white;
   border: none;
   cursor: pointer;
-  background-color: ${({ $isDisabled }) => ($isDisabled ? "#ff7f50" : "#c4c4c4")};
+  background-color: ${({ $isDisabled }) =>
+    $isDisabled ? "#ff7f50" : "#c4c4c4"};
 `;
 
-const AdminInfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
+const AdminInfoWrapper = styled.div<{
+  $btnClicked: boolean;
+  $isAdmin: boolean;
+}>`
   width: 384px;
   margin: auto;
-  display: ${({ $btnClicked, $isAdmin }) => ($btnClicked && $isAdmin ? "block" : "none")};
+  display: ${({ $btnClicked, $isAdmin }) =>
+    $btnClicked && $isAdmin ? "block" : "none"};
 `;
 
-const EmployeeInfoWrapper = styled.div<{ $btnClicked: boolean; $isAdmin: boolean }>`
+const EmployeeInfoWrapper = styled.div<{
+  $btnClicked: boolean;
+  $isAdmin: boolean;
+}>`
   width: 384px;
   margin: auto;
-  display: ${({ $btnClicked, $isAdmin }) => ($btnClicked && $isAdmin ? "block" : "none")};
+  display: ${({ $btnClicked, $isAdmin }) =>
+    $btnClicked && $isAdmin ? "block" : "none"};
 `;
 
 const CompanyNameWrapper = styled.div`
@@ -189,12 +198,16 @@ export default function Authority() {
   };
 
   // 입력된 인풋값을 companyAddress에 업데이트
-  const handleCompanyAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCompanyAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setCompanyAddress(e.target.value);
   };
 
   // 인풋의 값을 authorityCode에 업데이트, 코드가 비어있는지 여부에 따라 CodeBtnIsDisabled 상태 업데이트
-  const handleAuthorityCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAuthorityCodeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setAuthorityCode(e.target.value);
     setCodeBtnIsDisabled(e.target.value === "");
   };
@@ -228,7 +241,8 @@ export default function Authority() {
     };
 
     const jwt = localStorage.getItem("jwt");
-    fetch("https://dev.risetconstruction.net/preset/admin", {
+    // fetch("https://dev.risetconstruction.net/preset/admin", {
+    fetch("http://43.203.11.249:8080/preset/admin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -271,7 +285,8 @@ export default function Authority() {
     // 코드 유효성을 확인하는 중이라는 상태로 설정
     setIsValidatingCode(true);
 
-    fetch(`https://dev.risetconstruction.net/preset/employee?code=${authorityCode}`, {
+    // fetch(`https://dev.risetconstruction.net/preset/employee?code=${authorityCode}`, {
+    fetch(`http://43.203.11.249:8080/preset/employee?code=${authorityCode}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -357,12 +372,19 @@ export default function Authority() {
             )}
           </CompanyAddressWrapper>
 
-          <CompleteBtn type="submit" $disabled={isDisabled} onClick={sendCompanyInfoToServer}>
+          <CompleteBtn
+            type="submit"
+            $disabled={isDisabled}
+            onClick={sendCompanyInfoToServer}
+          >
             완료
           </CompleteBtn>
         </AdminInfoWrapper>
 
-        <EmployeeInfoWrapper $btnClicked={btnClicked && !isAdmin} $isAdmin={!isAdmin}>
+        <EmployeeInfoWrapper
+          $btnClicked={btnClicked && !isAdmin}
+          $isAdmin={!isAdmin}
+        >
           <HorizontalLineWithText
             style={{
               marginTop: "40px",
@@ -385,7 +407,11 @@ export default function Authority() {
               inValidMessage="코드 번호를 확인해 주세요"
             />
           </AuthorityCodeWrapper>
-          <CompleteBtn type="submit" $disabled={CodeBtnIsDisabled} onClick={validateCode}>
+          <CompleteBtn
+            type="submit"
+            $disabled={CodeBtnIsDisabled}
+            onClick={validateCode}
+          >
             완료
           </CompleteBtn>
         </EmployeeInfoWrapper>
