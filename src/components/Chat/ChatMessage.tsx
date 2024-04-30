@@ -402,8 +402,7 @@ export default function ChatMain({
   useEffect(() => {
     /* 소켓 함수 */
     client.current = new Client({
-      // brokerURL: "wss://dev.risetconstruction.net/ws-stomp",
-      brokerURL: "ws://43.203.11.249:8080/ws-stomp",
+      brokerURL: "wss://dev.risetconstruction.net/ws-stomp",
       connectHeaders: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -461,8 +460,7 @@ export default function ChatMain({
     e.preventDefault();
     if (isSearchBarOpen) {
       fetch(
-        // `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
-        `http://43.203.11.249:8080/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
+        `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -546,8 +544,7 @@ export default function ChatMain({
 
   /* 채팅방 삭제 */
   const handleRemoveChatRoom = () => {
-    // fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}`, {
-    fetch(`http://43.203.11.249:8080/chatRoom/${currentRoomId}`, {
+    fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -568,8 +565,7 @@ export default function ChatMain({
 
   /* 채팅 메세지 가져오기 */
   useEffect(() => {
-    // fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chat`, {
-    fetch(`http://43.203.11.249:8080/chatRoom/${currentRoomId}/chat`, {
+    fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chat`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },

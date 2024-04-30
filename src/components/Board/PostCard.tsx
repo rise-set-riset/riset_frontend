@@ -182,10 +182,7 @@ export default function PostCard({
   const jwt = localStorage.getItem("jwt");
 
   /* 즐겨찾기 추가 */
-  const handleRegistFavorite = async (
-    e: React.MouseEvent<SVGElement>,
-    post: any
-  ) => {
+  const handleRegistFavorite = async (e: React.MouseEvent<SVGElement>, post: any) => {
     e.stopPropagation();
 
     if (handleFavoriteIsPostExists) {
@@ -193,16 +190,12 @@ export default function PostCard({
 
       // 즐겨찾기 목록에 없을 경우에만 추가
       if (!isExists) {
-        // await fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
-        await fetch(
-          `http://43.203.11.249:8080/board/favorite/${post.post.id}`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${jwt}`,
-            },
-          }
-        );
+        await fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
 
         if (handleFavoritePostRegist) {
           handleFavoritePostRegist(post);
@@ -212,22 +205,15 @@ export default function PostCard({
   };
 
   /* 즐겨찾기 삭제 */
-  const handleDeleteFavorite = async (
-    e: React.MouseEvent<SVGElement>,
-    post: any
-  ) => {
+  const handleDeleteFavorite = async (e: React.MouseEvent<SVGElement>, post: any) => {
     e.stopPropagation();
 
-    await fetch(
-      // `https://dev.risetconstruction.net/board/favorite/delete/${post.id}`,
-      `http://43.203.11.249:8080/board/favorite/delete/${post.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    );
+    await fetch(`https://dev.risetconstruction.net/board/favorite/delete/${post.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
 
     if (handleFavoritePostDelete) {
       handleFavoritePostDelete(post.post.id);
@@ -239,10 +225,7 @@ export default function PostCard({
       <Transition in={isManageClick} timeout={300} unmountOnExit mountOnEnter>
         {(state) =>
           isAllPosts ? (
-            <StarIcon
-              $state={state}
-              onClick={(e) => handleRegistFavorite(e, post)}
-            />
+            <StarIcon $state={state} onClick={(e) => handleRegistFavorite(e, post)} />
           ) : (
             <MinusWrapper $state={state}>
               <MinusIcon onClick={(e) => handleDeleteFavorite(e, post)} />
@@ -277,10 +260,7 @@ export default function PostCard({
         />
       </Modal>
 
-      <Modal
-        isModalOpen={isModifyModalOpen}
-        handleIsModalOpen={setIsModifyModalOpen}
-      >
+      <Modal isModalOpen={isModifyModalOpen} handleIsModalOpen={setIsModifyModalOpen}>
         <PostMake
           setIsFormOpen={setIsModifyModalOpen}
           handlePostModify={handlePostModify}

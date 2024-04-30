@@ -140,8 +140,7 @@ export default function Mypage() {
 
   // 회원 정보 가져오는 함수
   const fetchData = () => {
-    // fetch("https://dev.risetconstruction.net/api/myPage/get", {
-    fetch("http://43.203.11.249:8080/api/myPage/get", {
+    fetch("https://dev.risetconstruction.net/api/myPage/get", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -159,8 +158,7 @@ export default function Mypage() {
 
   // 회원 탈퇴 버튼을 클릭했을 때 실행될 함수
   const handleDeleteAccount = () => {
-    // const deleteEndpoint = "https://dev.risetconstruction.net/api/myPage/deleteUser";
-    const deleteEndpoint = "http://43.203.11.249:8080/api/myPage/deleteUser";
+    const deleteEndpoint = "https://dev.risetconstruction.net/api/myPage/deleteUser";
 
     fetch(deleteEndpoint, {
       method: "DELETE",
@@ -208,11 +206,7 @@ export default function Mypage() {
           ) : (
             <img src={ProfileImgage} alt="" />
           )}
-          <ImageUploadInput
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-          />
+          <ImageUploadInput type="file" accept="image/*" onChange={handleImageUpload} />
           <CustomCiCirclePlus />
         </ProfileImg>
         <NameandPositionWrapper>
@@ -222,9 +216,7 @@ export default function Mypage() {
         <MypageContainer>
           <Table userData={userData} />
           <BtnWrapper>
-            <DeleteAccountBtn onClick={handleDeleteAccount}>
-              회원탈퇴
-            </DeleteAccountBtn>
+            <DeleteAccountBtn onClick={handleDeleteAccount}>회원탈퇴</DeleteAccountBtn>
             <SaveBtn>저장</SaveBtn>
           </BtnWrapper>
         </MypageContainer>

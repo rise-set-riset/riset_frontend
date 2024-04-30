@@ -16,8 +16,7 @@ import { DarkModeContext } from "../../contexts/DarkmodeContext";
 const Layout = styled.div<{ $isDarkmode: boolean }>`
   width: 90%;
   max-width: 900px;
-  border: 1px solid
-    ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
+  border: 1px solid ${(props) => (props.$isDarkmode ? "var(--color-brand-lightgray)" : "none")};
   border-radius: 1rem;
   overflow: hidden;
   background-color: var(--color-white);
@@ -167,8 +166,7 @@ const SendComment = styled.button`
 `;
 
 const SendIcon = styled(IoMdArrowRoundUp)<{ $isDarkmode: boolean }>`
-  color: ${(props) =>
-    props.$isDarkmode ? "var(--color-black)" : "var(--color-white)"};
+  color: ${(props) => (props.$isDarkmode ? "var(--color-black)" : "var(--color-white)")};
   font-size: 1.2rem;
 `;
 
@@ -253,8 +251,7 @@ export default function PostShow({
 
   /* 게시글 삭제 */
   const handleDelete = async (postId: number) => {
-    // await fetch(`https://dev.risetconstruction.net/board/deleted/${postId}`, {
-    await fetch(`http://43.203.11.249:8080/board/deleted/${postId}`, {
+    await fetch(`https://dev.risetconstruction.net/board/deleted/${postId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -269,8 +266,7 @@ export default function PostShow({
     e.preventDefault();
 
     if (comment.trim()) {
-      // fetch(`https://dev.risetconstruction.net/reply/${postItem.id}`, {
-      fetch(`http://43.203.11.249:8080/reply/${postItem.id}`, {
+      fetch(`https://dev.risetconstruction.net/reply/${postItem.id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -290,8 +286,7 @@ export default function PostShow({
 
   /* 댓글 삭제 */
   const handleCommentDel = (commentId: number) => {
-    // fetch(`https://dev.risetconstruction.net/reply/deleted/${commentId}`, {
-    fetch(`http://43.203.11.249:8080/reply/deleted/${commentId}`, {
+    fetch(`https://dev.risetconstruction.net/reply/deleted/${commentId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -303,15 +298,12 @@ export default function PostShow({
 
   /* 댓글 수정,삭제 열기/닫기 */
   const handleIsModifyComment = (idx: number) => {
-    setIsModifyComment((prev) =>
-      prev.map((value, index) => (index === idx ? !value : value))
-    );
+    setIsModifyComment((prev) => prev.map((value, index) => (index === idx ? !value : value)));
   };
 
   /* 내 정보 가져오기 */
   useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/preset", {
-    fetch("http://43.203.11.249:8080/preset", {
+    fetch("https://dev.risetconstruction.net/preset", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -324,9 +316,7 @@ export default function PostShow({
   /* 댓글 관련 */
   useEffect(() => {
     // 댓글 수 만큼 배열 생성
-    setIsModifyComment(
-      Array.from({ length: postItem.comment.length }, () => false)
-    );
+    setIsModifyComment(Array.from({ length: postItem.comment.length }, () => false));
   }, [postItem.comment]);
 
   return (
@@ -369,10 +359,7 @@ export default function PostShow({
           slidesPerView={1}
           navigation
           pagination={{ clickable: true }}
-          breakpoints={{
-            600: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-          }}
+          breakpoints={{ 600: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
         >
           {postItem?.files &&
             postItem.files.map((file: any, idx: number) => (
@@ -426,11 +413,7 @@ export default function PostShow({
         </CommentScroll>
       </CommentWrapper>
       <MyComment onSubmit={handleSubmit}>
-        {myInfo.myImage ? (
-          <img src={myInfo.myImage} alt="myImage" />
-        ) : (
-          <Profile />
-        )}
+        {myInfo.myImage ? <img src={myInfo.myImage} alt="myImage" /> : <Profile />}
         <Comment>
           <CommentInput
             placeholder="내용을 입력해주세요"

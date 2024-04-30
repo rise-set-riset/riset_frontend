@@ -153,10 +153,7 @@ export default function SettingProfile() {
   };
 
   /* 데이터 변경 */
-  const handleChageInput = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    selectedId: number
-  ) => {
+  const handleChageInput = (e: React.ChangeEvent<HTMLInputElement>, selectedId: number) => {
     const newArray = responseData.map((data) => {
       if (data.employeeNum === selectedId) {
         return {
@@ -181,9 +178,7 @@ export default function SettingProfile() {
           ...data,
           depart: {
             departmentName: value,
-            departmentId: departIdList.filter(
-              (dep: any) => dep.departName === value
-            )[0].departId,
+            departmentId: departIdList.filter((dep: any) => dep.departName === value)[0].departId,
           },
         };
       } else {
@@ -201,8 +196,7 @@ export default function SettingProfile() {
         return {
           ...data,
           jobGrade: {
-            grade: rankIdList.filter((dep: any) => dep.gradeNo === value)[0]
-              .grade,
+            grade: rankIdList.filter((dep: any) => dep.gradeNo === value)[0].grade,
             jobGradeId: value,
           },
         };
@@ -234,18 +228,14 @@ export default function SettingProfile() {
         }
       }
 
-      fetch(
-        // `https://dev.risetconstruction.net/preset/profiles/${userData.employeeNum}`,
-        `http://43.203.11.249:8080/preset/profiles/${userData.employeeNum}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwt}`,
-          },
-          body: JSON.stringify(dataToSend),
-        }
-      );
+      fetch(`https://dev.risetconstruction.net/preset/profiles/${userData.employeeNum}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(dataToSend),
+      });
     });
   };
 
@@ -255,8 +245,7 @@ export default function SettingProfile() {
   };
 
   useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/preset/profiles", {
-    fetch("http://43.203.11.249:8080/preset/profiles", {
+    fetch("https://dev.risetconstruction.net/preset/profiles", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
@@ -270,8 +259,7 @@ export default function SettingProfile() {
 
   /* 부서 */
   useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/depart", {
-    fetch("http://43.203.11.249:8080/depart", {
+    fetch("https://dev.risetconstruction.net/depart", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
@@ -285,8 +273,7 @@ export default function SettingProfile() {
 
   /* 등급 */
   useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/jobGrade", {
-    fetch("http://43.203.11.249:8080/jobGrade", {
+    fetch("https://dev.risetconstruction.net/jobGrade", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,

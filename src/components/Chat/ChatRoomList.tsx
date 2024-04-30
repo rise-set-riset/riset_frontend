@@ -238,8 +238,7 @@ export default function ChatRoomList({
 
   /* 채팅방 삭제 */
   const handleRemoveChatRoom = (selectedRoomId: number) => {
-    // fetch(`https://dev.risetconstruction.net/chatRoom/${selectedRoomId}`, {
-    fetch(`http://43.203.11.249:8080/chatRoom/${selectedRoomId}`, {
+    fetch(`https://dev.risetconstruction.net/chatRoom/${selectedRoomId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -255,8 +254,7 @@ export default function ChatRoomList({
 
   /* 채팅방 리스트 불러오기 */
   useEffect(() => {
-    // fetch(`https://dev.risetconstruction.net/chatRoom`, {
-    fetch(`http://43.203.11.249:8080/chatRoom`, {
+    fetch(`https://dev.risetconstruction.net/chatRoom`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },

@@ -104,9 +104,7 @@ export default function SideMenu() {
   const pathname = location.pathname;
   const { isMobile } = useContext(ResponsiveContext);
   const dispatch = useDispatch<AppDispatch>();
-  const isSideMenuOpen = useSelector(
-    (state: RootState) => state.sideMenu.isSideMenuOpen
-  );
+  const isSideMenuOpen = useSelector((state: RootState) => state.sideMenu.isSideMenuOpen);
 
   // 현재 보고있는 메뉴만 열리게하기
   const handleIsMenuOpen = (idx: number) => {
@@ -118,9 +116,7 @@ export default function SideMenu() {
   useEffect(() => {
     setIsMenuOpen(
       Array.from({ length: sideMenus?.menus.length! }, (_, idx) => {
-        return (
-          sideMenus?.menus[idx].link.split("/")[1] === pathname.split("/")[1]
-        );
+        return sideMenus?.menus[idx].link.split("/")[1] === pathname.split("/")[1];
       })
     );
   }, [sideMenus, pathname]);
@@ -146,8 +142,7 @@ export default function SideMenu() {
   useEffect(() => {
     const fetchMenus = async () => {
       try {
-        // fetch("https://dev.risetconstruction.net/api/menus")
-        fetch("http://43.203.11.249:8080/api/menus")
+        fetch("https://dev.risetconstruction.net/api/menus")
           .then((res) => res.json())
           .then((data) => setSideMenus(data));
       } catch (err: any) {
@@ -161,10 +156,7 @@ export default function SideMenu() {
   }, []);
 
   return (
-    <Layout
-      $isSideMenuOpen={isSideMenuOpen}
-      $sideMenuPosition={sideMenuPosition}
-    >
+    <Layout $isSideMenuOpen={isSideMenuOpen} $sideMenuPosition={sideMenuPosition}>
       <UserProfile>
         <CustomLink to="/mypage">
           {sideMenus && (
