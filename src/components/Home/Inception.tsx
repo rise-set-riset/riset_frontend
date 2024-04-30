@@ -36,8 +36,7 @@ const TotalCntAbbr = styled.div<{ $isDarkmode: boolean }>`
   align-items: center;
   justify-content: space-evenly;
   border-radius: 1rem;
-  border: ${(props) =>
-    props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none"};
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
   padding: 0.5rem;
   font-weight: bold;
   overflow: hidden;
@@ -85,8 +84,7 @@ const OfficialPlanAbbr = styled.div<{ $isDarkmode: boolean }>`
   display: flex;
   align-items: center;
   border-radius: 1rem;
-  border: ${(props) =>
-    props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none"};
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
   background-color: var(--color-white);
   overflow: hidden;
 
@@ -167,16 +165,12 @@ const ThirdSection = styled.section<{ $isDarkmode: boolean }>`
   height: 164px;
   padding: 1rem;
   border-radius: 1rem;
-  border: ${(props) =>
-    props.$isDarkmode && "1px solid var(--color-brand-lightgray)"};
-  background-color: ${(props) =>
-    props.$isDarkmode ? "transparent" : "var(--color-brand-yellow)"};
+  border: ${(props) => props.$isDarkmode && "1px solid var(--color-brand-lightgray)"};
+  background-color: ${(props) => (props.$isDarkmode ? "transparent" : "var(--color-brand-yellow)")};
 
   input {
     background-color: ${(props) =>
-      props.$isDarkmode
-        ? "var(--color-brand-darkgray) !important"
-        : "var(--color-white)"};
+      props.$isDarkmode ? "var(--color-brand-darkgray) !important" : "var(--color-white)"};
   }
 `;
 
@@ -206,8 +200,7 @@ const SectionTitle = styled.div`
 const FourthSection = styled.section<{ $isDarkmode: boolean }>`
   padding: 1rem;
   border-radius: 1rem;
-  border: ${(props) =>
-    props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none"};
+  border: ${(props) => (props.$isDarkmode ? "1px solid var(--color-brand-lightgray)" : "none")};
 `;
 
 const Posts = styled.div`
@@ -242,8 +235,7 @@ export default function Inception() {
   /* 초기 데이터 세팅 */
   useEffect(() => {
     // 출근일, 잔여연차 가져오기
-    // fetch("https://dev.risetconstruction.net/commute/days", {
-    fetch("http://43.203.11.249:8080/commute/days", {
+    fetch("https://dev.risetconstruction.net/commute/days", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -253,16 +245,12 @@ export default function Inception() {
       .then((data) => setDays(data));
 
     // 게시글 3개 가져오기
-    fetch(
-      // "https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''",
-      "http://43.203.11.249:8080/board?size=3&page=0&searchWord=''",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    )
+    fetch("https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setPosts(data));
 
@@ -271,8 +259,7 @@ export default function Inception() {
 
     // 회사 일정 가져오기 (월별)
     fetch(
-      // `https://dev.risetconstruction.net/api/get?currentMonth=${currentDate
-      `http://43.203.11.249:8080/api/get?currentMonth=${currentDate
+      `https://dev.risetconstruction.net/api/get?currentMonth=${currentDate
         .toISOString()
         .slice(0, 7)
         .replace("-", "")}`,
@@ -288,8 +275,7 @@ export default function Inception() {
 
     // 근무 일정 가져오기 (일별)
     fetch(
-      // `https://dev.risetconstruction.net/api/employees?employeeDate=${currentDate
-      `http://43.203.11.249:8080/api/employees?employeeDate=${currentDate
+      `https://dev.risetconstruction.net/api/employees?employeeDate=${currentDate
         .toISOString()
         .slice(0, 10)}`,
       {
@@ -342,17 +328,13 @@ export default function Inception() {
   /* 댓글 삭제 */
   const handleCommentDelete = (commentId: number) => {
     setPosts((prevPosts: any) =>
-      prevPosts.map((post: any) =>
-        post.post.comment.filter((com: any) => com.id !== commentId)
-      )
+      prevPosts.map((post: any) => post.post.comment.filter((com: any) => com.id !== commentId))
     );
   };
 
   /* 게시글 삭제 */
   const handlePostDelete = (postId: number) => {
-    setPosts((prevPosts: any) =>
-      prevPosts.filter((post: any) => post.post.id !== postId)
-    );
+    setPosts((prevPosts: any) => prevPosts.filter((post: any) => post.post.id !== postId));
   };
 
   /* 게시글 수정 */
@@ -393,11 +375,7 @@ export default function Inception() {
           <OfficialInfo>
             {officialPlan.length > 0 &&
               officialPlan.map((plan) => (
-                <OfficialCard
-                  key={plan.scheduleNo}
-                  title={plan.title}
-                  color={plan.color}
-                />
+                <OfficialCard key={plan.scheduleNo} title={plan.title} color={plan.color} />
               ))}
           </OfficialInfo>
         </OfficialPlanAbbr>

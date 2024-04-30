@@ -209,14 +209,11 @@ export default function ChatMain({
   /* 채팅방 생성 */
   const handleCreateChatRoom = () => {
     /* 선택한 사람들의 ID 모은 배열 */
-    const finalSelectedMember = Object.keys(memberState).filter(
-      (id) => memberState[id]
-    );
+    const finalSelectedMember = Object.keys(memberState).filter((id) => memberState[id]);
     setCurrentMembersId([...finalSelectedMember, userId]);
 
     /* 서버 통신 - 채팅방 생성 */
-    // fetch("https://dev.risetconstruction.net/chatRoom", {
-    fetch("http://43.203.11.249:8080/chatRoom", {
+    fetch("https://dev.risetconstruction.net/chatRoom", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -235,25 +232,16 @@ export default function ChatMain({
 
   /* 모든 직원 목록 데이터 받아오기 */
   useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/auth/userInfo")
-    fetch("http://43.203.11.249:8080/auth/userInfo")
+    fetch("https://dev.risetconstruction.net/auth/userInfo")
       .then((res) => res.json())
-      .then((data) =>
-        setResponseData(
-          data.filter((member: any) => member.employeeId !== userId)
-        )
-      );
+      .then((data) => setResponseData(data.filter((member: any) => member.employeeId !== userId)));
   }, []);
 
   /* 직원 선택 상태값 담을 객체 생성 및 초기화 */
   useEffect(() => {
     setSearchResult(responseData);
     if (!selectToCreate) {
-      setMemberState(
-        Object.fromEntries(
-          responseData.map((member) => [member.employeeId, false])
-        )
-      );
+      setMemberState(Object.fromEntries(responseData.map((member) => [member.employeeId, false])));
     }
   }, [responseData, selectToCreate]);
 
@@ -265,11 +253,7 @@ export default function ChatMain({
       </TitleBox>
 
       <SearchBox>
-        <SearchBar
-          placeholder="이름 검색"
-          value={searchWord}
-          onChange={handleSearchName}
-        />
+        <SearchBar placeholder="이름 검색" value={searchWord} onChange={handleSearchName} />
       </SearchBox>
 
       <MemberCardList $isDarkmode={isDarkmode}>

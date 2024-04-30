@@ -136,8 +136,7 @@ const Loading = styled.div`
 
 export default function PostList() {
   const [searchTitle, setSearchTitle] = useState<string>("");
-  const [isFavoriteManageClick, setIsFavoriteManageClick] =
-    useState<boolean>(false);
+  const [isFavoriteManageClick, setIsFavoriteManageClick] = useState<boolean>(false);
   const [isManageClick, setIsManageClick] = useState<boolean>(false);
   const [isMenuClick, setIsMenuClick] = useState<boolean>(false);
   // 모바일 화면에서 클릭 시 framer-motion 라이브러리 dragging 상태 판단
@@ -154,8 +153,7 @@ export default function PostList() {
     handleCommentRegist,
     handleCommentDelete,
     handlePostDelete,
-  } = usePosts("http://43.203.11.249:8080/board");
-  // } = usePosts("https://dev.risetconstruction.net/board");
+  } = usePosts("https://dev.risetconstruction.net/board");
   // 즐겨찾기 게시글
   const {
     posts: favoritePosts,
@@ -169,13 +167,10 @@ export default function PostList() {
     handlePostRegist: handleFavoritePostRegist,
     handlePostDelete: handleFavoritePostDelete,
     handleIsPostExists: handleFavoriteIsPostExists,
-  } = usePosts("http://43.203.11.249:8080/board/favorite");
-  // } = usePosts("https://dev.risetconstruction.net/board/favorite");
+  } = usePosts("https://dev.risetconstruction.net/board/favorite");
   // 즐겨찾기, 전체 게시물 열리는 조건
-  const isFavoriteOpen =
-    ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
-  const isAllOpen =
-    ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
+  const isFavoriteOpen = ((isMobile || isTablet) && !isMenuClick) || (!isMobile && !isTablet);
+  const isAllOpen = ((isMobile || isTablet) && isMenuClick) || (!isMobile && !isTablet);
   // jwt
   const jwt = localStorage.getItem("jwt");
 
@@ -214,18 +209,14 @@ export default function PostList() {
       const beforePostIdx = favoritePosts[idx - 1].indexNumber;
       const movedPostId = favoritePosts[idx].post.id;
 
-      fetch(
-        // `https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`,
-        `http://43.203.11.249:8080/board/favorite/update/${movedPostId}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(beforePostIdx),
-        }
-      );
+      fetch(`https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(beforePostIdx),
+      });
     }
   };
 
@@ -242,21 +233,14 @@ export default function PostList() {
       </Search>
 
       <Contents>
-        <ContentFavorite
-          $isOpen={isFavoriteOpen}
-          $isChangePosts={isChangePosts}
-        >
+        <ContentFavorite $isOpen={isFavoriteOpen} $isChangePosts={isChangePosts}>
           <ContentHeader>
             <HeaderWrapper>
               {isTablet || isMobile ? (
                 <>
-                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>
-                    즐겨찾기
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
                   <HeaderLine />
-                  <HeaderTitle onClick={() => handleMenuClick("posts")}>
-                    게시물
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
                 </>
               ) : (
                 <HeaderTitle>즐겨찾기</HeaderTitle>
@@ -304,22 +288,15 @@ export default function PostList() {
             <HeaderWrapper>
               {isTablet || isMobile ? (
                 <>
-                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>
-                    즐겨찾기
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("favorite")}>즐겨찾기</HeaderTitle>
                   <HeaderLine />
-                  <HeaderTitle onClick={() => handleMenuClick("posts")}>
-                    게시물
-                  </HeaderTitle>
+                  <HeaderTitle onClick={() => handleMenuClick("posts")}>게시물</HeaderTitle>
                 </>
               ) : (
                 <HeaderTitle>게시물</HeaderTitle>
               )}
             </HeaderWrapper>
-            <ManageBtn
-              type="button"
-              onClick={() => setIsManageClick(!isManageClick)}
-            >
+            <ManageBtn type="button" onClick={() => setIsManageClick(!isManageClick)}>
               관리
             </ManageBtn>
           </ContentHeader>

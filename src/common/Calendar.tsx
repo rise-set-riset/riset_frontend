@@ -159,8 +159,7 @@ export default function Calendar({
       const month = date.getMonth() + 1;
 
       fetch(
-        // `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
-        `http://43.203.11.249:8080/commute/commute-history?year=${year}&month=${month}`,
+        `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
         {
           method: "GET",
           headers: {
@@ -201,9 +200,7 @@ export default function Calendar({
       // 이벤트가 하나라도 있다면 = 칠해줄 일이 하나라도 있다면
       if (events.length > 0) {
         events.forEach(({ start }) => {
-          const cell = calendarApi.el.querySelector(
-            `td.fc-day[data-date="${start}"] div a`
-          );
+          const cell = calendarApi.el.querySelector(`td.fc-day[data-date="${start}"] div a`);
           if (cell) {
             cell.style.color = "var(--color-white)";
             cell.style.fontWeight = "bold";
