@@ -126,6 +126,7 @@ interface CommuteModalProp {
   handleFormWay: (way: string) => void;
   handleStartTime: (time: string) => void;
   handleEndTime: (time: string) => void;
+  isPlusClick: boolean;
 }
 
 export default function CommuteForm({
@@ -134,6 +135,7 @@ export default function CommuteForm({
   handleFormWay,
   handleStartTime,
   handleEndTime,
+  isPlusClick,
 }: CommuteModalProp) {
   const [isCurrentDate, setIsCurrentDate] = useState<boolean>(false);
   const [currentDate, setCurrentDate] = useState<string>("");
@@ -154,7 +156,7 @@ export default function CommuteForm({
     };
 
     // await fetch("https://dev.risetconstruction.net/commute/add-commute", {
-    await fetch("http://43.203.11.249:8080/commute/add-commute", {
+    await fetch("http://13.124.235.23:8080/commute/add-commute", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -182,7 +184,7 @@ export default function CommuteForm({
 
     // 내 정보 받아오기 (없을 경우 후처리)
     // fetch("https://dev.risetconstruction.net/preset", {
-    fetch("http://43.203.11.249:8080/preset", {
+    fetch("http://13.124.235.23:8080/preset", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -191,6 +193,8 @@ export default function CommuteForm({
       .then((res) => res.json())
       .then((data) => setMyInfo(data));
   }, []);
+
+  console.log("form", form, "current", currentDate);
 
   return (
     <Layout $isDarkmode={isDarkmode}>
@@ -222,7 +226,7 @@ export default function CommuteForm({
         <DateWrapper>
           <DateIcon />
           <DateText>
-            {form ? dateFormat(form?.start) : dateFormat(currentDate)}
+            {isPlusClick ? dateFormat(currentDate) : dateFormat(form?.start)}
           </DateText>
         </DateWrapper>
         <Time>

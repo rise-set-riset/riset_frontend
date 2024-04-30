@@ -73,7 +73,7 @@ export default function MyPost() {
     handlePostRegist,
     handlePostDelete,
     handlePostModify,
-  } = usePosts("http://43.203.11.249:8080/board/mine");
+  } = usePosts("http://13.124.235.23:8080/board/mine");
   // } = usePosts("https://dev.risetconstruction.net/board/mine");
 
   return (

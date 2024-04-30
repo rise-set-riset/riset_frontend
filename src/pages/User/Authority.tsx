@@ -242,7 +242,7 @@ export default function Authority() {
 
     const jwt = localStorage.getItem("jwt");
     // fetch("https://dev.risetconstruction.net/preset/admin", {
-    fetch("http://43.203.11.249:8080/preset/admin", {
+    fetch("http://13.124.235.23:8080/preset/admin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -286,7 +286,7 @@ export default function Authority() {
     setIsValidatingCode(true);
 
     // fetch(`https://dev.risetconstruction.net/preset/employee?code=${authorityCode}`, {
-    fetch(`http://43.203.11.249:8080/preset/employee?code=${authorityCode}`, {
+    fetch(`http://13.124.235.23:8080/preset/employee?code=${authorityCode}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

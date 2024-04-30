@@ -88,7 +88,7 @@ export default function PersonalPlan() {
 
     fetch(
       // `https://dev.risetconstruction.net/api/employees?employeeDate=${
-      `http://43.203.11.249:8080/api/employees?employeeDate=${
+      `http://13.124.235.23:8080/api/employees?employeeDate=${
         currentDate.toISOString().split("T")[0]
       }`,
       {
@@ -119,30 +119,35 @@ export default function PersonalPlan() {
               },
             ],
           });
-          if (responseData.length > 1) {
+          if (data.length > 1) {
             /* 타인 일정 */
-            const modifiedData = responseData.slice(1).map((data) => {
+            const modifiedData = data.slice(1).map((othersData) => {
               return {
-                employeeId: data.employeeId,
-                name: data.name,
-                department: data.department,
-                position: data.position,
-                image: data.image,
+                employeeId: othersData.employeeId,
+                name: othersData.name,
+                department: othersData.department,
+                position: othersData.position,
+                image: othersData.image,
                 planList: [
                   ...[
-                    ...data.annualLeaveDetail,
-                    ...data.halfLeaveDetail,
-                    data.commuteStartTime && {
-                      startTime: data.commuteStartTime,
-                      endTime: data.commuteEndTime,
-                      title: data.commutePlace,
+                    ...othersData.annualLeaveDetail,
+                    ...othersData.halfLeaveDetail,
+                    othersData.commuteStartTime && {
+                      startTime: othersData.commuteStartTime,
+                      endTime: othersData.commuteEndTime,
+                      title: othersData.commutePlace,
                     },
                   ],
-                  ...data.schedulesDetail,
+                  ...othersData.schedulesDetail,
                 ],
               };
             });
-            setOtherPlanData(modifiedData);
+            setOtherPlanData(
+              modifiedData.filter(
+                (othersData: any) =>
+                  othersData.name !== null && othersData.name !== "마나아"
+              )
+            );
           }
         }
       });

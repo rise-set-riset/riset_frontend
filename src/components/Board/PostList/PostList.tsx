@@ -154,7 +154,7 @@ export default function PostList() {
     handleCommentRegist,
     handleCommentDelete,
     handlePostDelete,
-  } = usePosts("http://43.203.11.249:8080/board");
+  } = usePosts("http://13.124.235.23:8080/board");
   // } = usePosts("https://dev.risetconstruction.net/board");
   // 즐겨찾기 게시글
   const {
@@ -169,7 +169,7 @@ export default function PostList() {
     handlePostRegist: handleFavoritePostRegist,
     handlePostDelete: handleFavoritePostDelete,
     handleIsPostExists: handleFavoriteIsPostExists,
-  } = usePosts("http://43.203.11.249:8080/board/favorite");
+  } = usePosts("http://13.124.235.23:8080/board/favorite");
   // } = usePosts("https://dev.risetconstruction.net/board/favorite");
   // 즐겨찾기, 전체 게시물 열리는 조건
   const isFavoriteOpen =
@@ -216,7 +216,7 @@ export default function PostList() {
 
       fetch(
         // `https://dev.risetconstruction.net/board/favorite/update/${movedPostId}`,
-        `http://43.203.11.249:8080/board/favorite/update/${movedPostId}`,
+        `http://13.124.235.23:8080/board/favorite/update/${movedPostId}`,
         {
           method: "PATCH",
           headers: {

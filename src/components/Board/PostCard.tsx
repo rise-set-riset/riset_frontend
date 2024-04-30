@@ -195,7 +195,7 @@ export default function PostCard({
       if (!isExists) {
         // await fetch(`https://dev.risetconstruction.net/board/favorite/${post.post.id}`, {
         await fetch(
-          `http://43.203.11.249:8080/board/favorite/${post.post.id}`,
+          `http://13.124.235.23:8080/board/favorite/${post.post.id}`,
           {
             method: "POST",
             headers: {
@@ -220,7 +220,7 @@ export default function PostCard({
 
     await fetch(
       // `https://dev.risetconstruction.net/board/favorite/delete/${post.id}`,
-      `http://43.203.11.249:8080/board/favorite/delete/${post.id}`,
+      `http://13.124.235.23:8080/board/favorite/delete/${post.id}`,
       {
         method: "DELETE",
         headers: {

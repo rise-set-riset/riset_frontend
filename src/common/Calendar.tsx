@@ -160,7 +160,7 @@ export default function Calendar({
 
       fetch(
         // `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
-        `http://43.203.11.249:8080/commute/commute-history?year=${year}&month=${month}`,
+        `http://13.124.235.23:8080/commute/commute-history?year=${year}&month=${month}`,
         {
           method: "GET",
           headers: {

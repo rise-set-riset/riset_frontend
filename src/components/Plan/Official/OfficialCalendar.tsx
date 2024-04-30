@@ -116,8 +116,8 @@ const CalendarCustomStyle = styled.div<{ $month: string }>`
   }
 
   div.fc-event-main {
-    /* color: var(--color-white); */
-    color: var(--color-black);
+    color: var(--color-white);
+    /* color: var(--color-black); */
   }
 
   /* 이벤트 스타일 */
@@ -252,7 +252,8 @@ export default function OfficialCalendar() {
   const [eventFormList, setEventFormList] = useState<EventFormType[]>([]);
   const [eventForm, setEventForm] = useState<EventFormType>({
     title: "",
-    color: "#FFBFA7",
+    // color: "#FFBFA7",
+    color: "",
     start: "",
     end: "",
     writer: "",
@@ -336,7 +337,7 @@ export default function OfficialCalendar() {
     if (!isEditorForm) {
       /* 서버에 데이터 전송 */
       // fetch("https://dev.risetconstruction.net/api/companySchedule", {
-      fetch("http://43.203.11.249:8080/api/companySchedule", {
+      fetch("http://13.124.235.23:8080/api/companySchedule", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -353,13 +354,20 @@ export default function OfficialCalendar() {
     } else {
       /* 수정시 */
       // fetch("https://dev.risetconstruction.net/api/update", {
-      fetch("http://43.203.11.249:8080/api/update", {
+      fetch("http://13.124.235.23:8080/api/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
         },
-        body: JSON.stringify({ ...eventForm, scheduleNo: selectedScheduleNo }),
+        body: JSON.stringify({
+          ...eventForm, // 종료 시간이 없다면 24:00 추가
+          end:
+            eventForm.start === eventForm.end || eventForm.end.includes("T")
+              ? eventForm.end
+              : `${eventForm.end}T24:00`,
+          scheduleNo: selectedScheduleNo,
+        }),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -417,7 +425,7 @@ export default function OfficialCalendar() {
 
     /* 서버에서 삭제 */
     // fetch(`https://dev.risetconstruction.net/api/delete?id=${findId}`, {
-    fetch(`http://43.203.11.249:8080/api/delete?id=${findId}`, {
+    fetch(`http://13.124.235.23:8080/api/delete?id=${findId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -478,7 +486,7 @@ export default function OfficialCalendar() {
         : `${year}${month.padStart(2, "0")}`;
 
     // fetch(`https://dev.risetconstruction.net/api/get?currentMonth=${current}`, {
-    fetch(`http://43.203.11.249:8080/api/get?currentMonth=${current}`, {
+    fetch(`http://13.124.235.23:8080/api/get?currentMonth=${current}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,

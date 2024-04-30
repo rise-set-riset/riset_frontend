@@ -184,7 +184,7 @@ export default function PostMake({
 
     if (post) {
       // fetch(`https://dev.risetconstruction.net/board/${post.id}`, {
-      fetch(`http://43.203.11.249:8080/board/${post.id}`, {
+      fetch(`http://13.124.235.23:8080/board/${post.id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -197,7 +197,7 @@ export default function PostMake({
         });
     } else {
       // fetch("https://dev.risetconstruction.net/board", {
-      fetch("http://43.203.11.249:8080/board", {
+      fetch("http://13.124.235.23:8080/board", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,

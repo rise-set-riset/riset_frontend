@@ -462,7 +462,7 @@ export default function ChatMain({
     if (isSearchBarOpen) {
       fetch(
         // `https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
-        `http://43.203.11.249:8080/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
+        `http://13.124.235.23:8080/chatRoom/${currentRoomId}/chatOne?msg=${searchWord}`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -547,7 +547,7 @@ export default function ChatMain({
   /* 채팅방 삭제 */
   const handleRemoveChatRoom = () => {
     // fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}`, {
-    fetch(`http://43.203.11.249:8080/chatRoom/${currentRoomId}`, {
+    fetch(`http://13.124.235.23:8080/chatRoom/${currentRoomId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -569,7 +569,7 @@ export default function ChatMain({
   /* 채팅 메세지 가져오기 */
   useEffect(() => {
     // fetch(`https://dev.risetconstruction.net/chatRoom/${currentRoomId}/chat`, {
-    fetch(`http://43.203.11.249:8080/chatRoom/${currentRoomId}/chat`, {
+    fetch(`http://13.124.235.23:8080/chatRoom/${currentRoomId}/chat`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },

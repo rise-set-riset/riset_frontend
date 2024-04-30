@@ -403,7 +403,7 @@ export default function EventForm({
   ];
   const [isColorOpen, setIsColorOpen] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string>(
-    eventForm.color && eventColorList[0]
+    eventForm.color === "" ? eventColorList[0] : eventForm.color
   );
   const [hasTime, setHasTime] = useState<boolean>(false);
   const [hasStartTime, setHasStartTime] = useState<boolean>(false);

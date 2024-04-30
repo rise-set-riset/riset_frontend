@@ -125,7 +125,7 @@ const OfficialInfo = styled.div`
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
-  padding: 0 0.5rem;
+  padding: 0.2rem 0.5rem;
 
   @media screen and (max-width: 1023px) {
     justify-content: flex-start;
@@ -243,7 +243,7 @@ export default function Inception() {
   useEffect(() => {
     // 출근일, 잔여연차 가져오기
     // fetch("https://dev.risetconstruction.net/commute/days", {
-    fetch("http://43.203.11.249:8080/commute/days", {
+    fetch("http://13.124.235.23:8080/commute/days", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -255,7 +255,7 @@ export default function Inception() {
     // 게시글 3개 가져오기
     fetch(
       // "https://dev.risetconstruction.net/board?size=3&page=0&searchWord=''",
-      "http://43.203.11.249:8080/board?size=3&page=0&searchWord=''",
+      "http://13.124.235.23:8080/board?size=3&page=0&searchWord=''",
       {
         method: "GET",
         headers: {
@@ -272,7 +272,7 @@ export default function Inception() {
     // 회사 일정 가져오기 (월별)
     fetch(
       // `https://dev.risetconstruction.net/api/get?currentMonth=${currentDate
-      `http://43.203.11.249:8080/api/get?currentMonth=${currentDate
+      `http://13.124.235.23:8080/api/get?currentMonth=${currentDate
         .toISOString()
         .slice(0, 7)
         .replace("-", "")}`,
@@ -284,12 +284,19 @@ export default function Inception() {
       }
     )
       .then((res) => res.json())
-      .then((data) => setOfficialPlan(data));
+      // .then((data) => setOfficialPlan(data));
+      .then((data) => {
+        if (data.length > 6) {
+          setOfficialPlan(data.slice(0, 6));
+        } else {
+          setOfficialPlan(data);
+        }
+      });
 
     // 근무 일정 가져오기 (일별)
     fetch(
       // `https://dev.risetconstruction.net/api/employees?employeeDate=${currentDate
-      `http://43.203.11.249:8080/api/employees?employeeDate=${currentDate
+      `http://13.124.235.23:8080/api/employees?employeeDate=${currentDate
         .toISOString()
         .slice(0, 10)}`,
       {
@@ -410,7 +417,7 @@ export default function Inception() {
       <ThirdSection $isDarkmode={isDarkmode}>
         <SectionTitle>
           <h2>근무일정</h2>
-          <Link to="/plan/official">
+          <Link to="/plan/personal">
             <MoreBtn type="button">
               <span>더보기</span>
               <IoIosArrowForward />
@@ -434,10 +441,11 @@ export default function Inception() {
                   isEditable={false}
                   planContent={{
                     id: plan.id,
-                    startTime: plan.starTime,
+                    startTime: plan.startTime,
                     endTime: plan.endTime,
                     title: plan.title,
                   }}
+                  currentDate={new Date()}
                 />
               </SwiperSlide>
             ))}

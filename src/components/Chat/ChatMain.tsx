@@ -216,7 +216,7 @@ export default function ChatMain({
 
     /* 서버 통신 - 채팅방 생성 */
     // fetch("https://dev.risetconstruction.net/chatRoom", {
-    fetch("http://43.203.11.249:8080/chatRoom", {
+    fetch("http://13.124.235.23:8080/chatRoom", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -236,7 +236,7 @@ export default function ChatMain({
   /* 모든 직원 목록 데이터 받아오기 */
   useEffect(() => {
     // fetch("https://dev.risetconstruction.net/auth/userInfo")
-    fetch("http://43.203.11.249:8080/auth/userInfo")
+    fetch("http://13.124.235.23:8080/auth/userInfo")
       .then((res) => res.json())
       .then((data) =>
         setResponseData(
@@ -291,11 +291,25 @@ export default function ChatMain({
                 memberInfo={{
                   image: member.profilePath ? member.profilePath : "false",
                   alt: `${member.name}-이미지`,
-                  name: member.name ? member.name : "",
-                  rank: member.jobGrade,
-                  department: member.depart,
-                  position: member.jobTitle,
+                  name: member.name ? member.name : "홍해인",
+                  rank: ["대리", "사원", "주임", "부장", "사원", "과장"][
+                    Math.floor(Math.random() * 6)
+                  ],
+                  department: ["인사부", "개발부", "개발부"][
+                    Math.floor(Math.random() * 3)
+                  ],
+                  position: ["프론트엔드", "백엔드", "총무"][
+                    Math.floor(Math.random() * 3)
+                  ],
                 }}
+                // memberInfo={{
+                //   image: member.profilePath ? member.profilePath : "false",
+                //   alt: `${member.name}-이미지`,
+                //   name: member.name ? member.name : "",
+                //   rank: member.jobGrade,
+                //   department: member.depart,
+                //   position: member.jobTitle,
+                // }}
               />
               <ChatBubbleIcon />
             </MemberCardBox>

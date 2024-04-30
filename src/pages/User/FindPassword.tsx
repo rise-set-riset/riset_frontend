@@ -71,7 +71,7 @@ export default function FindPassword() {
     try {
       // const response = await fetch("https://dev.risetconstruction.net/auth/find-password", {
       const response = await fetch(
-        "http://43.203.11.249:8080/auth/find-password",
+        "http://13.124.235.23:8080/auth/find-password",
         {
           method: "POST",
           headers: {

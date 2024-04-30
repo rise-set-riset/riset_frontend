@@ -67,7 +67,7 @@ export default function SettingInvite() {
   /* 초대코드 이메일 발송 */
   const handleSendEmail = () => {
     // fetch(`https://dev.risetconstruction.net/preset/mail?email=${employeeEmail}`, {
-    fetch(`http://43.203.11.249:8080/preset/mail?email=${employeeEmail}`, {
+    fetch(`http://13.124.235.23:8080/preset/mail?email=${employeeEmail}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

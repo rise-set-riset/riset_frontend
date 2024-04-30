@@ -166,7 +166,7 @@ interface PlanCardProps {
   isEditable: boolean;
   planContent: DayPlanType;
   setUserPlanData?: React.Dispatch<React.SetStateAction<any>>;
-  currentDate?: Date;
+  currentDate: Date;
   setMyPlanList?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -193,34 +193,49 @@ export default function PlanCard({
   const { isDarkmode } = useContext(DarkModeContext);
 
   useEffect(() => {
-    // 시작시간과 종료시간이 둘다 있는지 검증
-    const timePattern = /^(0[0-9]|1[0-2]):[0-5][0-9]$/;
+    // 당일이 아닌 경우
     if (
-      timePattern.test(planContent.startTime) &&
-      timePattern.test(planContent.endTime)
+      new Date().toISOString().slice(0, 10) !==
+      new Date(currentDate).toISOString().slice(0, 10)
     ) {
-      const currentHour = new Date().getHours();
-      const currentMinute = new Date().getMinutes();
-
-      // 시간 비교
-      if (currentHour > Number(planContent.endTime.split(":")[0])) {
-        setStateColor("#C5DAFF"); // 진행완료
-      } else if (currentHour < Number(planContent.startTime.split(":")[0])) {
+      // 이후
+      if (new Date().getTime() - new Date(currentDate).getTime() < 0) {
         setStateColor("#FFBFA7"); // 진행전
-      } else {
-        // 분 비교
-        if (currentMinute > Number(planContent.endTime.split(":")[1])) {
-          setStateColor("#C5DAFF"); // 진행완료
-        } else if (
-          currentMinute < Number(planContent.startTime.split(":")[1])
-        ) {
-          setStateColor("#FFBFA7"); // 진행전
-        } else {
-          setStateColor("#FFE7A7"); // 진행중
-        }
+      } else if (new Date().getTime() - new Date(currentDate).getTime() > 0) {
+        // 이전
+        setStateColor("#C5DAFF"); // 진행완료
       }
     } else {
-      setStateColor("var(--color-brand-main)");
+      // 당일
+      // 시작시간과 종료시간이 둘다 있는지 검증
+      const timePattern = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (
+        timePattern.test(planContent.startTime) &&
+        timePattern.test(planContent.endTime)
+      ) {
+        const currentHour = new Date().getHours();
+        const currentMinute = new Date().getMinutes();
+
+        // 시간 비교
+        if (currentHour > Number(planContent.endTime.split(":")[0])) {
+          setStateColor("#C5DAFF"); // 진행완료
+        } else if (currentHour < Number(planContent.startTime.split(":")[0])) {
+          setStateColor("#FFBFA7"); // 진행전
+        } else {
+          // 분 비교
+          if (currentMinute > Number(planContent.endTime.split(":")[1])) {
+            setStateColor("#C5DAFF"); // 진행완료
+          } else if (
+            currentMinute < Number(planContent.startTime.split(":")[1])
+          ) {
+            setStateColor("#FFBFA7"); // 진행전
+          } else {
+            setStateColor("#FFE7A7"); // 진행중
+          }
+        }
+      } else {
+        setStateColor("var(--color-brand-main)");
+      }
     }
   }, [planStartTime, planEndTime]);
 
@@ -242,16 +257,18 @@ export default function PlanCard({
   const handleSavePlan = (savePlanForm: any) => {
     /* 추가 기능일 때 */
     // fetch(`https://dev.risetconstruction.net/api/employees/addEmployees`, {
-    fetch(`http://43.203.11.249:8080/api/employees/addEmployees`, {
+    fetch(`http://13.124.235.23:8080/api/employees/addEmployees`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify(savePlanForm),
-    }).then((res) => {
-      res.json();
-    });
+    })
+      .then((res) => {
+        res.json();
+      })
+      .then((data) => console.log(data));
     // .then((data) => {
     //   console.log("iddata", data);
     // setUserPlanData(prev => {
@@ -290,7 +307,7 @@ export default function PlanCard({
   const handleUpdatePlan = (savePlanForm: any) => {
     /* 수정 기능일 때 */
     // fetch(`https://dev.risetconstruction.net/api/employees/updateSchedule`, {
-    fetch(`http://43.203.11.249:8080/api/employees/updateSchedule`, {
+    fetch(`http://13.124.235.23:8080/api/employees/updateSchedule`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -308,7 +325,7 @@ export default function PlanCard({
     // 삭제요청
     // fetch(`https://dev.risetconstruction.net/api/employees/deleteSchedule?id=${planContent.id}`, {
     fetch(
-      `http://43.203.11.249:8080/api/employees/deleteSchedule?id=${planContent.id}`,
+      `http://13.124.235.23:8080/api/employees/deleteSchedule?id=${planContent.id}`,
       {
         method: "DELETE",
         headers: {

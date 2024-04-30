@@ -109,6 +109,8 @@ const TableLine = styled(TableHeader)`
 `;
 
 const ProfileImg = styled.div`
+  width: 50px;
+  height: 50px;
   img,
   svg {
     width: 50px;
@@ -236,7 +238,7 @@ export default function SettingProfile() {
 
       fetch(
         // `https://dev.risetconstruction.net/preset/profiles/${userData.employeeNum}`,
-        `http://43.203.11.249:8080/preset/profiles/${userData.employeeNum}`,
+        `http://13.124.235.23:8080/preset/profiles/${userData.employeeNum}`,
         {
           method: "PATCH",
           headers: {
@@ -256,7 +258,7 @@ export default function SettingProfile() {
 
   useEffect(() => {
     // fetch("https://dev.risetconstruction.net/preset/profiles", {
-    fetch("http://43.203.11.249:8080/preset/profiles", {
+    fetch("http://13.124.235.23:8080/preset/profiles", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
@@ -264,14 +266,67 @@ export default function SettingProfile() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setResponseData(data);
+        // setResponseData(data);
+        setResponseData([
+          {
+            address: "경기 성남시 분당구 판교역로 166",
+            dateOfJoin: "2024-01-02",
+            depart: {
+              departmentId: 1,
+              departmentName: "개발부서",
+            },
+            employeeId: "daniel3636",
+            employeeNum: 1,
+            job: "프론트엔드",
+            jobGrade: {
+              jobGradeId: 1,
+              grade: "Black",
+            },
+            name: "손다니엘",
+            phone: "010-3333-5555",
+            position: "팀장",
+            profile: {
+              profileImgId: 1,
+              profileImgName: "myImg",
+              // profileImgPath: "/sample.png",
+              profileImgPath: "",
+            },
+            salary: 4000,
+            totalAnnualLeave: 16,
+          },
+          {
+            address: "경기도 성남시 분당구 분당내곡로 131",
+            dateOfJoin: "2024-03-04",
+            depart: {
+              departmentId: 1,
+              departmentName: "개발부서",
+            },
+            employeeId: "1717kso",
+            employeeNum: 2,
+            job: "프론트엔드",
+            jobGrade: {
+              jobGradeId: 2,
+              grade: "Red",
+            },
+            name: "김승윤",
+            phone: "010-2222-8888",
+            position: "사원",
+            profile: {
+              profileImgId: 2,
+              profileImgName: "myImg",
+              profileImgPath: "",
+            },
+            salary: 4000,
+            totalAnnualLeave: 16,
+          },
+        ]);
       });
   }, []);
 
   /* 부서 */
   useEffect(() => {
     // fetch("https://dev.risetconstruction.net/depart", {
-    fetch("http://43.203.11.249:8080/depart", {
+    fetch("http://13.124.235.23:8080/depart", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
@@ -279,22 +334,26 @@ export default function SettingProfile() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setDepartIdList(data);
+        // setDepartIdList(data);
+        setDepartIdList([{ departId: 1, departName: "개발부서" }]);
       });
   }, []);
 
   /* 등급 */
   useEffect(() => {
     // fetch("https://dev.risetconstruction.net/jobGrade", {
-    fetch("http://43.203.11.249:8080/jobGrade", {
+    fetch("http://13.124.235.23:8080/jobGrade", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
     })
       .then((res) => res.json())
-      .then((data) => setRankIdList(data));
+      // .then((data) => setRankIdList(data));
+      .then((data) => setRankIdList([{}]));
   }, []);
+
+  console.log(departIdList);
 
   return (
     <Layout>

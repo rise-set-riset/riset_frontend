@@ -174,7 +174,7 @@ export default function Login() {
   // 입력된 아이디와 이메일을 서버에 POST 요청으로 전송
   const handleLogin = async () => {
     // const loginUrl = "https://dev.risetconstruction.net/auth/login";
-    const loginUrl = "http://43.203.11.249:8080/auth/login";
+    const loginUrl = "http://13.124.235.23:8080/auth/login";
 
     const data = {
       id: id,
@@ -207,13 +207,13 @@ export default function Login() {
   // 네이버 로그인 버튼 클릭 이벤트 핸들러
   const handleNaverLogin = () => {
     // const url = "https://dev.risetconstruction.net/oauth2/authorization/naver";
-    const url = "http://43.203.11.249:8080/oauth2/authorization/naver";
+    const url = "http://13.124.235.23:8080/oauth2/authorization/naver";
     window.open(url);
   };
 
   // 카카오 로그인 버튼 클릭 이벤트 핸들러
   const handleKakaoLogin = () => {
-    const url = "http://43.203.11.249:8080/oauth2/authorization/kakao";
+    const url = "http://13.124.235.23:8080/oauth2/authorization/kakao";
     // const url = "https://dev.risetconstruction.net/oauth2/authorization/kakao";
     window.open(url);
   };
@@ -221,7 +221,7 @@ export default function Login() {
   // 구글 로그인 버튼 클릭 이벤트 핸들러
   const handleGoogleLogin = () => {
     // "https://dev.risetconstruction.net/oauth2/authorization/google";
-    "http://43.203.11.249:8080/oauth2/authorization/google";
+    "http://13.124.235.23:8080/oauth2/authorization/google";
   };
 
   return (

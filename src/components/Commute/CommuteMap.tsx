@@ -50,7 +50,7 @@ export default function CommuteMap({ setAddress, setIsInRange }: Address) {
     const jwt = localStorage.getItem("jwt");
 
     // fetch("https://dev.risetconstruction.net/commute/company-location", {
-    fetch("http://43.203.11.249:8080/commute/company-location", {
+    fetch("http://13.124.235.23:8080/commute/company-location", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,

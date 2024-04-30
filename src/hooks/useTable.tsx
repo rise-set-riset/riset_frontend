@@ -23,6 +23,7 @@ interface Props {
     totalHoliday: string;
     salary: string;
   };
+  setUserData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const StyledTable = styled.table`
@@ -39,7 +40,8 @@ const StyledTd = styled.td<{ hasBottomBorder: boolean }>`
   letter-spacing: 0.1px;
   border-left: none;
   border-right: none;
-  border-bottom: ${({ hasBottomBorder }) => (hasBottomBorder ? "1px solid #c4c4c4" : "none")};
+  border-bottom: ${({ hasBottomBorder }) =>
+    hasBottomBorder ? "1px solid #c4c4c4" : "none"};
 
   &:first-child {
     width: 180px;
@@ -108,7 +110,7 @@ const ModalContent = styled.div`
   padding: 20px;
 `;
 
-const Table: React.FC<Props> = ({ userData }) => {
+const Table: React.FC<Props> = ({ userData, setUserData }) => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -122,7 +124,9 @@ const Table: React.FC<Props> = ({ userData }) => {
     setNewPassword(e.target.value);
   };
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmNewPassword(e.target.value);
   };
 
@@ -132,14 +136,23 @@ const Table: React.FC<Props> = ({ userData }) => {
 
   const handleJoiningDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setJoiningDate(e.target.value);
+    setUserData((prev: any) => {
+      return { ...prev, joiningDate: e.target.value };
+    });
   };
 
   const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDepartment(e.target.value);
+    setUserData((prev: any) => {
+      return { ...prev, departmentName: e.target.value };
+    });
   };
 
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhoneNumber(e.target.value);
+    setUserData((prev: any) => {
+      return { ...prev, telNo: e.target.value };
+    });
   };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,6 +164,9 @@ const Table: React.FC<Props> = ({ userData }) => {
     const fullAddress = data.address;
     setAddress(fullAddress);
     setIsPopupOpen(false);
+    setUserData((prev: any) => {
+      return { ...prev, address: fullAddress };
+    });
   };
 
   // 모달 여는 함수
@@ -169,7 +185,8 @@ const Table: React.FC<Props> = ({ userData }) => {
     () => [
       {
         col1: "아이디",
-        col2: userData.userId,
+        // col2: userData.userId,
+        col2: "daniel3636",
       },
       {
         col1: "비밀번호",
@@ -217,7 +234,8 @@ const Table: React.FC<Props> = ({ userData }) => {
       },
       {
         col1: "등급",
-        col2: userData.jobGrade,
+        // col2: userData.jobGrade,
+        col2: "◼︎ 1등급",
       },
       {
         col1: "부서",
@@ -232,11 +250,13 @@ const Table: React.FC<Props> = ({ userData }) => {
       },
       {
         col1: "직책",
-        col2: userData.position,
+        // col2: userData.position,
+        col2: "팀장",
       },
       {
         col1: "직무",
-        col2: userData.jobTitle,
+        // col2: userData.jobTitle,
+        col2: "프론트엔드 개발자",
       },
       {
         col1: "휴대폰번호",
@@ -276,11 +296,13 @@ const Table: React.FC<Props> = ({ userData }) => {
       },
       {
         col1: "휴가일수",
-        col2: "",
+        // col2: "",
+        col2: "16일",
       },
       {
         col1: "연봉",
-        col2: "",
+        // col2: "",
+        col2: "4000",
       },
     ],
     [
@@ -345,7 +367,8 @@ const Table: React.FC<Props> = ({ userData }) => {
                   {...cell.getCellProps()}
                   key={index}
                   hasBottomBorder={
-                    cell.row.original.col1 !== "비밀번호" && cell.row.original.col1 !== "주소"
+                    cell.row.original.col1 !== "비밀번호" &&
+                    cell.row.original.col1 !== "주소"
                   }
                 >
                   {cell.render("Cell")}

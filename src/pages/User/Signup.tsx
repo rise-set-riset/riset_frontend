@@ -288,7 +288,7 @@ export default function SignUp() {
 
     try {
       // const response = await fetch("https://dev.risetconstruction.net/auth/signup", {
-      const response = await fetch("http://43.203.11.249:8080/auth/signup", {
+      const response = await fetch("http://13.124.235.23:8080/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

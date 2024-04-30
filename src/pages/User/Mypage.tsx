@@ -46,7 +46,7 @@ const CustomCiCirclePlus = styled(CiCirclePlus)`
 `;
 
 const NameandPositionWrapper = styled.div`
-  width: 67px;
+  width: 100px;
   height: 48px;
   margin: 20px auto;
   display: flex;
@@ -141,7 +141,7 @@ export default function Mypage() {
   // 회원 정보 가져오는 함수
   const fetchData = () => {
     // fetch("https://dev.risetconstruction.net/api/myPage/get", {
-    fetch("http://43.203.11.249:8080/api/myPage/get", {
+    fetch("http://13.124.235.23:8080/api/myPage/get", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -160,7 +160,7 @@ export default function Mypage() {
   // 회원 탈퇴 버튼을 클릭했을 때 실행될 함수
   const handleDeleteAccount = () => {
     // const deleteEndpoint = "https://dev.risetconstruction.net/api/myPage/deleteUser";
-    const deleteEndpoint = "http://43.203.11.249:8080/api/myPage/deleteUser";
+    const deleteEndpoint = "http://13.124.235.23:8080/api/myPage/deleteUser";
 
     fetch(deleteEndpoint, {
       method: "DELETE",
@@ -196,6 +196,24 @@ export default function Mypage() {
     }
   };
 
+  // 프로필 정보 수정
+  const handleSaveMyInform = () => {
+    fetch("http://13.124.235.23:8080/api/myPage/userUpdate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        name: userData.name,
+        departmentName: userData.departmentName,
+        telNo: userData.telNo,
+        address: userData.address,
+        joiningDate: userData.joiningDate,
+      }),
+    });
+  };
+
   return (
     <Layout>
       <main className="main">
@@ -220,12 +238,12 @@ export default function Mypage() {
           <p>{userData.position}</p>
         </NameandPositionWrapper>
         <MypageContainer>
-          <Table userData={userData} />
+          <Table userData={userData} setUserData={setUserData} />
           <BtnWrapper>
             <DeleteAccountBtn onClick={handleDeleteAccount}>
               회원탈퇴
             </DeleteAccountBtn>
-            <SaveBtn>저장</SaveBtn>
+            <SaveBtn onClick={handleSaveMyInform}>저장</SaveBtn>
           </BtnWrapper>
         </MypageContainer>
       </main>

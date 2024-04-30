@@ -7,7 +7,7 @@ const Layout = styled.div`
   width: 150px;
   height: 20px;
   border-radius: 12px;
-  background-color: var(--color-brand-main);
+  background-color: #ffbfa7;
   color: var(--color-black);
   font-size: 0.9rem;
 

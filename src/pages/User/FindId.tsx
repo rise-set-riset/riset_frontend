@@ -70,7 +70,7 @@ export default function FindId() {
 
     try {
       // const response = await fetch("https://dev.risetconstruction.net/auth/find-id", {
-      const response = await fetch("http://43.203.11.249:8080/auth/find-id", {
+      const response = await fetch("http://13.124.235.23:8080/auth/find-id", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

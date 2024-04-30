@@ -254,7 +254,7 @@ export default function PostShow({
   /* 게시글 삭제 */
   const handleDelete = async (postId: number) => {
     // await fetch(`https://dev.risetconstruction.net/board/deleted/${postId}`, {
-    await fetch(`http://43.203.11.249:8080/board/deleted/${postId}`, {
+    await fetch(`http://13.124.235.23:8080/board/deleted/${postId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -270,7 +270,7 @@ export default function PostShow({
 
     if (comment.trim()) {
       // fetch(`https://dev.risetconstruction.net/reply/${postItem.id}`, {
-      fetch(`http://43.203.11.249:8080/reply/${postItem.id}`, {
+      fetch(`http://13.124.235.23:8080/reply/${postItem.id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -291,7 +291,7 @@ export default function PostShow({
   /* 댓글 삭제 */
   const handleCommentDel = (commentId: number) => {
     // fetch(`https://dev.risetconstruction.net/reply/deleted/${commentId}`, {
-    fetch(`http://43.203.11.249:8080/reply/deleted/${commentId}`, {
+    fetch(`http://13.124.235.23:8080/reply/deleted/${commentId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -311,7 +311,7 @@ export default function PostShow({
   /* 내 정보 가져오기 */
   useEffect(() => {
     // fetch("https://dev.risetconstruction.net/preset", {
-    fetch("http://43.203.11.249:8080/preset", {
+    fetch("http://13.124.235.23:8080/preset", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,

@@ -159,7 +159,7 @@ export default function Header() {
 
   useEffect(() => {
     // fetch("https://dev.risetconstruction.net/preset", {
-    fetch("http://43.203.11.249:8080/preset", {
+    fetch("http://13.124.235.23:8080/preset", {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -189,7 +189,17 @@ export default function Header() {
             <ProfileMenu
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
             >
-              {userImg ? <img src={userImg} alt="user" /> : <Profile />}
+              {/* {userImg ? <img src={userImg} alt="user" /> : <Profile />} */}
+              <img
+                src="/sample.png"
+                alt="user"
+                style={{
+                  width: "35px",
+                  height: "35px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
             </ProfileMenu>
             {isProfileMenuOpen && (
               <DropdownMenu>

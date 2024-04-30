@@ -122,7 +122,7 @@ export default function CommuteRecord() {
       // 출근 데이터
       await fetch(
         // "https://dev.risetconstruction.net/commute/register-commute",
-        "http://43.203.11.249:8080/commute/register-commute",
+        "http://13.124.235.23:8080/commute/register-commute",
         {
           method: "POST",
           headers: {
@@ -141,7 +141,7 @@ export default function CommuteRecord() {
     } else if (workStatus === "START") {
       // 퇴근 데이터
       // await fetch("https://dev.risetconstruction.net/commute/get-off", {
-      await fetch("http://43.203.11.249:8080/commute/get-off", {
+      await fetch("http://13.124.235.23:8080/commute/get-off", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -160,6 +160,7 @@ export default function CommuteRecord() {
   const handleIsFormOpen = (data: EventType) => {
     setForm(data);
     setIsFormOpen(true);
+    setIsPlusClick(false);
   };
 
   /* 버튼(+) 클릭해서 Form 열기 */
@@ -170,7 +171,7 @@ export default function CommuteRecord() {
 
     await fetch(
       // `https://dev.risetconstruction.net/commute/commute-history?year=${year}&month=${month}`,
-      `http://43.203.11.249:8080/commute/commute-history?year=${year}&month=${month}`,
+      `http://13.124.235.23:8080/commute/commute-history?year=${year}&month=${month}`,
       {
         method: "GET",
         headers: {
@@ -181,13 +182,14 @@ export default function CommuteRecord() {
       .then((res) => res.json())
       .then((data) => setForm(data[data.length - 1]));
 
+    setIsPlusClick(true);
     setIsFormOpen(true);
   };
 
   /* 새로고침, 재접속 시 출근, 퇴근 버튼 클릭 여부 판단하기 */
   useEffect(() => {
     // fetch("https://dev.risetconstruction.net/commute/get-status", {
-    fetch("http://43.203.11.249:8080/commute/get-status", {
+    fetch("http://13.124.235.23:8080/commute/get-status", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -203,6 +205,8 @@ export default function CommuteRecord() {
       })
       .catch((err) => console.error(err));
   }, []);
+
+  const [isPlusClick, setIsPlusClick] = useState<boolean>(false);
 
   return (
     <Layout className="commute-record">
@@ -248,6 +252,7 @@ export default function CommuteRecord() {
           handleFormWay={handleFormWay}
           handleStartTime={handleStartTime}
           handleEndTime={handleEndTime}
+          isPlusClick={isPlusClick}
         />
       </Modal>
     </Layout>

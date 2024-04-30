@@ -56,7 +56,8 @@ const MemberCardStyle = styled.div<{ $isSelected: boolean }>`
   background-color: var(--color-brand-main);
 
   border-radius: 16px;
-  outline: ${(props) => (props.$isSelected ? "4px solid var(--color-brand-main);" : "none")};
+  outline: ${(props) =>
+    props.$isSelected ? "4px solid var(--color-brand-main);" : "none"};
 `;
 
 /* 일정 리스트 */
@@ -175,7 +176,9 @@ export default function PlanList({
       setSelectedMemberPlan(userPlanData);
     } else {
       setSelectedMemberPlan(
-        otherPlanData.filter((data: any) => data.employeeId === selectedMemberId)[0]
+        otherPlanData.filter(
+          (data: any) => data.employeeId === selectedMemberId
+        )[0]
       );
     }
   }, [selectedMemberId]);
@@ -193,18 +196,25 @@ export default function PlanList({
                 <MemberCard
                   memberInfo={{
                     name: userPlanData.name,
-                    department: userPlanData.department || "false",
-                    position: userPlanData.position || "false",
+                    department: "개발부서",
+                    position: "프론트엔드",
                     image: userPlanData.image || "false",
-                    rank: userPlanData.rank || "false",
+                    rank: "팀장",
                   }}
+                  // memberInfo={{
+                  //   name: userPlanData.name,
+                  //   department: userPlanData.department || "false",
+                  //   position: userPlanData.position || "false",
+                  //   image: userPlanData.image || "false",
+                  //   rank: userPlanData.rank || "false",
+                  // }}
                 />
               </MemberCardStyle>
             </MemberCardList>
 
             <MemberCardList>
               {otherPlanData.length !== 0 &&
-                otherPlanData.map((othersPlan) => (
+                otherPlanData.map((othersPlan, index) => (
                   <MemberCardStyle
                     key={othersPlan.employeeId}
                     onClick={() => setSelectedMemberId(othersPlan.employeeId)}
@@ -213,11 +223,23 @@ export default function PlanList({
                     <MemberCard
                       memberInfo={{
                         name: othersPlan.name,
-                        department: othersPlan.department || "false",
-                        position: othersPlan.position || "false",
-                        image: othersPlan.image || "false",
-                        rank: othersPlan.rank || "false",
+                        department: "개발부서",
+                        position:
+                          index < 3
+                            ? "프론트엔드"
+                            : index < 7
+                            ? "백엔드"
+                            : "DBA",
+                        image: userPlanData.image || "false",
+                        rank: "사원",
                       }}
+                      // memberInfo={{
+                      //   name: othersPlan.name,
+                      //   department: othersPlan.department || "false",
+                      //   position: othersPlan.position || "false",
+                      //   image: othersPlan.image || "false",
+                      //   rank: othersPlan.rank || "false",
+                      // }}
                     />
                   </MemberCardStyle>
                 ))}
@@ -240,6 +262,7 @@ export default function PlanList({
                         endTime: planData.endTime,
                         title: planData.title,
                       }}
+                      currentDate={currentDate}
                     />
                   </PlanCardStyle>
                 ))}
@@ -272,7 +295,11 @@ export default function PlanList({
         </Layout>
       ) : (
         <MobileAreaBox>
-          <MobilePlanCard whos="my" memberPlanData={userPlanData} currentDate={currentDate} />
+          <MobilePlanCard
+            whos="my"
+            memberPlanData={userPlanData}
+            currentDate={currentDate}
+          />
           {otherPlanData.map((otherPlan) => (
             <MobilePlanCard
               key={otherPlan.employeeId}

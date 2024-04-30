@@ -11,7 +11,8 @@ const Layout = styled.div<{ $isPlanOpen: boolean }>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  border: ${(props) => (props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none")};
+  border: ${(props) =>
+    props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none"};
   border-radius: 16px;
   padding-bottom: 1rem;
 `;
@@ -64,9 +65,11 @@ const ArrowButton = styled.div<{ $isPlanOpen: boolean }>`
   font-size: 1.5rem;
 
   outline: 4px solid
-    ${(props) => (props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none")};
+    ${(props) =>
+      props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none"};
   border-right: 4px solid
-    ${(props) => (props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none")};
+    ${(props) =>
+      props.$isPlanOpen ? "4px solid var(--color-brand-yellow);" : "none"};
 `;
 
 /* 일정 추가 버튼 */
@@ -84,7 +87,11 @@ interface MobilePlanCard {
   memberPlanData: any;
   currentDate: Date;
 }
-export default function MobilePlanCard({ memberPlanData, whos, currentDate }: MobilePlanCard) {
+export default function MobilePlanCard({
+  memberPlanData,
+  whos,
+  currentDate,
+}: MobilePlanCard) {
   const [isPlanOpen, setIsPlanOpen] = useState<boolean>(false);
   const [planComponents, setPlanComponents] = useState<JSX.Element[]>([]);
   const [allPlanLen, setAllPlanLen] = useState<number>(0);
@@ -92,7 +99,9 @@ export default function MobilePlanCard({ memberPlanData, whos, currentDate }: Mo
   useEffect(() => {
     if (Array.isArray(memberPlanData?.planList)) {
       if (memberPlanData?.unEditablePlan) {
-        setAllPlanLen(memberPlanData.planList.length + memberPlanData.unEditablePlan.length);
+        setAllPlanLen(
+          memberPlanData.planList.length + memberPlanData.unEditablePlan.length
+        );
       } else {
         setAllPlanLen(memberPlanData.planList.length);
       }
@@ -121,17 +130,28 @@ export default function MobilePlanCard({ memberPlanData, whos, currentDate }: Mo
     ]);
   };
 
+  console.log("planData", memberPlanData);
+  console.log(Object.keys(memberPlanData).length);
+  console.log("planList", memberPlanData.planList);
+
   return (
     <Layout $isPlanOpen={isPlanOpen}>
       <MemberCardStyle onClick={() => setIsPlanOpen(!isPlanOpen)}>
         <MemberCard
           memberInfo={{
             name: memberPlanData.name,
-            department: memberPlanData.department || "false",
-            position: memberPlanData.position || "false",
+            department: "개발부서",
+            position: "프론트엔드",
             image: memberPlanData.image || "false",
-            rank: memberPlanData.rank || "false",
+            rank: "팀장",
           }}
+          // memberInfo={{
+          //   name: memberPlanData.name,
+          //   department: memberPlanData.department || "false",
+          //   position: memberPlanData.position || "false",
+          //   image: memberPlanData.image || "false",
+          //   rank: memberPlanData.rank || "false",
+          // }}
         />
         {allPlanLen !== 0 && <ShowLength>{allPlanLen}</ShowLength>}
       </MemberCardStyle>
@@ -147,45 +167,49 @@ export default function MobilePlanCard({ memberPlanData, whos, currentDate }: Mo
 
       {isPlanOpen &&
         whos === "my" &&
-        memberPlanData.unEditablePlan &&
-        memberPlanData.unEditablePlan.length !== 0 && (
+        Object.keys(memberPlanData).length > 0 && (
           <PlanCardList>
-            {memberPlanData?.unEditablePlan?.map((plan: any) => (
-              <li key={uuidv4()}>
-                <PlanCard
-                  clickToAdd={false}
-                  isEditable={false}
-                  planContent={{
-                    id: plan.id,
-                    startTime: plan.startTime,
-                    endTime: plan.endTime,
-                    title: plan.title,
-                  }}
-                />
-              </li>
-            ))}
+            {Array.isArray(memberPlanData?.unEditablePlan) &&
+              memberPlanData?.unEditablePlan?.length !== 0 &&
+              memberPlanData?.unEditablePlan?.map((plan: any) => (
+                <li key={uuidv4()}>
+                  <PlanCard
+                    clickToAdd={false}
+                    isEditable={false}
+                    planContent={{
+                      id: plan.id,
+                      startTime: plan.startTime,
+                      endTime: plan.endTime,
+                      title: plan.title,
+                    }}
+                    currentDate={currentDate}
+                  />
+                </li>
+              ))}
           </PlanCardList>
         )}
 
       {isPlanOpen &&
-        memberPlanData.planList &&
-        memberPlanData.planList.length !== 0 &&
-        memberPlanData.planList.map(
+        memberPlanData?.planList &&
+        Array.isArray(memberPlanData?.planList) &&
+        memberPlanData?.planList?.length !== 0 &&
+        memberPlanData?.planList?.map((plan: any) => (
           <PlanCardList>
             <li key={uuidv4()}>
               <PlanCard
                 clickToAdd={false}
                 isEditable={true}
                 planContent={{
-                  id: memberPlanData.id,
-                  startTime: memberPlanData.startTime,
-                  endTime: memberPlanData.endTime,
-                  title: memberPlanData.title,
+                  id: plan.id,
+                  startTime: plan.startTime,
+                  endTime: plan.endTime,
+                  title: plan.title,
                 }}
+                currentDate={currentDate}
               />
             </li>
           </PlanCardList>
-        )}
+        ))}
       {isPlanOpen && planComponents}
       {whos === "my" && isPlanOpen && (
         <PlusPlanButton>

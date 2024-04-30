@@ -64,6 +64,7 @@ const UserImg = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  object-fit: cover;
 `;
 
 const UserInfo = styled.div`
@@ -147,7 +148,7 @@ export default function SideMenu() {
     const fetchMenus = async () => {
       try {
         // fetch("https://dev.risetconstruction.net/api/menus")
-        fetch("http://43.203.11.249:8080/api/menus")
+        fetch("http://13.124.235.23:8080/api/menus")
           .then((res) => res.json())
           .then((data) => setSideMenus(data));
       } catch (err: any) {
@@ -170,14 +171,17 @@ export default function SideMenu() {
           {sideMenus && (
             <>
               <Profile>
-                {sideMenus.user.icon ? (
+                <UserImg src="/sample.png" alt="profile" />
+                {/* {sideMenus.user.icon ? (
                   <UserImg src={sideMenus.user.icon} alt="profile" />
                 ) : (
                   sideMenuIcon["profile"]()
-                )}
+                )} */}
                 <UserInfo>
-                  <p>{sideMenus.user.name}</p>
-                  <p>{sideMenus.user.rank}</p>
+                  <p>손다니엘</p>
+                  <p>팀장</p>
+                  {/* <p>{sideMenus.user.name}</p>
+                  <p>{sideMenus.user.rank}</p> */}
                 </UserInfo>
               </Profile>
               {sideMenuIcon["arrow"]()}
