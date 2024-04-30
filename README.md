@@ -122,6 +122,8 @@
     <h3>게시판</h3>
     <ul>
       <li>게시글 무한스크롤 기능</li>
+      <li><b>framer-motion</b>을 사용한 즐겨찾기 Drag & Drop 기능</li>
+      <li>다중 파일 업로드, 다운로드 기능</li>
     </ul>
   </div>
   <div>
@@ -131,7 +133,7 @@
       <li>날짜별 개인일정 관리 기능</li>
     </ul>
   </div>
-    <div>
+  <div>
     <h3>채팅</h3>
     <ul>
       <li><b>websocket</b>과 <b>stompJS</b>를 사용한 1:1 및 그룹 실시간 채팅 기능</li>
