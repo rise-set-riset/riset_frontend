@@ -1,4 +1,4 @@
-Project Title : Riset (라이셋)
+**Project Title** : Riset (라이셋)
 
 Deploy : https://riset-frontend.vercel.app/
 
