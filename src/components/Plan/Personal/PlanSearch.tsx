@@ -79,7 +79,7 @@ const DropMenu = styled.ul`
 
 interface PlanSearchProps {
   searchWord: string;
-  handleSearchWord: (searchWord: string) => void;
+  handleSearchWord: () => void;
   filterCategory: string;
   setFilterCategory: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -108,9 +108,14 @@ export default function PlanSearch({
   return (
     <Layout>
       {/* 검색 기준 필터 */}
-      <SearchFilter type="button" onClick={() => setIsFilterOpen(!isFilterOpen)}>
+      <SearchFilter
+        type="button"
+        onClick={() => setIsFilterOpen(!isFilterOpen)}
+      >
         <div>{filterCategory}</div>
-        <ArrowIcon>{isFilterOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}</ArrowIcon>
+        <ArrowIcon>
+          {isFilterOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        </ArrowIcon>
 
         {/* 검색 기준 선택 드롭다운 메뉴 */}
         {isFilterOpen && (
@@ -126,7 +131,7 @@ export default function PlanSearch({
         name={"search-plan"}
         value={searchWord}
         placeholder="이름 검색"
-        onChange={handleTest}
+        onChange={handleSearchWord}
         autoComplete={"on"}
       />
     </Layout>

@@ -106,7 +106,7 @@ export default function MobilePlanCard({
         setAllPlanLen(memberPlanData.planList.length);
       }
     }
-  }, []);
+  });
 
   /* Plus 버튼 클릭시 새로운 Plan 컴포넌트 추가*/
   const handleAddComponent = () => {
@@ -129,10 +129,6 @@ export default function MobilePlanCard({
       </PlanCardList>,
     ]);
   };
-
-  console.log("planData", memberPlanData);
-  console.log(Object.keys(memberPlanData).length);
-  console.log("planList", memberPlanData.planList);
 
   return (
     <Layout $isPlanOpen={isPlanOpen}>
@@ -167,35 +163,34 @@ export default function MobilePlanCard({
 
       {isPlanOpen &&
         whos === "my" &&
-        Object.keys(memberPlanData).length > 0 && (
-          <PlanCardList>
-            {Array.isArray(memberPlanData?.unEditablePlan) &&
-              memberPlanData?.unEditablePlan?.length !== 0 &&
-              memberPlanData?.unEditablePlan?.map((plan: any) => (
-                <li key={uuidv4()}>
-                  <PlanCard
-                    clickToAdd={false}
-                    isEditable={false}
-                    planContent={{
-                      id: plan.id,
-                      startTime: plan.startTime,
-                      endTime: plan.endTime,
-                      title: plan.title,
-                    }}
-                    currentDate={currentDate}
-                  />
-                </li>
-              ))}
+        memberPlanData?.unEditablePlan &&
+        Array.isArray(memberPlanData?.unEditablePlan) &&
+        memberPlanData?.unEditablePlan?.length !== 0 &&
+        memberPlanData?.unEditablePlan?.map((plan: any) => (
+          <PlanCardList key={uuidv4()}>
+            <li>
+              <PlanCard
+                clickToAdd={false}
+                isEditable={false}
+                planContent={{
+                  id: plan.id,
+                  startTime: plan.startTime,
+                  endTime: plan.endTime,
+                  title: plan.title,
+                }}
+                currentDate={currentDate}
+              />
+            </li>
           </PlanCardList>
-        )}
+        ))}
 
       {isPlanOpen &&
         memberPlanData?.planList &&
         Array.isArray(memberPlanData?.planList) &&
         memberPlanData?.planList?.length !== 0 &&
         memberPlanData?.planList?.map((plan: any) => (
-          <PlanCardList>
-            <li key={uuidv4()}>
+          <PlanCardList key={uuidv4()}>
+            <li>
               <PlanCard
                 clickToAdd={false}
                 isEditable={true}

@@ -153,7 +153,7 @@ export default function PersonalPlan() {
       });
   }, [currentDate]);
 
-  const handleTest = (searchWord: string) => {};
+  const handleTest = () => {};
 
   return (
     <Layout>
