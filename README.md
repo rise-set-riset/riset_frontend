@@ -103,6 +103,7 @@
 
 <div>
   <h2>⭐ Main Feature</h2>
+  <p><b>세부 기능 확인 :</b> https://www.notion.so/Riset-c5f9828ccb86492b970994ac1aca4252</p>
   <div>
     <h3>회원가입, 로그인</h3>
     <ul>
@@ -114,19 +115,26 @@
   <div>
     <h3>출퇴근</h3>
     <ul>
-      <li>위치기반 출퇴근 기능</li>
+      <li>kakao-map, geolocation을 사용한 위치기반 출퇴근 기능</li>
     </ul>
   </div>
   <div>
     <h3>게시판</h3>
     <ul>
-      <li>게시글 무한스크롤</li>
+      <li>게시글 무한스크롤 기능</li>
     </ul>
   </div>
   <div>
-    <h3>출퇴근</h3>
+    <h3>일정</h3>
     <ul>
-      <li>kakao-map, geolocation을 사용한 위치기반 출퇴근 기능</li>
+      <li><b>fullcalendar</b>를 사용한 공식일정 달력 기능</li>
+      <li>날짜별 개인일정 관리</li>
+    </ul>
+  </div>
+    <div>
+    <h3>채팅</h3>
+    <ul>
+      <li><b>websocket</b>과 <b>stompJS</b>를 사용한 1:1 및 그룹 실시간 채팅</li>
     </ul>
   </div>
 </div>
