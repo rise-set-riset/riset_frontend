@@ -11,7 +11,7 @@
 
 <div>
   <h2>✈️ Deploy</h2>
-  <span>▶ 사용자 중심의 출퇴근 관리 시스템!</span>
+  <strong>▶ 사용자 중심의 출퇴근 관리 시스템!</strong>
   <span>https://riset-frontend.vercel.app/ (AWS 서버 비용 문제로 인해 현재 API 통신이 불가합니다)</span>
 </div>
 
