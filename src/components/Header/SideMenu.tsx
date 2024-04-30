@@ -171,14 +171,14 @@ export default function SideMenu() {
           {sideMenus && (
             <>
               <Profile>
-                <UserImg src="/sample.png" alt="profile" />
-                {/* {sideMenus.user.icon ? (
+                {/* <UserImg src="/sample.png" alt="profile" /> */}
+                {sideMenus.user.icon ? (
                   <UserImg src={sideMenus.user.icon} alt="profile" />
                 ) : (
                   sideMenuIcon["profile"]()
-                )} */}
+                )}
                 <UserInfo>
-                  <p>손다니엘</p>
+                  <p>시연</p>
                   <p>팀장</p>
                   {/* <p>{sideMenus.user.name}</p>
                   <p>{sideMenus.user.rank}</p> */}

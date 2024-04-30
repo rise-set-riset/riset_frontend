@@ -189,8 +189,8 @@ export default function Header() {
             <ProfileMenu
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
             >
-              {/* {userImg ? <img src={userImg} alt="user" /> : <Profile />} */}
-              <img
+              {userImg ? <img src={userImg} alt="user" /> : <Profile />}
+              {/* <img
                 src="/sample.png"
                 alt="user"
                 style={{
@@ -199,7 +199,7 @@ export default function Header() {
                   borderRadius: "50%",
                   objectFit: "cover",
                 }}
-              />
+              /> */}
             </ProfileMenu>
             {isProfileMenuOpen && (
               <DropdownMenu>

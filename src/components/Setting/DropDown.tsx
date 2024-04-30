@@ -89,11 +89,15 @@ export default function DropDown({
   useEffect(() => {
     if (typeof value === "number") {
       if (value === 1) {
-        setRankColor("var(--color-black)");
+        if (isDarkmode) {
+          setRankColor("#000000");
+        } else {
+          setRankColor("#000000");
+        }
       } else if (value === 2) {
-        setRankColor("var(--color-brand-main");
+        setRankColor("var(--color-brand-main)");
       } else {
-        setRankColor("var(--color-brand-yellow");
+        setRankColor("var(--color-brand-yellow)");
       }
     }
   }, [value]);

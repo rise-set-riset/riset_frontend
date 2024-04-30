@@ -21,7 +21,8 @@ const Layout = styled.div`
   }
 
   input {
-    background-color: transparent;
+    background-color: var(--color-white);
+    color: var(--color-black);
   }
 `;
 
@@ -38,7 +39,7 @@ const TitleBox = styled.div`
 
 const SaveButton = styled.button`
   background-color: var(--color-brand-main);
-  color: var(--color-white);
+  color: white;
   margin-left: 1rem;
   border: 1px solid var(--color-brand-main);
   border-radius: 8px;
@@ -47,10 +48,15 @@ const SaveButton = styled.button`
   min-width: 88px;
   height: 45px;
   cursor: pointer;
+
+  @media screen and (max-width: 430px) {
+    font-size: 0.8rem;
+    min-width: 70px;
+  }
 `;
 
 const ProfileTable = styled.div`
-  margin: 4rem 1rem;
+  margin: 2rem 1rem;
   display: grid;
   grid-template-rows: 36px repeat(auto-fill, 66px);
   overflow-x: auto;
@@ -58,8 +64,7 @@ const ProfileTable = styled.div`
 
 const TableHeader = styled.div`
   display: grid;
-  grid-template-columns: 50px 80px 100px 100px 80px 100px 90px 100px 130px 80px 100px 200px 200px;
-
+  grid-template-columns: 50px 80px 100px 140px 80px 120px 90px 100px 130px 80px 100px 200px 280px;
   div {
     background-color: var(--color-brand-main);
     height: 36px;
@@ -67,7 +72,7 @@ const TableHeader = styled.div`
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    color: var(--color-white);
+    color: white;
     border-left: 1px solid var(--color-white);
     font-size: 1rem;
     padding: 0 0.5rem;
@@ -106,12 +111,23 @@ const TableLine = styled(TableHeader)`
   div:nth-child(1) {
     border-left: none;
   }
+
+  div:nth-last-child(1) {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 1rem;
+  }
 `;
 
 const ProfileImg = styled.div`
-  width: 50px;
+  /* width: 50px;
   height: 50px;
-  img,
+  margin: 0 auto; */
+  img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
   svg {
     width: 50px;
     height: 50px;
@@ -128,15 +144,26 @@ interface ResponseDataType {
 }
 export default function SettingProfile() {
   const jwt = localStorage.getItem("jwt");
-  const [responseData, setResponseData] = useState<ResponseDataType[]>([]);
+  const [responseData, setResponseData] = useState<ResponseDataType[]>(Test);
   const [totalItems, setTotalItems] = useState<number>(10);
   const [itemsPerPage, setItemsPerPage] = useState<number>(3);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchWord, setSearchWord] = useState<string>("");
   const [searchResult, setSearchResult] = useState<any>([]);
 
-  const [departIdList, setDepartIdList] = useState<any>();
-  const [rankIdList, setRankIdList] = useState<any>();
+  const [departIdList, setDepartIdList] = useState<any>([
+    { departId: 1, departName: "개발부서" },
+    { departId: 2, departName: "영업부서" },
+    { departId: 3, departName: "인사부서" },
+    { departId: 4, departName: "마케팅부서" },
+    { departId: 5, departName: "디자인부서" },
+    { departId: 6, departName: "재무부서" },
+  ]);
+  const [rankIdList, setRankIdList] = useState<any>([
+    { gradeNo: 1, grade: "black" },
+    { gradeNo: 2, grade: "red" },
+    { gradeNo: 3, grade: "yellow" },
+  ]);
   const [currentUserId, setCurrentUserId] = useState<number>();
 
   /* 이름 검색 */
@@ -256,109 +283,64 @@ export default function SettingProfile() {
     // 여기서 새로운 데이터를 가져와서 페이지에 맞게 렌더링할 수 있음
   };
 
-  useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/preset/profiles", {
-    fetch("http://13.124.235.23:8080/preset/profiles", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // setResponseData(data);
-        setResponseData([
-          {
-            address: "경기 성남시 분당구 판교역로 166",
-            dateOfJoin: "2024-01-02",
-            depart: {
-              departmentId: 1,
-              departmentName: "개발부서",
-            },
-            employeeId: "daniel3636",
-            employeeNum: 1,
-            job: "프론트엔드",
-            jobGrade: {
-              jobGradeId: 1,
-              grade: "Black",
-            },
-            name: "손다니엘",
-            phone: "010-3333-5555",
-            position: "팀장",
-            profile: {
-              profileImgId: 1,
-              profileImgName: "myImg",
-              // profileImgPath: "/sample.png",
-              profileImgPath: "",
-            },
-            salary: 4000,
-            totalAnnualLeave: 16,
-          },
-          {
-            address: "경기도 성남시 분당구 분당내곡로 131",
-            dateOfJoin: "2024-03-04",
-            depart: {
-              departmentId: 1,
-              departmentName: "개발부서",
-            },
-            employeeId: "1717kso",
-            employeeNum: 2,
-            job: "프론트엔드",
-            jobGrade: {
-              jobGradeId: 2,
-              grade: "Red",
-            },
-            name: "김승윤",
-            phone: "010-2222-8888",
-            position: "사원",
-            profile: {
-              profileImgId: 2,
-              profileImgName: "myImg",
-              profileImgPath: "",
-            },
-            salary: 4000,
-            totalAnnualLeave: 16,
-          },
-        ]);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // fetch("https://dev.risetconstruction.net/preset/profiles", {
+  //   fetch("http://13.124.235.23:8080/preset/profiles", {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${jwt}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       // setResponseData(data);
+  //       setResponseData(Test);
+  //     });
+  // }, []);
 
   /* 부서 */
-  useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/depart", {
-    fetch("http://13.124.235.23:8080/depart", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // setDepartIdList(data);
-        setDepartIdList([{ departId: 1, departName: "개발부서" }]);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // fetch("https://dev.risetconstruction.net/depart", {
+  //   fetch("http://13.124.235.23:8080/depart", {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${jwt}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       // setDepartIdList(data);
+  //       setDepartIdList([
+  //         { departId: 1, departName: "개발부서" },
+  //         { departId: 2, departName: "영업부서" },
+  //         { departId: 3, departName: "인사부서" },
+  //         { departId: 4, departName: "마케팅부서" },
+  //         { departId: 5, departName: "디자인부서" },
+  //         { departId: 6, departName: "재무부서" },
+  //       ]);
+  //     });
+  // }, []);
 
   /* 등급 */
-  useEffect(() => {
-    // fetch("https://dev.risetconstruction.net/jobGrade", {
-    fetch("http://13.124.235.23:8080/jobGrade", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-      .then((res) => res.json())
-      // .then((data) => setRankIdList(data));
-      .then((data) => setRankIdList([{}]));
-  }, []);
-
-  console.log(departIdList);
+  // useEffect(() => {
+  //   // fetch("https://dev.risetconstruction.net/jobGrade", {
+  //   fetch("http://13.124.235.23:8080/jobGrade", {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${jwt}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     // .then((data) => setRankIdList(data));
+  //     .then((data) =>
+  //       setRankIdList(data)
+  //     );
+  // }, []);
 
   return (
     <Layout>
       <main className="main">
-        <h2 className="title">조직원 프로필</h2>
+        <h2 className="title">프로필 관리</h2>
         <TitleBox>
           <SearchBar
             placeholder="이름을 검색하세요"
@@ -386,7 +368,7 @@ export default function SettingProfile() {
             <div>주소</div>
           </TableHeader>
           {responseData.map((data, index) => (
-            <TableLine key={data.employeeId}>
+            <TableLine key={data.employeeNum}>
               <div>{index + 1}</div>
               {data.profile.profileImgPath ? (
                 <div>
@@ -442,7 +424,15 @@ export default function SettingProfile() {
               <DropDownBox onClick={() => setCurrentUserId(data.employeeNum)}>
                 <DropDown
                   main={data.depart.departmentName}
-                  dropList={departIdList?.map((dep: any) => dep?.departName)}
+                  // dropList={departIdList?.map((dep: any) => dep?.departName)}
+                  dropList={[
+                    "개발부서",
+                    "영업부서",
+                    "인사부서",
+                    "마케팅부서",
+                    "디자인부서",
+                    "재무부서",
+                  ]}
                   handleSyncData={handleSyncDepart}
                 />
               </DropDownBox>
@@ -450,6 +440,7 @@ export default function SettingProfile() {
               <div>
                 <input
                   type="text"
+                  value={data.position}
                   onChange={(e) => handleChageInput(e, data.employeeNum)}
                   name="position"
                 />
@@ -458,6 +449,7 @@ export default function SettingProfile() {
               <div>
                 <input
                   type="text"
+                  value={data.job}
                   onChange={(e) => handleChageInput(e, data.employeeNum)}
                   name="job"
                 />
@@ -478,3 +470,256 @@ export default function SettingProfile() {
     </Layout>
   );
 }
+
+const Test = [
+  {
+    address: "경기 성남시 분당구 판교역로 166",
+    dateOfJoin: "24. 01. 02",
+    depart: {
+      departmentId: 1,
+      departmentName: "개발부서",
+    },
+    employeeId: "daniel3636",
+    employeeNum: 1,
+    job: "프론트엔드",
+    jobGrade: {
+      jobGradeId: 1,
+      grade: "black",
+    },
+    name: "손다니엘",
+    phone: "010-6516-5616",
+    position: "팀장",
+    profile: {
+      profileImgId: 1,
+      profileImgName: "myImg",
+      profileImgPath: "/sample.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 16,
+  },
+  {
+    address: "경기도 성남시 분당구 분당내곡로 131",
+    dateOfJoin: "24. 03. 04",
+    depart: {
+      departmentId: 1,
+      departmentName: "개발부서",
+    },
+    employeeId: "1717kso",
+    employeeNum: 2,
+    job: "프론트엔드",
+    jobGrade: {
+      jobGradeId: 2,
+      grade: "red",
+    },
+    name: "김승윤",
+    phone: "010-3513-8613",
+    position: "연구원",
+    profile: {
+      profileImgId: 2,
+      profileImgName: "myImg",
+      profileImgPath: "/sample02.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 16,
+  },
+  {
+    address: "서울 중랑구 공릉로 2",
+    dateOfJoin: "23. 03. 01",
+    depart: {
+      departmentId: 5,
+      departmentName: "디자인부서",
+    },
+    employeeId: "attaniy00",
+    employeeNum: 3,
+    job: "디자이너",
+    jobGrade: {
+      jobGradeId: 2,
+      grade: "red",
+    },
+    name: "조은샘",
+    phone: "010-4568-5613",
+    position: "파트장",
+    profile: {
+      profileImgId: 3,
+      profileImgName: "myImg",
+      profileImgPath: "/sample03.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 17,
+  },
+  {
+    address: "서울 송파구 도곡로 434",
+    dateOfJoin: "24. 04. 01",
+    depart: {
+      departmentId: 2,
+      departmentName: "영업부서",
+    },
+    employeeId: "CloudSurfer123",
+    employeeNum: 4,
+    job: "영업담당자",
+    jobGrade: {
+      jobGradeId: 3,
+      grade: "yellow",
+    },
+    name: "김민지",
+    phone: "010-8651-1235",
+    position: "사원",
+    profile: {
+      profileImgId: 4,
+      profileImgName: "myImg",
+      profileImgPath: "/sample04.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 16,
+  },
+  {
+    address: "서울 관악구 관악로5길 30",
+    dateOfJoin: "22. 09. 01",
+    depart: {
+      departmentId: 6,
+      departmentName: "재무부서",
+    },
+    employeeId: "TechSavvy21",
+    employeeNum: 5,
+    job: "재무관리자",
+    jobGrade: {
+      jobGradeId: 1,
+      grade: "black",
+    },
+    name: "김민성",
+    phone: "010-5164-1346",
+    position: "과장",
+    profile: {
+      profileImgId: 5,
+      profileImgName: "myImg",
+      profileImgPath: "/sample05.png",
+    },
+    salary: 5000,
+    totalAnnualLeave: 18,
+  },
+  {
+    address: "경기 안양시 동안구 관양로 13",
+    dateOfJoin: "23. 06. 01",
+    depart: {
+      departmentId: 1,
+      departmentName: "개발부서",
+    },
+    employeeId: "sanghyuk35",
+    employeeNum: 6,
+    job: "백엔드",
+    jobGrade: {
+      jobGradeId: 1,
+      grade: "black",
+    },
+    name: "이상혁",
+    phone: "010-2384-0193",
+    position: "팀장",
+    profile: {
+      profileImgId: 6,
+      profileImgName: "myImg",
+      profileImgPath: "/sample06.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 16,
+  },
+  {
+    address: "경기 성남시 분당구 내정로 54",
+    dateOfJoin: "23. 12. 01",
+    depart: {
+      departmentId: 1,
+      departmentName: "개발부서",
+    },
+    employeeId: "minseok77",
+    employeeNum: 7,
+    job: "백엔드",
+    jobGrade: {
+      jobGradeId: 2,
+      grade: "red",
+    },
+    name: "김민석",
+    phone: "010-3892-1983",
+    position: "사원",
+    profile: {
+      profileImgId: 7,
+      profileImgName: "myImg",
+      profileImgPath: "/sample07.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 16,
+  },
+  {
+    address: "서울 영등포구 여의동로3길 10",
+    dateOfJoin: "22. 11. 01",
+    depart: {
+      departmentId: 3,
+      departmentName: "인사부서",
+    },
+    employeeId: "seongmin77",
+    employeeNum: 8,
+    job: "인사담당자",
+    jobGrade: {
+      jobGradeId: 1,
+      grade: "black",
+    },
+    name: "김성민",
+    phone: "010-3904-2930",
+    position: "대리",
+    profile: {
+      profileImgId: 8,
+      profileImgName: "myImg",
+      profileImgPath: "/sample08.png",
+    },
+    salary: 5000,
+    totalAnnualLeave: 18,
+  },
+  {
+    address: "경기 김포시 김포한강5로 385",
+    dateOfJoin: "23. 12. 10",
+    depart: {
+      departmentId: 4,
+      departmentName: "마케팅부서",
+    },
+    employeeId: "jiheego84",
+    employeeNum: 9,
+    job: "마케터",
+    jobGrade: {
+      jobGradeId: 3,
+      grade: "yellow",
+    },
+    name: "유지희",
+    phone: "010-3423-3424",
+    position: "사원",
+    profile: {
+      profileImgId: 9,
+      profileImgName: "myImg",
+      profileImgPath: "/sample09.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 16,
+  },
+  {
+    address: "서울 서초구 남부순환로 2103",
+    dateOfJoin: "23. 19. 10",
+    depart: {
+      departmentId: 5,
+      departmentName: "디자인부서",
+    },
+    employeeId: "devhoo13",
+    employeeNum: 10,
+    job: "디자이너",
+    jobGrade: {
+      jobGradeId: 3,
+      grade: "yellow",
+    },
+    name: "서지후",
+    phone: "010-5665-2315",
+    position: "사원",
+    profile: {
+      profileImgId: 10,
+      profileImgName: "myImg",
+      profileImgPath: "/sample10.png",
+    },
+    salary: 4000,
+    totalAnnualLeave: 16,
+  },
+];
