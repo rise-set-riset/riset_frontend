@@ -19,7 +19,8 @@
 
 <div>
   <h2>🎙️ Presentation</h2>
-  <p><b>발표 영상</b> : url 주소</p>
+  <p><b>FrontEnd 발표 영상</b> : https://www.youtube.com/watch?v=0ycSCWs5kLQ</p>
+  <p><b>BackEnd 발표 영상</b> : https://www.youtube.com/watch?v=cZOZw4_wA_A&feature=youtu.be</p>
 </div>
 
 <br>
